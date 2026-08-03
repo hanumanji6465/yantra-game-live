@@ -6,6 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Yantra Game Interface - Full Version</title>
     <style>
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        overflow: hidden !important; /* Yeh kisi bhi tarah ka scroll hamesha ke liye band kar dega */
+        touch-action: none !important; /* Mobile par ungli se page khiskana (swipe) rok dega */
+        overscroll-behavior: none !important; /* Page ko khinchne par jo bounce hota hai, use band karega */
+        box-sizing: border-box !important;
+    }
+</style>
+    <style>
         body { background-color: #1a001a; color: #333; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; box-sizing: border-box; }
         .game-container { background-color: #f78fb3; width: 100%; max-width: 1200px; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; border: 2px solid #fff; box-sizing: border-box; }
         .header { display: flex; justify-content: space-between; color: #550022; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
