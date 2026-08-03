@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Yantra Game Interface - Full Version</title>
     <style>
         body { background-color: #1a001a; color: #333; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; box-sizing: border-box; }
@@ -354,6 +355,29 @@
             }, 1000);
         }
         startEventTimer();
+        // Screen orientation ko lock karne ka function
+function lockLandscape() {
+    if (screen.orientation && screen.orientation.lock) {
+        // Pehle check karein ki feature available hai (Android/Safari modern)
+        screen.orientation.lock('landscape').then(function() {
+            console.log('Screen orientation locked to landscape');
+        }).catch(function(error) {
+            console.error('Orientation lock failed:', error);
+            // Fallback: Agar lock fail ho jaye (jaise permission issue),
+            // toh aap warning dikha sakte hain ya responsive styles ensure karein.
+        });
+    } else {
+        // Feature supported nahi hai (kuch older browsers)
+        console.warn('Screen Orientation Lock feature not supported by this browser.');
+        // Fallback: Responsive CSS, use flexible layout, ensure elements scale
+    }
+}
+
+// Jab page load ho, horizontal orientation enforce karein
+window.onload = function() {
+    lockLandscape();
+    // Aapka baaki ka load code yahan...
+};
     </script>
 </body>
 </html>
