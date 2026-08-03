@@ -4,43 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Yantra Game Interface - Full Version</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
 <style>
+    /* Screen ko fix karne ke liye body settings override karein */
     html, body {
         margin: 0 !important;
         padding: 0 !important;
         width: 100vw !important;
         height: 100vh !important;
-        overflow: hidden !important; /* Koi scroll nahi */
-        touch-action: none !important; /* Screen khiskegi nahi */
+        overflow: hidden !important; 
+        background-color: #000 !important;
+        position: relative !important;
+        touch-action: none !important;
+    }
+
+    /* Purane 1200px limit ko todne ke liye aur game ko stretch karne ke liye */
+    .game-container {
+        width: 1300px !important;  
+        height: 700px !important;
+        max-width: none !important; /* Purani rukawat hatayi */
+        min-height: auto !important;
+        margin: 0 !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        border: none !important; /* Mobile app jaisa look dene ke liye */
+        border-radius: 0 !important;
+        transform-origin: top left !important;
     }
 </style>
 
 <script>
-    function stretchToMobile() {
-        // Width ko 1600 kar diya hai taaki right side ke saare buttons ek line mein aa jayein
-        const gameWidth = 1600;  
-        const gameHeight = 750;  
+    function stretchGamePerfectly() {
+        const container = document.querySelector('.game-container');
+        
+        // CSS wali exact width aur height jo humne upar di hai
+        const targetWidth = 1300; 
+        const targetHeight = 700; 
 
-        let screenWidth = window.innerWidth;
-        let screenHeight = window.innerHeight;
+        // Mobile screen ka asli size napna
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
 
-        // X aur Y dono ko mobile screen ke hisaab se stretch karenge taaki width poori cover ho
-        let scaleX = screenWidth / gameWidth;
-        let scaleY = screenHeight / gameHeight;
+        // X aur Y dono direction mein kheenchne (stretch) ka calculation
+        const scaleX = screenWidth / targetWidth;
+        const scaleY = screenHeight / targetHeight;
 
-        // Game ko scale (zoom/stretch) karke fit karna
-        document.body.style.width = gameWidth + "px";
-        document.body.style.height = gameHeight + "px";
-        document.body.style.transformOrigin = "top left";
-        document.body.style.transform = "scale(" + scaleX + ", " + scaleY + ")";
-        document.body.style.margin = "0";
+        // Container par stretch apply karna
+        container.style.transform = `scale(${scaleX}, ${scaleY})`;
     }
 
-    // Jaise hi game load ho ya mobile ghoome, script chal jayegi
-    window.onload = stretchToMobile;
-    window.onresize = stretchToMobile;
+    // Jaise hi page load ho ya orientation change ho, ye function chalega
+    window.onload = stretchGamePerfectly;
+    window.onresize = stretchGamePerfectly;
 </script>
     <style>
         body { background-color: #1a001a; color: #333; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; box-sizing: border-box; }
