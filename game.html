@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yantra Game Interface - Full Version</title>
+    <style>
+        body { background-color: #1a001a; color: #333; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; box-sizing: border-box; }
+        .game-container { background-color: #f78fb3; width: 100%; max-width: 1200px; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; border: 2px solid #fff; box-sizing: border-box; }
+        .header { display: flex; justify-content: space-between; color: #550022; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+        .header-right { text-align: right; }
+        .tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; justify-content: center; }
+        .tab { background-color: #d1ccc0; padding: 5px 15px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 1px solid #777; cursor: pointer; }
+        .tab.active { background-color: #574b90; color: white; }
+        .main-content { display: flex; gap: 10px; flex-grow: 1; }
+        .grid-section { width: 75%; overflow-x: auto; background-color: #fdf5f6; border: 1px solid #ccc; }
+        .grid-table { border-collapse: collapse; width: 100%; min-width: 800px; font-size: 11px; }
+        .grid-table th, .grid-table td { border: 1px solid #ccc; text-align: center; padding: 4px; height: 25px; }
+        .grid-table th { background-color: #e0d9d3; }
+        .group-name { background-color: #e0d9d3; font-weight: bold; text-align: left; padding-left: 5px; pointer-events: none; white-space: nowrap; }
+        .gift-coin { background-color: #e0d9d3; pointer-events: none; }
+        .input-cell { cursor: pointer; width: 40px; }
+        .selected-cell { background-color: #00ff00 !important; }
+        .cart-ledger { background-color: #e0d9d3; width: 25%; border: 1px solid #ccc; display: flex; flex-direction: column; justify-content: space-between; }
+        .cart-table-wrapper { height: 200px; overflow-y: auto; }
+        #cart-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
+        #cart-table th { background-color: #ccc; padding: 5px; }
+        #cart-table td { border-bottom: 1px solid #bbb; padding: 4px; }
+        .cart-total { background-color: #ccc; padding: 5px; font-weight: bold; text-align: right; font-size: 14px; border-top: 2px solid #999; }
+        .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .numpad { background-color: #e3dff0; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: center; }
+        .num-btn { background-color: white; border: 1px solid #ccc; border-radius: 5px; padding: 10px 15px; font-size: 16px; font-weight: bold; box-shadow: 0px 2px 2px rgba(0,0,0,0.2); cursor: pointer; }
+        .num-btn:active { background-color: #ddd; }
+        .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 5px; padding: 10px 15px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
+        .action-btn.green { background-color: #008000; }
+        
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 100; padding: 10px; box-sizing: border-box; }
+        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #f78fb3; padding: 10px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
+        .date-input { width: 80%; padding: 8px; margin: 10px 0; font-size: 16px; text-align: center; border: 1px solid #ccc; }
+        .btn-ok { background-color: #008000; color: white; border: none; padding: 8px 30px; font-weight: bold; cursor: pointer; border-radius: 3px; }
+        
+        .yantra-content { max-width: 650px; height: 80vh; display: flex; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; background-color: #f78fb3; padding: 8px; font-weight: bold; color: #550022; }
+        .close-btn { background-color: #d10000; color: white; border: 1px solid white; cursor: pointer; font-weight: bold; padding: 2px 10px; }
+        .table-scroll { overflow-y: auto; overflow-x: auto; margin-top: 10px; flex-grow: 1; }
+        .yantra-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; min-width: 400px; }
+        .yantra-table th, .yantra-table td { border: 1px solid #ccc; padding: 6px; }
+        .yantra-table th { background-color: #e0d9d3; color: #550022; }
+
+        @media (max-width: 768px) {
+            .header { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+            .header-right { text-align: center; }
+            .main-content { flex-direction: column; }
+            .grid-section { width: 100%; }
+            .cart-ledger { width: 100%; }
+            .bottom-controls { flex-direction: column; gap: 15px; }
+            .numpad { width: 100%; }
+            .action-bar { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🎵 HIDDEN AUDIO TAGS (Yahan se sound aayega) -->
+    <audio id="sound-buy" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
+    <audio id="sound-win" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" preload="auto"></audio>
+    <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
+
+    <div class="game-container">
+        <div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center; flex-wrap: wrap;">
+            <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">➕ Add Money</button>
+            <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">💸 Withdraw</button>
+        </div>
+
+        <div id="walletModal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 style="color: black; margin-top: 0;">Add Points to Wallet</h3>
+                <img src="qrcode.jpeg" alt="UPI QR Code" style="width: 200px; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 10px;">
+                <p style="font-size: 14px; color: red;">Scan karke payment karein aur niche UTR number dalein.</p>
+                <input type="number" id="depositAmount" placeholder="Kitne Paise Bheje?" style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
+                <input type="text" id="utrNumber" placeholder="12-Digit UTR Number" style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
+                <button onclick="submitDeposit()" style="background: blue; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">Submit Request</button>
+                <button onclick="document.getElementById('walletModal').style.display='none'" style="background: red; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+        </div>
+
+        <div id="withdrawModal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 style="color: black; margin-top: 0;">Withdraw Points</h3>
+                <p style="font-size: 14px; color: #555;">Jeete huye paise nikalne ke liye details dalein.</p>
+                <input type="number" id="withdrawAmount" placeholder="Amount (Kam se kam 10)" style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
+                <input type="text" id="bankDetails" placeholder="UPI ID ya Bank A/C No." style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
+                <button onclick="submitWithdraw()" style="background: #27ae60; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">Send Request</button>
+                <button onclick="document.getElementById('withdrawModal').style.display='none'" style="background: red; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+        </div>
+
+        <div class="header">
+            <div>
+                Welcome: <span id="welcome-phone">Guest</span><br>
+                Balance Point: <span id="balance">0.00</span>
+            </div>
+            <div class="header-right">
+                <span style="background-color:#d1ccc0; padding:2px 10px; font-size:10px;">LOBBY</span><br>
+                Date: <span id="current-date"></span><br>
+                Gift Event Code: <span id="event-code">13:00</span><br>
+                Countdown: <span id="countdown-display" style="color: red;">00:00:00</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab">Bulk Coupons [ A ]</div><div class="tab active">Bulk Coupons [ B ]</div><div class="tab">Pointwise Coupons</div><div class="tab">Loose Coupons</div><div class="tab">Loose Pointwise Coupons</div>
+        </div>
+
+        <div class="main-content">
+            <div class="grid-section">
+                <table class="grid-table" id="game-grid">
+                    <tr><th>Product Group</th><th>Gift Coin</th><th>00-09</th><th>10-19</th><th>20-29</th><th>30-39</th><th>40-49</th><th>50-59</th><th>60-69</th><th>70-79</th><th>80-89</th><th>90-99</th><th>All</th></tr>
+                    <tr><td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td><td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td></tr>
+                    <tr><td class="group-name">Yantra Group RR</td><td class="gift-coin">-</td><td class="input-cell" data-group="RR" data-range="00-09"></td><td class="input-cell" data-group="RR" data-range="10-19"></td><td class="input-cell" data-group="RR" data-range="20-29"></td><td class="input-cell" data-group="RR" data-range="30-39"></td><td class="input-cell" data-group="RR" data-range="40-49"></td><td class="input-cell" data-group="RR" data-range="50-59"></td><td class="input-cell" data-group="RR" data-range="60-69"></td><td class="input-cell" data-group="RR" data-range="70-79"></td><td class="input-cell" data-group="RR" data-range="80-89"></td><td class="input-cell" data-group="RR" data-range="90-99"></td><td class="input-cell" data-group="RR" data-range="All"></td></tr>
+                    <tr><td class="group-name">Yantra Group RY</td><td class="gift-coin">-</td><td class="input-cell" data-group="RY" data-range="00-09"></td><td class="input-cell" data-group="RY" data-range="10-19"></td><td class="input-cell" data-group="RY" data-range="20-29"></td><td class="input-cell" data-group="RY" data-range="30-39"></td><td class="input-cell" data-group="RY" data-range="40-49"></td><td class="input-cell" data-group="RY" data-range="50-59"></td><td class="input-cell" data-group="RY" data-range="60-69"></td><td class="input-cell" data-group="RY" data-range="70-79"></td><td class="input-cell" data-group="RY" data-range="80-89"></td><td class="input-cell" data-group="RY" data-range="90-99"></td><td class="input-cell" data-group="RY" data-range="All"></td></tr>
+                    <tr><td class="group-name">Yantra Group CH</td><td class="gift-coin">-</td><td class="input-cell" data-group="CH" data-range="00-09"></td><td class="input-cell" data-group="CH" data-range="10-19"></td><td class="input-cell" data-group="CH" data-range="20-29"></td><td class="input-cell" data-group="CH" data-range="30-39"></td><td class="input-cell" data-group="CH" data-range="40-49"></td><td class="input-cell" data-group="CH" data-range="50-59"></td><td class="input-cell" data-group="CH" data-range="60-69"></td><td class="input-cell" data-group="CH" data-range="70-79"></td><td class="input-cell" data-group="CH" data-range="80-89"></td><td class="input-cell" data-group="CH" data-range="90-99"></td><td class="input-cell" data-group="CH" data-range="All"></td></tr>
+                </table>
+            </div>
+
+            <div class="cart-ledger">
+                <div class="cart-table-wrapper"><table id="cart-table"><tr><th>Qty</th><th>Pts</th><th>Code</th></tr></table></div>
+                <div class="cart-total">TOTAL: <span id="cart-total-pts">0</span></div>
+            </div>
+        </div>
+
+        <div class="bottom-controls">
+            <div class="numpad">
+                <button class="num-btn" onclick="typeNumber('1')">1</button><button class="num-btn" onclick="typeNumber('2')">2</button><button class="num-btn" onclick="typeNumber('3')">3</button>
+                <button class="num-btn" onclick="typeNumber('4')">4</button><button class="num-btn" onclick="typeNumber('5')">5</button><button class="num-btn" onclick="typeNumber('6')">6</button>
+                <button class="num-btn" onclick="typeNumber('7')">7</button><button class="num-btn" onclick="typeNumber('8')">8</button><button class="num-btn" onclick="typeNumber('9')">9</button>
+                <button class="num-btn" onclick="typeNumber('0')">0</button><button class="num-btn" onclick="clearActiveCell()" style="background-color: #ddd;">C</button>
+            </div>
+            <div class="action-bar">
+                <button class="action-btn green" onclick="buyTickets()">BUY</button>
+                <button class="action-btn" onclick="clearEntireGrid()">CLEAR</button>
+                <button class="action-btn">CANCEL</button>
+                <button class="action-btn" onclick="openDatePicker()">YANTRA</button>
+                <button class="action-btn" onclick="openHistoryModal()">C.DETAILS</button>
+                <button class="action-btn" onclick="openPsumModal()">P.SUM</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="date-modal">
+        <div class="modal-content">
+            <input type="text" class="date-input" id="yantra-date-input" readonly><br>
+            <button class="btn-ok" onclick="submitDateAndOpenYantra()">OK</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="yantra-modal">
+        <div class="modal-content yantra-content">
+            <div class="modal-header">
+                <span id="yantra-header-date"></span>
+                <button class="close-btn" onclick="closeYantraModal()">Close</button>
+            </div>
+            <div class="table-scroll">
+                <table class="yantra-table" id="yantra-results-table">
+                    <tr><th>Event Time</th><th>NV</th><th>RR</th><th>RY</th><th>CH</th></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="history-modal">
+        <div class="modal-content yantra-content">
+            <div class="modal-header">
+                <span>My Coupon Details (Bet History)</span>
+                <button class="close-btn" onclick="closeHistoryModal()">Close</button>
+            </div>
+            <div class="table-scroll">
+                <table class="yantra-table" id="history-table">
+                    <tr><th>Date & Time</th><th>Group</th><th>Number Range</th><th>Points</th><th>Status</th></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="psum-modal">
+        <div class="modal-content" style="text-align: left;">
+            <div class="modal-header" style="margin-bottom: 10px;">
+                <span>Purchase Summary (P.SUM)</span>
+                <button class="close-btn" onclick="closePsumModal()">Close</button>
+            </div>
+            <div style="padding: 10px; color: black; font-size: 16px;">
+                <p><strong>Total Tickets Bought:</strong> <span id="psum-total-tickets" style="color: blue;">0</span></p>
+                <p><strong>Points Spent Today:</strong> <span id="psum-today-spent" style="color: green;">0</span> pts</p>
+                <p><strong>Total Points Spent:</strong> <span id="psum-total-spent" style="color: red;">0</span> pts</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Scripts -->
+    <script>
+        let activeBox = document.querySelector('.selected-cell');
+        const allInputCells = document.querySelectorAll('.input-cell');
+        const cartTable = document.getElementById('cart-table');
+        const totalPointsElement = document.getElementById('cart-total-pts');
+        
+        let currentTotal = 0;
+        let currentUser = localStorage.getItem('userPhone') || "Guest";
+        let currentBalance = parseFloat(localStorage.getItem('userBalance')) || 0;
+
+        document.getElementById('welcome-phone').innerText = currentUser;
+        const balanceElement = document.getElementById('balance');
+        balanceElement.innerText = currentBalance.toFixed(2);
+
+        // Play Sound Functions
+        function playSound(id) {
+            let sound = document.getElementById(id);
+            if(sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Sound play error (Browser policy):", e));
+            }
+        }
+
+        async function fetchLiveBalance() {
+            if (currentUser === "Guest") return; 
+            try {
+                let response = await fetch('/api/get-balance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
+                let data = await response.json();
+                if (data.success && data.balance !== currentBalance) {
+                    currentBalance = data.balance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance);
+                }
+            } catch(e) {}
+        }
+        setInterval(fetchLiveBalance, 3000);
+
+        allInputCells.forEach(cell => { cell.addEventListener('click', function() { if (activeBox) activeBox.classList.remove('selected-cell'); activeBox = this; activeBox.classList.add('selected-cell'); }); });
+        function typeNumber(number) { if (activeBox) { activeBox.innerText = activeBox.innerText + number; updateCart(); } }
+        function clearActiveCell() { if (activeBox) { activeBox.innerText = ""; updateCart(); } }
+
+        function updateCart() {
+            cartTable.innerHTML = `<tr><th>Qty</th><th>Pts</th><th>Code</th></tr>`; currentTotal = 0;
+            allInputCells.forEach(cell => {
+                let points = parseInt(cell.innerText);
+                if (!isNaN(points) && points > 0) {
+                    let group = cell.getAttribute('data-group'), range = cell.getAttribute('data-range');
+                    cartTable.innerHTML += `<tr><td>1</td><td>${points}</td><td>${group} ${range}</td></tr>`; currentTotal += points; 
+                }
+            });
+            totalPointsElement.innerText = currentTotal;
+        }
+
+        function clearEntireGrid() { allInputCells.forEach(cell => cell.innerText = ""); updateCart(); }
+
+        async function buyTickets() {
+            if (currentTotal === 0) { 
+                playSound('sound-error'); // 🎵 Error Sound
+                alert("Cart khali hai!"); return; 
+            }
+            let myTickets = [];
+            allInputCells.forEach(cell => {
+                let points = parseInt(cell.innerText);
+                if (!isNaN(points) && points > 0) { myTickets.push({ group: cell.getAttribute('data-group'), number: cell.getAttribute('data-range'), points: points }); }
+            });
+            try {
+                let response = await fetch('/api/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, totalCost: currentTotal, cartData: myTickets }) });
+                let data = await response.json();
+                if (data.success) {
+                    playSound('sound-buy'); // 🎵 Buy Success Sound
+                    currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); 
+                    alert("Ticket Khareedi Gayi!\nBalance: ₹" + currentBalance); clearEntireGrid();
+                } else {
+                    playSound('sound-error'); // 🎵 Error Sound
+                    alert("Error: " + data.message);
+                }
+            } catch (error) { alert("Server connection error!"); }
+        }
+
+        async function submitDeposit() {
+            const amount = document.getElementById('depositAmount').value, utr = document.getElementById('utrNumber').value;
+            if (!amount || !utr || utr.length < 12) { alert("Sahi Details dalein!"); return; }
+            const res = await fetch('/api/deposit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, amount: Number(amount), utr }) });
+            alert((await res.json()).message); document.getElementById('walletModal').style.display = 'none';
+        }
+
+        async function submitWithdraw() {
+            const amount = document.getElementById('withdrawAmount').value, bankDetails = document.getElementById('bankDetails').value;
+            if (!amount || amount <= 0) { alert("Kripya sahi amount dalein!"); return; }
+            if (amount < 10) { alert("Aap kam se kam 10 points hi nikal sakte hain!"); return; }
+            if (!bankDetails || bankDetails.trim() === "") { alert("Kripya apni UPI ID ya Bank Account Number dalein!"); return; }
+            try {
+                const response = await fetch('/api/withdraw', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, amount: Number(amount), bankDetails }) });
+                const data = await response.json(); alert(data.message);
+                if(data.success) {
+                    document.getElementById('withdrawModal').style.display = 'none'; document.getElementById('withdrawAmount').value = ''; document.getElementById('bankDetails').value = '';
+                    currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); 
+                }
+            } catch(err) { alert("Server error!"); }
+        }
+
+        async function fetchYantraResults() {
+            try {
+                const data = await (await fetch('/api/results')).json(); const table = document.getElementById('yantra-results-table'); table.innerHTML = `<tr><th>Event Time</th><th>NV</th><th>RR</th><th>RY</th><th>CH</th></tr>`; 
+                if(data.success && data.results.length > 0) { data.results.forEach(res => { table.innerHTML += `<tr><td style="font-weight: bold; color: blue;">${res.time}</td><td>${res.nv || '-'}</td><td>${res.rr || '-'}</td><td>${res.ry || '-'}</td><td>${res.ch || '-'}</td></tr>`; });
+                } else table.innerHTML += `<tr><td colspan="5">Abhi koi result declare nahi hua hai.</td></tr>`;
+            } catch(e) {}
+        }
+
+        function openDatePicker() { document.getElementById('date-modal').style.display = 'flex'; }
+        function submitDateAndOpenYantra() { document.getElementById('date-modal').style.display = 'none'; document.getElementById('yantra-modal').style.display = 'flex'; fetchYantraResults(); }
+        function closeYantraModal() { document.getElementById('yantra-modal').style.display = 'none'; }
+
+        async function openHistoryModal() {
+            document.getElementById('history-modal').style.display = 'flex'; const table = document.getElementById('history-table'); table.innerHTML = `<tr><th>Date & Time</th><th>Group</th><th>Number Range</th><th>Points</th><th>Status</th></tr>`;
+            try {
+                const response = await fetch('/api/history', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
+                const data = await response.json();
+                let hasWonAny = false; // 🎵 Sound Check ke liye variable
+                
+                if (data.success && data.tickets.length > 0) {
+                    data.tickets.forEach(ticket => {
+                        let dateObj = new Date(ticket.date); let dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString(); 
+                        let statusColor = ticket.status === 'Won' ? 'green' : (ticket.status === 'Lost' ? 'red' : 'blue');
+                        
+                        if (ticket.status === 'Won') hasWonAny = true; // Agar koi ticket jeeta hai
+
+                        ticket.tickets.forEach(bet => { table.innerHTML += `<tr><td>${dateStr}</td><td>${bet.group}</td><td>${bet.number}</td><td>${bet.points}</td><td style="color: ${statusColor}; font-weight: bold;">${ticket.status}</td></tr>`; });
+                    });
+                    
+                    // 🎵 Agar jeeta hai toh Jeetne wali awaaz bajao!
+                    if (hasWonAny) { playSound('sound-win'); }
+                    
+                } else table.innerHTML += `<tr><td colspan="5">Aapne abhi tak koi ticket nahi kharidi hai.</td></tr>`;
+            } catch (err) { table.innerHTML += `<tr><td colspan="5">History load nahi ho payi.</td></tr>`; }
+        }
+        function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
+
+        async function openPsumModal() {
+            document.getElementById('psum-modal').style.display = 'flex';
+            try {
+                const response = await fetch('/api/purchase-summary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
+                const data = await response.json();
+                if (data.success) { document.getElementById('psum-total-tickets').innerText = data.totalTickets; document.getElementById('psum-today-spent').innerText = data.todaySpent; document.getElementById('psum-total-spent').innerText = data.totalSpent; }
+            } catch (err) { console.log("Error loading P.SUM"); }
+        }
+        function closePsumModal() { document.getElementById('psum-modal').style.display = 'none'; }
+
+        function startEventTimer() {
+            let dateString = new Date().toLocaleDateString('en-GB'); 
+            document.getElementById('current-date').innerText = dateString; document.getElementById('yantra-date-input').value = dateString; document.getElementById('yantra-header-date').innerText = dateString;
+            setInterval(() => {
+                let now = new Date(), min = now.getMinutes(), sec = now.getSeconds(); let mLeft = 15 - (min % 15) - 1, sLeft = 60 - sec; if (sLeft === 60) { sLeft = 0; mLeft += 1; }
+                document.getElementById('countdown-display').innerText = `00:${mLeft.toString().padStart(2, '0')}:${sLeft.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        startEventTimer();
+    </script>
+</body>
+</html>

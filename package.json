@@ -1,0 +1,13 @@
+{
+  "name": "yantra-game",
+  "version": "1.0.0",
+  "description": "Yantra Live Game Server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.0.0"
+  }
+}

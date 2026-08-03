@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yantra Game - Admin Panel</title>
+    <style>
+        body { background-color: #2c3e50; color: #ecf0f1; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .header { background-color: #e74c3c; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h1, h2, h3 { margin: 0; }
+        .dashboard-grid { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+        .card { background-color: #34495e; padding: 20px; border-radius: 8px; flex: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border-top: 4px solid #e74c3c; min-width: 300px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background-color: #ecf0f1; color: #2c3e50; border-radius: 5px; overflow: hidden; }
+        th, td { padding: 10px; text-align: center; border-bottom: 1px solid #bdc3c7; }
+        th { background-color: #bdc3c7; font-weight: bold; }
+        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-green { background-color: #27ae60; }
+        .btn-red { background-color: #c0392b; }
+        .btn-blue { background-color: #2980b9; }
+        .input-box { padding: 8px; width: 100%; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🛠️ ADMIN CONTROL PANEL</h1>
+        <div><button class="btn btn-red" onclick="logoutAdmin()">Logout</button></div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- 1. LIVE BETS -->
+        <div class="card" style="border-top-color: #f1c40f;">
+            <h2>📊 Live Bets</h2>
+            <button class="btn btn-blue" onclick="fetchLiveBets()" style="margin: 10px 0; width: 100%;">🔄 Refresh Live Data</button>
+            <table>
+                <thead><tr><th>Group</th><th>Range</th><th>Total Points (₹)</th></tr></thead>
+                <tbody id="live-bets-body"></tbody>
+            </table>
+        </div>
+
+        <!-- 2. RESULT -->
+        <div class="card" style="border-top-color: #2ecc71;">
+            <h2>🏆 Set Next Result</h2>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra NV:</label><input type="text" class="input-box" id="win-nv" placeholder="47"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra RR:</label><input type="text" class="input-box" id="win-rr" placeholder="26"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra RY:</label><input type="text" class="input-box" id="win-ry" placeholder="39"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra CH:</label><input type="text" class="input-box" id="win-ch" placeholder="45"></div>
+                <button class="btn btn-green" style="margin-top: 10px; padding: 12px;" onclick="declareResult()">DECLARE RESULT</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- 3. ADD MONEY REQUESTS -->
+        <div class="card" style="border-top-color: #9b59b6;">
+            <h2>💰 Pending Deposit (Add Money)</h2>
+            <table>
+                <thead><tr><th>Phone</th><th>Amount</th><th>UTR Number</th><th>Action</th></tr></thead>
+                <tbody id="deposit-requests-table"></tbody>
+            </table>
+        </div>
+
+        <!-- 🚀 4. NAYA: WITHDRAWAL REQUESTS -->
+        <div class="card" style="border-top-color: #e74c3c;">
+            <h2>💸 Pending Withdrawals (Paise Nikalna)</h2>
+            <table>
+                <thead><tr><th>Phone</th><th>Amount</th><th>Bank/UPI Details</th><th>Action</th></tr></thead>
+                <tbody id="withdraw-requests-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 5. MANUAL ADD / DEDUCT -->
+    <div class="dashboard-grid">
+        <div class="card" style="border-top-color: #e67e22;">
+            <h2>⚙️ User Management (+ Add / - Deduct)</h2>
+            <table>
+                <tr><th>User ID (Phone)</th><th>Points</th><th>Action</th></tr>
+                <tr>
+                    <td><input type="text" class="input-box" id="target-phone" placeholder="Phone No."></td>
+                    <td><input type="number" class="input-box" id="target-points" placeholder="Points"></td>
+                    <td>
+                        <button class="btn btn-green" onclick="modifyPoints('add')">+ Add</button>
+                        <button class="btn btn-red" onclick="modifyPoints('deduct')">- Deduct</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchLiveBets() {
+            try {
+                const data = await (await fetch('/api/admin/live-bets')).json();
+                const tbody = document.getElementById('live-bets-body'); tbody.innerHTML = '';
+                if (data.success) {
+                    let hasBets = false;
+                    for (let g in data.liveData) {
+                        for (let r in data.liveData[g]) {
+                            hasBets = true;
+                            tbody.innerHTML += `<tr><td>${g}</td><td>${r}</td><td style="color: red; font-weight: bold;">${data.liveData[g][r]} Pts</td></tr>`;
+                        }
+                    }
+                    if(!hasBets) tbody.innerHTML = '<tr><td colspan="3">Koi bet nahi hai.</td></tr>';
+                }
+            } catch (error) {}
+        }
+
+        async function loadPendingDeposits() {
+            const data = await (await fetch('/api/admin/pending-deposits')).json();
+            const table = document.getElementById('deposit-requests-table'); table.innerHTML = ''; 
+            if(data.success && data.deposits.length > 0) {
+                data.deposits.forEach(dep => {
+                    table.innerHTML += `<tr><td>${dep.phone}</td><td style="color: green; font-weight: bold;">₹${dep.amount}</td><td>${dep.utr}</td>
+                        <td><button class="btn btn-green" onclick="handleDeposit('${dep._id}', 'Approved')">Approve</button> <button class="btn btn-red" onclick="handleDeposit('${dep._id}', 'Rejected')">Reject</button></td></tr>`;
+                });
+            } else table.innerHTML = '<tr><td colspan="4">Koi request nahi hai.</td></tr>';
+        }
+
+        async function handleDeposit(depositId, action) {
+            if(!confirm(`Kya aap isko ${action} karna chahte hain?`)) return;
+            const res = await fetch('/api/admin/handle-deposit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ depositId, action }) });
+            alert((await res.json()).message); loadPendingDeposits(); 
+        }
+
+        // 🚀 NAYA: WITHDRAWAL REQUESTS LOAD KARNA
+        async function loadPendingWithdrawals() {
+            const data = await (await fetch('/api/admin/pending-withdrawals')).json();
+            const table = document.getElementById('withdraw-requests-table'); table.innerHTML = ''; 
+            if(data.success && data.withdrawals.length > 0) {
+                data.withdrawals.forEach(req => {
+                    table.innerHTML += `<tr><td>${req.phone}</td><td style="color: red; font-weight: bold;">₹${req.amount}</td><td>${req.bankDetails}</td>
+                        <td><button class="btn btn-green" onclick="handleWithdraw('${req._id}', 'Approved')">Approve</button> <button class="btn btn-red" onclick="handleWithdraw('${req._id}', 'Rejected')">Reject</button></td></tr>`;
+                });
+            } else table.innerHTML = '<tr><td colspan="4">Koi naya withdrawal nahi hai.</td></tr>';
+        }
+
+        async function handleWithdraw(withdrawId, action) {
+            if(!confirm(`Kya aap withdrawal ko ${action} karna chahte hain? (Reject karne par paise wapas user ko mil jayenge)`)) return;
+            const res = await fetch('/api/admin/handle-withdrawal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ withdrawId, action }) });
+            alert((await res.json()).message); loadPendingWithdrawals(); 
+        }
+
+        async function declareResult() {
+            let nv = document.getElementById('win-nv').value, rr = document.getElementById('win-rr').value;
+            let ry = document.getElementById('win-ry').value, ch = document.getElementById('win-ch').value;
+            if(!nv || !rr || !ry || !ch) { alert("Sabhi fields bharein!"); return; }
+            if(!confirm(`Result nikalna chahte hain?`)) return;
+            let res = await fetch('/api/admin/result', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nv, rr, ry, ch }) });
+            alert((await res.json()).message);
+            ['win-nv','win-rr','win-ry','win-ch'].forEach(id => document.getElementById(id).value = "");
+            fetchLiveBets(); 
+        }
+
+        async function modifyPoints(action) {
+            let targetPhone = document.getElementById('target-phone').value, points = document.getElementById('target-points').value;
+            if(!targetPhone || !points) return;
+            let res = await fetch('/api/admin/modify-points', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetPhone, points, action }) });
+            alert((await res.json()).message);
+        }
+
+        function logoutAdmin() { window.location.href = "login.html"; }
+
+        window.onload = function() {
+            loadPendingDeposits();
+            loadPendingWithdrawals(); // Page khulte hi withdrawals load karo
+            fetchLiveBets();
+        };
+    </script>
+</body>
+</html>

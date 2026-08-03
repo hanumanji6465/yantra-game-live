@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yantra Game - Login</title>
+    <style>
+        /* CSS: The Styling */
+        body {
+            background-color: #1a001a; /* Dark background */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .auth-container {
+            background-color: #f78fb3; /* Game theme pink */
+            width: 350px;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #fff;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        h2 {
+            color: #550022;
+            margin-top: 0;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #550022;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .btn {
+            background-color: #008000; /* Green button */
+            color: white;
+            border: 1px solid #fff;
+            padding: 10px 20px;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0px 2px 2px rgba(0,0,0,0.3);
+        }
+
+        .btn:hover {
+            background-color: #006400;
+        }
+
+        .toggle-link {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #550022;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Hide register form by default */
+        #register-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        
+        <!-- LOGIN FORM -->
+        <div id="login-form">
+            <h2>User Login</h2>
+            <div class="input-group">
+                <label>Mobile Number (User ID)</label>
+                <input type="number" id="login-phone" placeholder="Enter your mobile number">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="Enter password">
+            </div>
+            <button class="btn" onclick="attemptLogin()">LOGIN</button>
+            <div class="toggle-link" onclick="toggleForms()">New User? Create Account</div>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="register-form">
+            <h2>Create Account</h2>
+            <div class="input-group">
+                <label>Mobile Number</label>
+                <input type="number" id="reg-phone" placeholder="Enter mobile number">
+            </div>
+            <div class="input-group">
+                <label>Create Password</label>
+                <input type="password" id="reg-password" placeholder="Create a password">
+            </div>
+            <button class="btn" style="background-color: #574b90;" onclick="attemptRegister()">REGISTER</button>
+            <div class="toggle-link" onclick="toggleForms()">Already have an account? Login</div>
+        </div>
+
+    </div>
+<script>
+        // Form switch karne ke liye
+        function toggleForms() {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+        }
+
+        // Asli Live Login Function
+        async function attemptLogin() {
+            let phone = document.getElementById('login-phone').value;
+            let pass = document.getElementById('login-password').value;
+
+            if(phone === "" || pass === "") {
+                alert("Please enter both Mobile Number and Password!");
+                return;
+            }
+
+            try {
+                // Server se pooch rahe hain ki kya user sahi hai?
+                let response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone, password: pass })
+                });
+                
+                let data = await response.json();
+
+                if(data.success) {
+                    alert("Login Successful!");
+                    
+                    // User ka data browser mein save kar rahe hain taaki game screen par dikhe
+                    localStorage.setItem('userPhone', phone);
+                    localStorage.setItem('userBalance', data.balance);
+
+                    // Agar admin login karega toh Admin Panel khulega, warna Game khulega
+                    if(data.role === 'admin') {
+                        window.location.href = "admin.html";
+                    } else {
+                        window.location.href = "game.html";
+                    }
+                } else {
+                    alert(data.message); // Error: Invalid password ya User not found
+                }
+            } catch (error) {
+                alert("Server error! Kya aapka terminal mein server chal raha hai?");
+            }
+        }
+
+        // Asli Live Register Function
+        async function attemptRegister() {
+            let phone = document.getElementById('reg-phone').value;
+            let pass = document.getElementById('reg-password').value;
+
+            if(phone === "" || pass === "") {
+                alert("Please fill all fields to register!");
+                return;
+            }
+
+            try {
+                // Server ko naya account banane bhej rahe hain
+                let response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone, password: pass })
+                });
+                
+                let data = await response.json();
+                alert(data.message);
+
+                if(data.success) {
+                    toggleForms(); // Account ban gaya, ab wapas login dikhao
+                }
+            } catch (error) {
+                alert("Server error!");
+            }
+        }
+    </script>
+</body>
+</html>
