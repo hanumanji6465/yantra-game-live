@@ -7,26 +7,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
 <style>
-    /* Screen par Pink background fix karein aur scroll hamesha ke liye band karein */
     html, body {
         margin: 0 !important; padding: 0 !important;
         width: 100vw !important; height: 100vh !important;
         overflow: hidden !important; 
-        background-color: #f78fb3 !important; /* Photo jaisa pink color */
+        background-color: #f78fb3 !important;
         touch-action: none !important;
     }
 
-    /* Game dabe ko ek FIXED size dein, taaki hum ise kheench kar screen par bitha sakein */
     .game-container {
         position: absolute !important;
         top: 0 !important; left: 0 !important;
-        width: 1300px !important;  /* Fix chaudai */
-        height: 650px !important;  /* Fix lambai */
+        width: 1300px !important;  
+        height: 500px !important;  /* 👈 MAIN BADLAAV: 650 se 500 kar diya taaki khali jagah khatam ho */
         max-width: none !important; 
         margin: 0 !important;
-        border-radius: 0 !important; /* Kone gol nahi honge */
+        border-radius: 0 !important;
         border: none !important;
-        transform-origin: top left !important; /* Zoom humesha left-top se shuru hoga */
+        transform-origin: top left !important;
+    }
+
+    /* 👈 NAYA BADLAAV: Right side wale cart box ki bekaar height kam kar di */
+    .cart-table-wrapper { 
+        height: 120px !important; 
     }
 </style>
 
@@ -34,22 +37,17 @@
     function makePerfectMobileApp() {
         const container = document.querySelector('.game-container');
         
-        // CSS me di gayi exact width aur height
         const targetW = 1300; 
-        const targetH = 650;  
+        const targetH = 500;  // 👈 Yahan bhi 650 se 500 kiya taaki Vertically Zyada Zoom ho
         
-        // Aapke mobile screen ka current size
         const screenW = window.innerWidth;
         const screenH = window.innerHeight;
         
-        // X aur Y ko alag-alag calculate karein taaki screen poori bhar jaye (100% Stretch)
         const scaleX = screenW / targetW;
         const scaleY = screenH / targetH;
         
-        // Game par stretch apply karein
         container.style.transform = `scale(${scaleX}, ${scaleY})`;
         
-        // Android me automatically screen ko 'Landscape' (aada) mode me lock karne ki koshish
         try {
             if (screen.orientation && screen.orientation.lock) {
                 screen.orientation.lock('landscape').catch(function() {});
@@ -57,7 +55,6 @@
         } catch (error) {}
     }
 
-    // Page khulte hi aur phone ghoomne par adjust ho jayega
     window.onload = makePerfectMobileApp;
     window.onresize = makePerfectMobileApp;
 </script>
