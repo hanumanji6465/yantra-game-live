@@ -2,20 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1200, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Yantra Game Interface - Full Version</title>
-    <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<style>
+    /* Yeh screen ka scroll hamesha ke liye roke rakhega */
     html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        overflow: hidden !important; /* Yeh kisi bhi tarah ka scroll hamesha ke liye band kar dega */
-        touch-action: none !important; /* Mobile par ungli se page khiskana (swipe) rok dega */
-        overscroll-behavior: none !important; /* Page ko khinchne par jo bounce hota hai, use band karega */
-        box-sizing: border-box !important;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden; 
+        background-color: #000; /* Khali jagah par kala rang dikhega taaki game focus me rahe */
     }
 </style>
+
+<script>
+    // Yeh script game ko mobile screen ke hisaab se sikud (shrink) degi
+    function fitGameToScreen() {
+        // Aapke computer wale game ka lagbhag size
+        const gameOriginalWidth = 1250;  
+        const gameOriginalHeight = 650;  
+
+        // Mobile ki screen ka size napna
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+
+        // Kitna chhota karna hai, uska hisaab lagana
+        let scaleX = screenWidth / gameOriginalWidth;
+        let scaleY = screenHeight / gameOriginalHeight;
+        let scale = Math.min(scaleX, scaleY); // Poora fit karne ke liye
+
+        // Game ki body par zoom apply karna
+        document.body.style.width = gameOriginalWidth + "px";
+        document.body.style.height = gameOriginalHeight + "px";
+        document.body.style.transform = "scale(" + scale + ")";
+        document.body.style.transformOrigin = "top left";
+        
+        // Agar screen game se badi/chhoti hai, toh usko center me lana
+        let leftSpace = (screenWidth - (gameOriginalWidth * scale)) / 2;
+        document.body.style.marginLeft = leftSpace + "px";
+    }
+
+    // Jaise hi page khule ya mobile ghoome, auto-fit chalu ho jaye
+    window.onload = fitGameToScreen;
+    window.onresize = fitGameToScreen;
+</script>
     <style>
         body { background-color: #1a001a; color: #333; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; box-sizing: border-box; }
         .game-container { background-color: #f78fb3; width: 100%; max-width: 1200px; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; border: 2px solid #fff; box-sizing: border-box; }
@@ -366,29 +399,6 @@
             }, 1000);
         }
         startEventTimer();
-        // Screen orientation ko lock karne ka function
-function lockLandscape() {
-    if (screen.orientation && screen.orientation.lock) {
-        // Pehle check karein ki feature available hai (Android/Safari modern)
-        screen.orientation.lock('landscape').then(function() {
-            console.log('Screen orientation locked to landscape');
-        }).catch(function(error) {
-            console.error('Orientation lock failed:', error);
-            // Fallback: Agar lock fail ho jaye (jaise permission issue),
-            // toh aap warning dikha sakte hain ya responsive styles ensure karein.
-        });
-    } else {
-        // Feature supported nahi hai (kuch older browsers)
-        console.warn('Screen Orientation Lock feature not supported by this browser.');
-        // Fallback: Responsive CSS, use flexible layout, ensure elements scale
-    }
-}
-
-// Jab page load ho, horizontal orientation enforce karein
-window.onload = function() {
-    lockLandscape();
-    // Aapka baaki ka load code yahan...
-};
     </script>
 </body>
 </html>
