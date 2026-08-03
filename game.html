@@ -7,57 +7,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
 <style>
-    /* Screen ko fix karne ke liye body settings override karein */
+    /* Screen par Pink background fix karein aur scroll hamesha ke liye band karein */
     html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
+        margin: 0 !important; padding: 0 !important;
+        width: 100vw !important; height: 100vh !important;
         overflow: hidden !important; 
-        background-color: #000 !important;
-        position: relative !important;
+        background-color: #f78fb3 !important; /* Photo jaisa pink color */
         touch-action: none !important;
     }
 
-    /* Purane 1200px limit ko todne ke liye aur game ko stretch karne ke liye */
+    /* Game dabe ko ek FIXED size dein, taaki hum ise kheench kar screen par bitha sakein */
     .game-container {
-        width: 1300px !important;  
-        height: 600px !important;
-        max-width: none !important; /* Purani rukawat hatayi */
-        min-height: auto !important;
-        margin: 0 !important;
         position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        border: none !important; /* Mobile app jaisa look dene ke liye */
-        border-radius: 0 !important;
-        transform-origin: top left !important;
+        top: 0 !important; left: 0 !important;
+        width: 1300px !important;  /* Fix chaudai */
+        height: 650px !important;  /* Fix lambai */
+        max-width: none !important; 
+        margin: 0 !important;
+        border-radius: 0 !important; /* Kone gol nahi honge */
+        border: none !important;
+        transform-origin: top left !important; /* Zoom humesha left-top se shuru hoga */
     }
 </style>
 
 <script>
-    function stretchGamePerfectly() {
+    function makePerfectMobileApp() {
         const container = document.querySelector('.game-container');
         
-        // CSS wali exact width aur height jo humne upar di hai
-        const targetWidth = 1300; 
-        const targetHeight = 700; 
-
-        // Mobile screen ka asli size napna
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
-
-        // X aur Y dono direction mein kheenchne (stretch) ka calculation
-        const scaleX = screenWidth / targetWidth;
-        const scaleY = screenHeight / targetHeight;
-
-        // Container par stretch apply karna
+        // CSS me di gayi exact width aur height
+        const targetW = 1300; 
+        const targetH = 650;  
+        
+        // Aapke mobile screen ka current size
+        const screenW = window.innerWidth;
+        const screenH = window.innerHeight;
+        
+        // X aur Y ko alag-alag calculate karein taaki screen poori bhar jaye (100% Stretch)
+        const scaleX = screenW / targetW;
+        const scaleY = screenH / targetH;
+        
+        // Game par stretch apply karein
         container.style.transform = `scale(${scaleX}, ${scaleY})`;
+        
+        // Android me automatically screen ko 'Landscape' (aada) mode me lock karne ki koshish
+        try {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(function() {});
+            }
+        } catch (error) {}
     }
 
-    // Jaise hi page load ho ya orientation change ho, ye function chalega
-    window.onload = stretchGamePerfectly;
-    window.onresize = stretchGamePerfectly;
+    // Page khulte hi aur phone ghoomne par adjust ho jayega
+    window.onload = makePerfectMobileApp;
+    window.onresize = makePerfectMobileApp;
 </script>
     <style>
         body { background-color: #1a001a; color: #333; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; box-sizing: border-box; }
@@ -77,7 +79,7 @@
         .input-cell { cursor: pointer; width: 40px; }
         .selected-cell { background-color: #00ff00 !important; }
         .cart-ledger { background-color: #e0d9d3; width: 25%; border: 1px solid #ccc; display: flex; flex-direction: column; justify-content: space-between; }
-        .cart-table-wrapper { height: 125px; overflow-y: auto; }
+        .cart-table-wrapper { height: 200px; overflow-y: auto; }
         #cart-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
         #cart-table th { background-color: #ccc; padding: 5px; }
         #cart-table td { border-bottom: 1px solid #bbb; padding: 4px; }
@@ -103,16 +105,7 @@
         .yantra-table th, .yantra-table td { border: 1px solid #ccc; padding: 6px; }
         .yantra-table th { background-color: #e0d9d3; color: #550022; }
 
-        @media (max-width: 768px) {
-            .header { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
-            .header-right { text-align: center; }
-            .main-content { flex-direction: column; }
-            .grid-section { width: 100%; }
-            .cart-ledger { width: 100%; }
-            .bottom-controls { flex-direction: column; gap: 15px; }
-            .numpad { width: 100%; }
-            .action-bar { width: 100%; }
-        }
+        
     </style>
 </head>
 <body>
