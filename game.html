@@ -2,97 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yantra Game Interface - Full Version</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Yantra Game Interface - Full Version</title>
 
-<style>
-    html, body {
-        margin: 0 !important; padding: 0 !important;
-        width: 100vw !important; height: 100vh !important;
-        overflow: hidden !important; 
-        background-color: #f78fb3 !important;
-        touch-action: none !important;
-    }
-
-    .game-container {
-        position: absolute !important;
-        top: 0 !important; left: 0 !important;
-        width: 1300px !important;  
-        height: 500px !important;  /* 👈 MAIN BADLAAV: 650 se 500 kar diya taaki khali jagah khatam ho */
-        max-width: none !important; 
-        margin: 0 !important;
-        border-radius: 0 !important;
-        border: none !important;
-        transform-origin: top left !important;
-    }
-
-    /* 👈 NAYA BADLAAV: Right side wale cart box ki bekaar height kam kar di */
-    .cart-table-wrapper { 
-        height: 120px !important; 
-    }
-</style>
-
-<script>
-    function makePerfectMobileApp() {
-        const container = document.querySelector('.game-container');
-        
-        const targetW = 1300; 
-        const targetH = 500;  // 👈 Yahan bhi 650 se 500 kiya taaki Vertically Zyada Zoom ho
-        
-        const screenW = window.innerWidth;
-        const screenH = window.innerHeight;
-        
-        const scaleX = screenW / targetW;
-        const scaleY = screenH / targetH;
-        
-        container.style.transform = `scale(${scaleX}, ${scaleY})`;
-        
-        try {
-            if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(function() {});
-            }
-        } catch (error) {}
-    }
-
-    window.onload = makePerfectMobileApp;
-    window.onresize = makePerfectMobileApp;
-</script>
     <style>
-        body { background-color: #1a001a; color: #333; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; box-sizing: border-box; }
-        .game-container { background-color: #f78fb3; width: 100%; max-width: 1200px; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; border: 2px solid #fff; box-sizing: border-box; }
+        html, body {
+            margin: 0 !important; padding: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            overflow: hidden !important; 
+            background-color: #f78fb3 !important;
+            touch-action: none !important;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        .game-container {
+            position: absolute !important;
+            top: 0 !important; left: 0 !important;
+            width: 1300px !important;  
+            height: 500px !important;  
+            max-width: none !important; 
+            margin: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            background-color: #f78fb3;
+            display: flex; flex-direction: column; padding: 10px;
+            box-sizing: border-box;
+            transform-origin: top left !important;
+        }
+
         .header { display: flex; justify-content: space-between; color: #550022; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
         .header-right { text-align: right; }
+        
         .tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; justify-content: center; }
         .tab { background-color: #d1ccc0; padding: 5px 15px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 1px solid #777; cursor: pointer; }
         .tab.active { background-color: #574b90; color: white; }
+        
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
-        .grid-section { width: 75%; overflow-x: auto; background-color: #fdf5f6; border: 1px solid #ccc; }
-        .grid-table { border-collapse: collapse; width: 100%; min-width: 800px; font-size: 11px; }
-        .grid-table th, .grid-table td { border: 1px solid #ccc; text-align: center; padding: 4px; height: 25px; }
-        .grid-table th { background-color: #e0d9d3; }
+        
+        .grid-section { width: 100%; overflow-x: auto; background-color: #fdf5f6; border: 1px solid #ccc; }
+        .grid-table { border-collapse: collapse; width: 100%; font-size: 12px; }
+        .grid-table th, .grid-table td { border: 1px solid #ccc; text-align: center; padding: 4px; height: 28px; }
+        .grid-table th { background-color: #e0d9d3; color: #550022; }
         .group-name { background-color: #e0d9d3; font-weight: bold; text-align: left; padding-left: 5px; pointer-events: none; white-space: nowrap; }
         .gift-coin { background-color: #e0d9d3; pointer-events: none; }
-        .input-cell { cursor: pointer; width: 40px; }
+        .input-cell { cursor: pointer; width: 40px; background-color: white; }
         .selected-cell { background-color: #00ff00 !important; }
-        .cart-ledger { background-color: #e0d9d3; width: 25%; border: 1px solid #ccc; display: flex; flex-direction: column; justify-content: space-between; }
-        .cart-table-wrapper { height: 200px; overflow-y: auto; }
-        #cart-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
-        #cart-table th { background-color: #ccc; padding: 5px; }
-        #cart-table td { border-bottom: 1px solid #bbb; padding: 4px; }
-        .cart-total { background-color: #ccc; padding: 5px; font-weight: bold; text-align: right; font-size: 14px; border-top: 2px solid #999; }
+        
         .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .numpad { background-color: #e3dff0; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: center; }
         .num-btn { background-color: white; border: 1px solid #ccc; border-radius: 5px; padding: 10px 15px; font-size: 16px; font-weight: bold; box-shadow: 0px 2px 2px rgba(0,0,0,0.2); cursor: pointer; }
         .num-btn:active { background-color: #ddd; }
+        
         .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
         .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 5px; padding: 10px 15px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
         .action-btn.green { background-color: #008000; }
         
+        /* Modals */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 100; padding: 10px; box-sizing: border-box; }
-        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #f78fb3; padding: 10px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
-        .date-input { width: 80%; padding: 8px; margin: 10px 0; font-size: 16px; text-align: center; border: 1px solid #ccc; }
-        .btn-ok { background-color: #008000; color: white; border: none; padding: 8px 30px; font-weight: bold; cursor: pointer; border-radius: 3px; }
+        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #f78fb3; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
+        .btn-ok { background-color: #008000; color: white; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 5px; width: 100%; font-size: 16px;}
         
         .yantra-content { max-width: 650px; height: 80vh; display: flex; flex-direction: column; }
         .modal-header { display: flex; justify-content: space-between; background-color: #f78fb3; padding: 8px; font-weight: bold; color: #550022; }
@@ -102,12 +71,31 @@
         .yantra-table th, .yantra-table td { border: 1px solid #ccc; padding: 6px; }
         .yantra-table th { background-color: #e0d9d3; color: #550022; }
 
-        
+        #rotate-warning { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; color: #fff; z-index: 99999; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; padding: 20px; box-sizing: border-box; flex-direction: column; }
+        @media screen and (orientation: portrait) { #rotate-warning { display: flex !important; } .game-container { display: none !important; } }
     </style>
+
+    <script>
+        function makePerfectMobileApp() {
+            const container = document.querySelector('.game-container');
+            const targetW = 1300; const targetH = 500;  
+            const scaleX = window.innerWidth / targetW;
+            const scaleY = window.innerHeight / targetH;
+            container.style.transform = `scale(${scaleX}, ${scaleY})`;
+            try { if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(function() {}); } } catch (error) {}
+        }
+        window.onload = makePerfectMobileApp;
+        window.onresize = makePerfectMobileApp;
+    </script>
 </head>
 <body>
 
-    <!-- 🎵 HIDDEN AUDIO TAGS (Yahan se sound aayega) -->
+    <div id="rotate-warning">
+        <div style="font-size: 50px;">🔄</div><br>
+        <div style="text-align: center;">Game khelne ke liye kripya apne mobile ko ghumayein.</div>
+    </div>
+
+    <!-- 🎵 HIDDEN AUDIO TAGS -->
     <audio id="sound-buy" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
     <audio id="sound-win" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" preload="auto"></audio>
     <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
@@ -142,10 +130,7 @@
         </div>
 
         <div class="header">
-            <div>
-                Welcome: <span id="welcome-phone">Guest</span><br>
-                Balance Point: <span id="balance">0.00</span>
-            </div>
+            <div>Welcome: <span id="welcome-phone">Guest</span><br>Balance Point: <span id="balance">0.00</span></div>
             <div class="header-right">
                 <span style="background-color:#d1ccc0; padding:2px 10px; font-size:10px;">LOBBY</span><br>
                 Date: <span id="current-date"></span><br>
@@ -161,17 +146,42 @@
         <div class="main-content">
             <div class="grid-section">
                 <table class="grid-table" id="game-grid">
-                    <tr><th>Product Group</th><th>Gift Coin</th><th>00-09</th><th>10-19</th><th>20-29</th><th>30-39</th><th>40-49</th><th>50-59</th><th>60-69</th><th>70-79</th><th>80-89</th><th>90-99</th><th>All</th></tr>
-                    <tr><td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td><td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td></tr>
-                    <tr><td class="group-name">Yantra Group RR</td><td class="gift-coin">-</td><td class="input-cell" data-group="RR" data-range="00-09"></td><td class="input-cell" data-group="RR" data-range="10-19"></td><td class="input-cell" data-group="RR" data-range="20-29"></td><td class="input-cell" data-group="RR" data-range="30-39"></td><td class="input-cell" data-group="RR" data-range="40-49"></td><td class="input-cell" data-group="RR" data-range="50-59"></td><td class="input-cell" data-group="RR" data-range="60-69"></td><td class="input-cell" data-group="RR" data-range="70-79"></td><td class="input-cell" data-group="RR" data-range="80-89"></td><td class="input-cell" data-group="RR" data-range="90-99"></td><td class="input-cell" data-group="RR" data-range="All"></td></tr>
-                    <tr><td class="group-name">Yantra Group RY</td><td class="gift-coin">-</td><td class="input-cell" data-group="RY" data-range="00-09"></td><td class="input-cell" data-group="RY" data-range="10-19"></td><td class="input-cell" data-group="RY" data-range="20-29"></td><td class="input-cell" data-group="RY" data-range="30-39"></td><td class="input-cell" data-group="RY" data-range="40-49"></td><td class="input-cell" data-group="RY" data-range="50-59"></td><td class="input-cell" data-group="RY" data-range="60-69"></td><td class="input-cell" data-group="RY" data-range="70-79"></td><td class="input-cell" data-group="RY" data-range="80-89"></td><td class="input-cell" data-group="RY" data-range="90-99"></td><td class="input-cell" data-group="RY" data-range="All"></td></tr>
-                    <tr><td class="group-name">Yantra Group CH</td><td class="gift-coin">-</td><td class="input-cell" data-group="CH" data-range="00-09"></td><td class="input-cell" data-group="CH" data-range="10-19"></td><td class="input-cell" data-group="CH" data-range="20-29"></td><td class="input-cell" data-group="CH" data-range="30-39"></td><td class="input-cell" data-group="CH" data-range="40-49"></td><td class="input-cell" data-group="CH" data-range="50-59"></td><td class="input-cell" data-group="CH" data-range="60-69"></td><td class="input-cell" data-group="CH" data-range="70-79"></td><td class="input-cell" data-group="CH" data-range="80-89"></td><td class="input-cell" data-group="CH" data-range="90-99"></td><td class="input-cell" data-group="CH" data-range="All"></td></tr>
+                    <tr>
+                        <th>Product Group</th><th>Gift Coin</th><th>00-09</th><th>10-19</th><th>20-29</th><th>30-39</th><th>40-49</th><th>50-59</th><th>60-69</th><th>70-79</th><th>80-89</th><th>90-99</th><th>All</th>
+                        <th>Qty</th><th>Pts</th><th id="last-result-time" style="color: #333; font-weight: bold; width: 60px;">--:--</th>
+                    </tr>
+                    
+                    <tr>
+                        <td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td>
+                        <td id="qty-NV" style="font-weight:bold; color:black;"></td><td id="pts-NV" style="font-weight:bold; color:black;"></td><td id="last-res-nv" style="font-weight:bold; background:#e0d9d3; color:#333;">-</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="group-name">Yantra Group RR</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="RR" data-range="00-09"></td><td class="input-cell" data-group="RR" data-range="10-19"></td><td class="input-cell" data-group="RR" data-range="20-29"></td><td class="input-cell" data-group="RR" data-range="30-39"></td><td class="input-cell" data-group="RR" data-range="40-49"></td><td class="input-cell" data-group="RR" data-range="50-59"></td><td class="input-cell" data-group="RR" data-range="60-69"></td><td class="input-cell" data-group="RR" data-range="70-79"></td><td class="input-cell" data-group="RR" data-range="80-89"></td><td class="input-cell" data-group="RR" data-range="90-99"></td><td class="input-cell" data-group="RR" data-range="All"></td>
+                        <td id="qty-RR" style="font-weight:bold; color:black;"></td><td id="pts-RR" style="font-weight:bold; color:black;"></td><td id="last-res-rr" style="font-weight:bold; background:#e0d9d3; color:#333;">-</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="group-name">Yantra Group RY</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="RY" data-range="00-09"></td><td class="input-cell" data-group="RY" data-range="10-19"></td><td class="input-cell" data-group="RY" data-range="20-29"></td><td class="input-cell" data-group="RY" data-range="30-39"></td><td class="input-cell" data-group="RY" data-range="40-49"></td><td class="input-cell" data-group="RY" data-range="50-59"></td><td class="input-cell" data-group="RY" data-range="60-69"></td><td class="input-cell" data-group="RY" data-range="70-79"></td><td class="input-cell" data-group="RY" data-range="80-89"></td><td class="input-cell" data-group="RY" data-range="90-99"></td><td class="input-cell" data-group="RY" data-range="All"></td>
+                        <td id="qty-RY" style="font-weight:bold; color:black;"></td><td id="pts-RY" style="font-weight:bold; color:black;"></td><td id="last-res-ry" style="font-weight:bold; background:#e0d9d3; color:#333;">-</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="group-name">Yantra Group CH</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="CH" data-range="00-09"></td><td class="input-cell" data-group="CH" data-range="10-19"></td><td class="input-cell" data-group="CH" data-range="20-29"></td><td class="input-cell" data-group="CH" data-range="30-39"></td><td class="input-cell" data-group="CH" data-range="40-49"></td><td class="input-cell" data-group="CH" data-range="50-59"></td><td class="input-cell" data-group="CH" data-range="60-69"></td><td class="input-cell" data-group="CH" data-range="70-79"></td><td class="input-cell" data-group="CH" data-range="80-89"></td><td class="input-cell" data-group="CH" data-range="90-99"></td><td class="input-cell" data-group="CH" data-range="All"></td>
+                        <td id="qty-CH" style="font-weight:bold; color:black;"></td><td id="pts-CH" style="font-weight:bold; color:black;"></td><td id="last-res-ch" style="font-weight:bold; background:#e0d9d3; color:#333;">-</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="group-name">All</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="ALL" data-range="00-09"></td><td class="input-cell" data-group="ALL" data-range="10-19"></td><td class="input-cell" data-group="ALL" data-range="20-29"></td><td class="input-cell" data-group="ALL" data-range="30-39"></td><td class="input-cell" data-group="ALL" data-range="40-49"></td><td class="input-cell" data-group="ALL" data-range="50-59"></td><td class="input-cell" data-group="ALL" data-range="60-69"></td><td class="input-cell" data-group="ALL" data-range="70-79"></td><td class="input-cell" data-group="ALL" data-range="80-89"></td><td class="input-cell" data-group="ALL" data-range="90-99"></td>
+                        <td style="font-weight:bold; background-color:#e0d9d3;">TOTAL</td>
+                        <td id="total-qty" style="font-weight:bold; background-color:#e0d9d3;"></td><td id="cart-total-pts" style="font-weight:bold; background-color:#e0d9d3;">₹0.00</td><td style="background-color:#e0d9d3;"></td>
+                    </tr>
                 </table>
-            </div>
-
-            <div class="cart-ledger">
-                <div class="cart-table-wrapper"><table id="cart-table"><tr><th>Qty</th><th>Pts</th><th>Code</th></tr></table></div>
-                <div class="cart-total">TOTAL: <span id="cart-total-pts">0</span></div>
             </div>
         </div>
 
@@ -193,11 +203,13 @@
         </div>
     </div>
 
-    <!-- Modals -->
+    <!-- Date Picker Modal -->
     <div class="modal-overlay" id="date-modal">
         <div class="modal-content">
-            <input type="text" class="date-input" id="yantra-date-input" readonly><br>
-            <button class="btn-ok" onclick="submitDateAndOpenYantra()">OK</button>
+            <h3 style="color: black; margin-top: 0; margin-bottom: 15px;">Purana Result Dekhein</h3>
+            <input type="date" id="yantra-date-input" style="width: 90%; padding: 10px; font-size: 16px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;"><br>
+            <button class="btn-ok" onclick="submitDateAndOpenYantra()">Check Result</button>
+            <button class="btn-ok" onclick="document.getElementById('date-modal').style.display='none'" style="background: red;">Cancel</button>
         </div>
     </div>
 
@@ -237,19 +249,15 @@
             </div>
             <div style="padding: 10px; color: black; font-size: 16px;">
                 <p><strong>Total Tickets Bought:</strong> <span id="psum-total-tickets" style="color: blue;">0</span></p>
-                <p><strong>Points Spent Today:</strong> <span id="psum-today-spent" style="color: green;">0</span> pts</p>
-                <p><strong>Total Points Spent:</strong> <span id="psum-total-spent" style="color: red;">0</span> pts</p>
+                <p><strong>Points Spent Today:</strong> ₹<span id="psum-today-spent" style="color: green;">0.00</span></p>
+                <p><strong>Total Points Spent:</strong> ₹<span id="psum-total-spent" style="color: red;">0.00</span></p>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Scripts -->
     <script>
         let activeBox = document.querySelector('.selected-cell');
         const allInputCells = document.querySelectorAll('.input-cell');
-        const cartTable = document.getElementById('cart-table');
-        const totalPointsElement = document.getElementById('cart-total-pts');
-        
         let currentTotal = 0;
         let currentUser = localStorage.getItem('userPhone') || "Guest";
         let currentBalance = parseFloat(localStorage.getItem('userBalance')) || 0;
@@ -258,23 +266,14 @@
         const balanceElement = document.getElementById('balance');
         balanceElement.innerText = currentBalance.toFixed(2);
 
-        // Play Sound Functions
-        function playSound(id) {
-            let sound = document.getElementById(id);
-            if(sound) {
-                sound.currentTime = 0;
-                sound.play().catch(e => console.log("Sound play error (Browser policy):", e));
-            }
-        }
+        function playSound(id) { let sound = document.getElementById(id); if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); } }
 
         async function fetchLiveBalance() {
             if (currentUser === "Guest") return; 
             try {
                 let response = await fetch('/api/get-balance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
                 let data = await response.json();
-                if (data.success && data.balance !== currentBalance) {
-                    currentBalance = data.balance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance);
-                }
+                if (data.success && data.balance !== currentBalance) { currentBalance = data.balance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); }
             } catch(e) {}
         }
         setInterval(fetchLiveBalance, 3000);
@@ -283,42 +282,61 @@
         function typeNumber(number) { if (activeBox) { activeBox.innerText = activeBox.innerText + number; updateCart(); } }
         function clearActiveCell() { if (activeBox) { activeBox.innerText = ""; updateCart(); } }
 
+        // 🚀 NAYA JAADU: 1 Point = 10.10 Rs Calculation
         function updateCart() {
-            cartTable.innerHTML = `<tr><th>Qty</th><th>Pts</th><th>Code</th></tr>`; currentTotal = 0;
+            let totalQty = 0, totalPts = 0;
+            let groupTotals = { "NV": {qty:0, pts:0}, "RR": {qty:0, pts:0}, "RY": {qty:0, pts:0}, "CH": {qty:0, pts:0}, "ALL": {qty:0, pts:0} };
+
             allInputCells.forEach(cell => {
                 let points = parseInt(cell.innerText);
                 if (!isNaN(points) && points > 0) {
-                    let group = cell.getAttribute('data-group'), range = cell.getAttribute('data-range');
-                    cartTable.innerHTML += `<tr><td>1</td><td>${points}</td><td>${group} ${range}</td></tr>`; currentTotal += points; 
+                    let group = cell.getAttribute('data-group');
+                    if(groupTotals[group]) { 
+                        groupTotals[group].qty += 1; 
+                        groupTotals[group].pts += (points * 10.10); // 10.10 ka calculation
+                    }
+                    totalQty += 1; 
+                    totalPts += (points * 10.10);
                 }
             });
-            totalPointsElement.innerText = currentTotal;
+
+            ['NV', 'RR', 'RY', 'CH'].forEach(g => {
+                let qCell = document.getElementById('qty-' + g), pCell = document.getElementById('pts-' + g);
+                if(qCell && pCell) { 
+                    qCell.innerText = groupTotals[g].qty > 0 ? groupTotals[g].qty : ''; 
+                    pCell.innerText = groupTotals[g].pts > 0 ? groupTotals[g].pts.toFixed(2) : ''; // 2 Decimal Tak
+                }
+            });
+
+            document.getElementById('total-qty').innerText = totalQty > 0 ? totalQty : '';
+            document.getElementById('cart-total-pts').innerText = totalPts > 0 ? "₹" + totalPts.toFixed(2) : '₹0.00';
+            currentTotal = parseFloat(totalPts.toFixed(2));
         }
 
         function clearEntireGrid() { allInputCells.forEach(cell => cell.innerText = ""); updateCart(); }
 
         async function buyTickets() {
-            if (currentTotal === 0) { 
-                playSound('sound-error'); // 🎵 Error Sound
-                alert("Cart khali hai!"); return; 
-            }
+            if (currentTotal === 0) { playSound('sound-error'); alert("Board khali hai!"); return; }
             let myTickets = [];
-            allInputCells.forEach(cell => {
-                let points = parseInt(cell.innerText);
-                if (!isNaN(points) && points > 0) { myTickets.push({ group: cell.getAttribute('data-group'), number: cell.getAttribute('data-range'), points: points }); }
-            });
+            allInputCells.forEach(cell => { let points = parseInt(cell.innerText); if (!isNaN(points) && points > 0) { myTickets.push({ group: cell.getAttribute('data-group'), number: cell.getAttribute('data-range'), points: points }); } });
             try {
                 let response = await fetch('/api/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, totalCost: currentTotal, cartData: myTickets }) });
                 let data = await response.json();
-                if (data.success) {
-                    playSound('sound-buy'); // 🎵 Buy Success Sound
-                    currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); 
-                    alert("Ticket Khareedi Gayi!\nBalance: ₹" + currentBalance); clearEntireGrid();
-                } else {
-                    playSound('sound-error'); // 🎵 Error Sound
-                    alert("Error: " + data.message);
-                }
+                if (data.success) { playSound('sound-buy'); currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); alert("Ticket Khareedi Gayi!\nBalance: ₹" + currentBalance.toFixed(2)); clearEntireGrid(); } 
+                else { playSound('sound-error'); alert("Error: " + data.message); }
             } catch (error) { alert("Server connection error!"); }
+        }
+
+        async function cancelLastTicket() {
+            if (currentUser === "Guest") { alert("Pehle login karein!"); return; }
+            if (confirm("Kya aap apni aakhiri kharidi hui ticket sach mein Cancel karna chahte hain? Paise turant wapas aa jayenge.")) {
+                try {
+                    let response = await fetch('/api/cancel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
+                    let data = await response.json();
+                    if (data.success) { playSound('sound-win'); currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); alert("✅ " + data.message + "\nAapka naya balance: ₹" + currentBalance.toFixed(2)); } 
+                    else { playSound('sound-error'); alert("❌ Error: " + data.message); }
+                } catch (error) { alert("Server se connection toot gaya!"); }
+            }
         }
 
         async function submitDeposit() {
@@ -331,28 +349,56 @@
         async function submitWithdraw() {
             const amount = document.getElementById('withdrawAmount').value, bankDetails = document.getElementById('bankDetails').value;
             if (!amount || amount <= 0) { alert("Kripya sahi amount dalein!"); return; }
-            if (amount < 10) { alert("Aap kam se kam 10 points hi nikal sakte hain!"); return; }
-            if (!bankDetails || bankDetails.trim() === "") { alert("Kripya apni UPI ID ya Bank Account Number dalein!"); return; }
+            if (amount < 10) { alert("Kam se kam 10 points nikal sakte hain!"); return; }
+            if (!bankDetails) { alert("Kripya apni UPI ID ya Bank Account Number dalein!"); return; }
             try {
                 const response = await fetch('/api/withdraw', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, amount: Number(amount), bankDetails }) });
                 const data = await response.json(); alert(data.message);
-                if(data.success) {
-                    document.getElementById('withdrawModal').style.display = 'none'; document.getElementById('withdrawAmount').value = ''; document.getElementById('bankDetails').value = '';
-                    currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); 
-                }
+                if(data.success) { document.getElementById('withdrawModal').style.display = 'none'; currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); }
             } catch(err) { alert("Server error!"); }
         }
 
-        async function fetchYantraResults() {
-            try {
-                const data = await (await fetch('/api/results')).json(); const table = document.getElementById('yantra-results-table'); table.innerHTML = `<tr><th>Event Time</th><th>NV</th><th>RR</th><th>RY</th><th>CH</th></tr>`; 
-                if(data.success && data.results.length > 0) { data.results.forEach(res => { table.innerHTML += `<tr><td style="font-weight: bold; color: blue;">${res.time}</td><td>${res.nv || '-'}</td><td>${res.rr || '-'}</td><td>${res.ry || '-'}</td><td>${res.ch || '-'}</td></tr>`; });
-                } else table.innerHTML += `<tr><td colspan="5">Abhi koi result declare nahi hua hai.</td></tr>`;
-            } catch(e) {}
+        function openDatePicker() { 
+            document.getElementById('date-modal').style.display = 'flex'; 
+            let today = new Date();
+            let yyyy = today.getFullYear();
+            let mm = String(today.getMonth() + 1).padStart(2, '0');
+            let dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('yantra-date-input').value = `${yyyy}-${mm}-${dd}`;
+        }
+        
+        function submitDateAndOpenYantra() { 
+            let dateVal = document.getElementById('yantra-date-input').value;
+            if (!dateVal) return alert("Kripya date select karein!");
+            
+            let parts = dateVal.split("-");
+            let formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            
+            document.getElementById('date-modal').style.display = 'none'; 
+            document.getElementById('yantra-modal').style.display = 'flex'; 
+            document.getElementById('yantra-header-date').innerText = "Result for: " + formattedDate;
+            fetchYantraResults(formattedDate); 
         }
 
-        function openDatePicker() { document.getElementById('date-modal').style.display = 'flex'; }
-        function submitDateAndOpenYantra() { document.getElementById('date-modal').style.display = 'none'; document.getElementById('yantra-modal').style.display = 'flex'; fetchYantraResults(); }
+        async function fetchYantraResults(selectedDate) {
+            const table = document.getElementById('yantra-results-table'); 
+            table.innerHTML = `<tr><th>Event Time</th><th>NV</th><th>RR</th><th>RY</th><th>CH</th></tr>`; 
+            try {
+                const response = await fetch('/api/results', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ date: selectedDate })
+                });
+                const data = await response.json();
+                
+                if(data.success && data.results.length > 0) { 
+                    data.results.forEach(res => { 
+                        table.innerHTML += `<tr><td style="font-weight: bold; color: blue;">${res.time}</td><td>${res.nv || '-'}</td><td>${res.rr || '-'}</td><td>${res.ry || '-'}</td><td>${res.ch || '-'}</td></tr>`; 
+                    });
+                } else { table.innerHTML += `<tr><td colspan="5">Is date par koi result declare nahi hua hai.</td></tr>`; }
+            } catch(e) {}
+        }
+        
         function closeYantraModal() { document.getElementById('yantra-modal').style.display = 'none'; }
 
         async function openHistoryModal() {
@@ -360,21 +406,15 @@
             try {
                 const response = await fetch('/api/history', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
                 const data = await response.json();
-                let hasWonAny = false; // 🎵 Sound Check ke liye variable
-                
+                let hasWonAny = false; 
                 if (data.success && data.tickets.length > 0) {
                     data.tickets.forEach(ticket => {
                         let dateObj = new Date(ticket.date); let dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString(); 
-                        let statusColor = ticket.status === 'Won' ? 'green' : (ticket.status === 'Lost' ? 'red' : 'blue');
-                        
-                        if (ticket.status === 'Won') hasWonAny = true; // Agar koi ticket jeeta hai
-
+                        let statusColor = ticket.status === 'Won' ? 'green' : (ticket.status === 'Lost' ? 'red' : (ticket.status === 'Cancelled' ? 'gray' : 'blue'));
+                        if (ticket.status === 'Won') hasWonAny = true; 
                         ticket.tickets.forEach(bet => { table.innerHTML += `<tr><td>${dateStr}</td><td>${bet.group}</td><td>${bet.number}</td><td>${bet.points}</td><td style="color: ${statusColor}; font-weight: bold;">${ticket.status}</td></tr>`; });
                     });
-                    
-                    // 🎵 Agar jeeta hai toh Jeetne wali awaaz bajao!
                     if (hasWonAny) { playSound('sound-win'); }
-                    
                 } else table.innerHTML += `<tr><td colspan="5">Aapne abhi tak koi ticket nahi kharidi hai.</td></tr>`;
             } catch (err) { table.innerHTML += `<tr><td colspan="5">History load nahi ho payi.</td></tr>`; }
         }
@@ -385,14 +425,14 @@
             try {
                 const response = await fetch('/api/purchase-summary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
                 const data = await response.json();
-                if (data.success) { document.getElementById('psum-total-tickets').innerText = data.totalTickets; document.getElementById('psum-today-spent').innerText = data.todaySpent; document.getElementById('psum-total-spent').innerText = data.totalSpent; }
+                if (data.success) { document.getElementById('psum-total-tickets').innerText = data.totalTickets; document.getElementById('psum-today-spent').innerText = data.todaySpent.toFixed(2); document.getElementById('psum-total-spent').innerText = data.totalSpent.toFixed(2); }
             } catch (err) { console.log("Error loading P.SUM"); }
         }
         function closePsumModal() { document.getElementById('psum-modal').style.display = 'none'; }
 
         function startEventTimer() {
             let dateString = new Date().toLocaleDateString('en-GB'); 
-            document.getElementById('current-date').innerText = dateString; document.getElementById('yantra-date-input').value = dateString; document.getElementById('yantra-header-date').innerText = dateString;
+            document.getElementById('current-date').innerText = dateString; document.getElementById('event-code').innerText = "13:00";
             setInterval(() => {
                 let now = new Date(), min = now.getMinutes(), sec = now.getSeconds(); let mLeft = 15 - (min % 15) - 1, sLeft = 60 - sec; if (sLeft === 60) { sLeft = 0; mLeft += 1; }
                 document.getElementById('countdown-display').innerText = `00:${mLeft.toString().padStart(2, '0')}:${sLeft.toString().padStart(2, '0')}`;
@@ -400,41 +440,41 @@
         }
         startEventTimer();
 
-
-
-        async function cancelLastTicket() {
-    if (currentUser === "Guest") {
-        alert("Pehle login karein!");
-        return;
-    }
-    
-    // User se confirm karwayein taaki galti se cancel na ho jaye
-    let confirmCancel = confirm("Kya aap apni aakhiri kharidi hui ticket sach mein Cancel karna chahte hain? Paise turant wapas aa jayenge.");
-    
-    if (confirmCancel) {
-        try {
-            let response = await fetch('/api/cancel', { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ phone: currentUser }) 
-            });
-            let data = await response.json();
+        function updateLiveResultColumn() {
+            let now = new Date();
+            let minutes = now.getMinutes(); let hours = now.getHours();
+            let lastSlotMinutes = minutes - (minutes % 15);
+            let hh = hours.toString().padStart(2, '0'); let mmSlot = lastSlotMinutes.toString().padStart(2, '0');
+            let expectedTimeStr = hh + ":" + mmSlot;
             
-            if (data.success) {
-                playSound('sound-win'); // Cancel hone par bhi ek sound de sakte hain
-                currentBalance = data.newBalance; 
-                balanceElement.innerText = currentBalance.toFixed(2); 
-                localStorage.setItem('userBalance', currentBalance); 
-                alert("✅ " + data.message + "\nAapka naya balance: ₹" + currentBalance);
-            } else {
-                playSound('sound-error');
-                alert("❌ Error: " + data.message);
-            }
-        } catch (error) { 
-            alert("Server se connection toot gaya!"); 
+            document.getElementById('last-result-time').innerText = expectedTimeStr;
+
+            let dd = String(now.getDate()).padStart(2, '0'); 
+            let mm = String(now.getMonth() + 1).padStart(2, '0'); 
+            let yyyy = now.getFullYear();
+            let todayStr = `${dd}/${mm}/${yyyy}`;
+
+            fetch('/api/results', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: todayStr })
+            }).then(res => res.json()).then(data => {
+                if (data.success && data.results.length > 0) {
+                    let exactResult = data.results.find(r => r.time === expectedTimeStr);
+                    if (exactResult) {
+                        document.getElementById('last-res-nv').innerText = exactResult.nv ? "NV" + exactResult.nv : "-";
+                        document.getElementById('last-res-rr').innerText = exactResult.rr ? "RR" + exactResult.rr : "-";
+                        document.getElementById('last-res-ry').innerText = exactResult.ry ? "RY" + exactResult.ry : "-";
+                        document.getElementById('last-res-ch').innerText = exactResult.ch ? "CH" + exactResult.ch : "-";
+                    } else {
+                        document.getElementById('last-res-nv').innerText = "Wait.."; document.getElementById('last-res-rr').innerText = "Wait.."; document.getElementById('last-res-ry').innerText = "Wait.."; document.getElementById('last-res-ch').innerText = "Wait..";
+                    }
+                } else {
+                    document.getElementById('last-res-nv').innerText = "Wait.."; document.getElementById('last-res-rr').innerText = "Wait.."; document.getElementById('last-res-ry').innerText = "Wait.."; document.getElementById('last-res-ch').innerText = "Wait..";
+                }
+            }).catch(e => console.log("Result fetch error:", e));
         }
-    }
-}
+
+        setInterval(updateLiveResultColumn, 10000);
+        updateLiveResultColumn();
     </script>
 </body>
 </html>
