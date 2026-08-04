@@ -185,7 +185,7 @@
             <div class="action-bar">
                 <button class="action-btn green" onclick="buyTickets()">BUY</button>
                 <button class="action-btn" onclick="clearEntireGrid()">CLEAR</button>
-                <button class="action-btn">CANCEL</button>
+                <button class="action-btn" onclick="cancelLastTicket()">CANCEL</button>
                 <button class="action-btn" onclick="openDatePicker()">YANTRA</button>
                 <button class="action-btn" onclick="openHistoryModal()">C.DETAILS</button>
                 <button class="action-btn" onclick="openPsumModal()">P.SUM</button>
@@ -399,6 +399,42 @@
             }, 1000);
         }
         startEventTimer();
+
+
+
+        async function cancelLastTicket() {
+    if (currentUser === "Guest") {
+        alert("Pehle login karein!");
+        return;
+    }
+    
+    // User se confirm karwayein taaki galti se cancel na ho jaye
+    let confirmCancel = confirm("Kya aap apni aakhiri kharidi hui ticket sach mein Cancel karna chahte hain? Paise turant wapas aa jayenge.");
+    
+    if (confirmCancel) {
+        try {
+            let response = await fetch('/api/cancel', { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ phone: currentUser }) 
+            });
+            let data = await response.json();
+            
+            if (data.success) {
+                playSound('sound-win'); // Cancel hone par bhi ek sound de sakte hain
+                currentBalance = data.newBalance; 
+                balanceElement.innerText = currentBalance.toFixed(2); 
+                localStorage.setItem('userBalance', currentBalance); 
+                alert("✅ " + data.message + "\nAapka naya balance: ₹" + currentBalance);
+            } else {
+                playSound('sound-error');
+                alert("❌ Error: " + data.message);
+            }
+        } catch (error) { 
+            alert("Server se connection toot gaya!"); 
+        }
+    }
+}
     </script>
 </body>
 </html>
