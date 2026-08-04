@@ -40,8 +40,17 @@
 
         <!-- 2. RESULT -->
         <div class="card" style="border-top-color: #2ecc71;">
-            <h2>🏆 Set Next Result</h2>
+            <h2>🏆 Set Result</h2>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px;">
+                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Purani Date (DD/MM/YYYY):<br><span style="font-size: 10px; color: #bdc3c7;">Khali chhoda to aaj ki date aayegi</span></label>
+                    <input type="text" class="input-box" id="custom-date" placeholder="Jaise: 15/07/2026" style="width: 55%;">
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px;">
+                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Purana Time:<br><span style="font-size: 10px; color: #bdc3c7;">Khali chhoda to abhi ka time aayega</span></label>
+                    <input type="text" class="input-box" id="custom-time" placeholder="Jaise: 14:15:00" style="width: 55%;">
+                </div>
+
                 <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra NV:</label><input type="text" class="input-box" id="win-nv" placeholder="47"></div>
                 <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra RR:</label><input type="text" class="input-box" id="win-rr" placeholder="26"></div>
                 <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra RY:</label><input type="text" class="input-box" id="win-ry" placeholder="39"></div>
@@ -61,7 +70,7 @@
             </table>
         </div>
 
-        <!-- 🚀 4. NAYA: WITHDRAWAL REQUESTS -->
+        <!-- 4. WITHDRAWAL REQUESTS -->
         <div class="card" style="border-top-color: #e74c3c;">
             <h2>💸 Pending Withdrawals (Paise Nikalna)</h2>
             <table>
@@ -71,8 +80,8 @@
         </div>
     </div>
 
-    <!-- 5. MANUAL ADD / DEDUCT -->
     <div class="dashboard-grid">
+        <!-- 5. MANUAL ADD / DEDUCT -->
         <div class="card" style="border-top-color: #e67e22;">
             <h2>⚙️ User Management (+ Add / - Deduct)</h2>
             <table>
@@ -86,6 +95,19 @@
                     </td>
                 </tr>
             </table>
+        </div>
+
+        <!-- 6. ALL USERS LIST WITH DELETE OPTION -->
+        <div class="card" style="border-top-color: #3498db;">
+            <h2>👥 All Registered Users</h2>
+            <button class="btn btn-blue" onclick="loadAllUsers()" style="margin: 10px 0; width: 100%;">🔄 Refresh Users List</button>
+            <div style="max-height: 250px; overflow-y: auto;">
+                <table>
+                    <!-- 🚀 NAYA: Action column add kiya -->
+                    <thead><tr><th>Phone (ID)</th><th>Password</th><th>Balance (₹)</th><th>Action</th></tr></thead>
+                    <tbody id="all-users-table"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -121,10 +143,9 @@
         async function handleDeposit(depositId, action) {
             if(!confirm(`Kya aap isko ${action} karna chahte hain?`)) return;
             const res = await fetch('/api/admin/handle-deposit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ depositId, action }) });
-            alert((await res.json()).message); loadPendingDeposits(); 
+            alert((await res.json()).message); loadPendingDeposits(); loadAllUsers();
         }
 
-        // 🚀 NAYA: WITHDRAWAL REQUESTS LOAD KARNA
         async function loadPendingWithdrawals() {
             const data = await (await fetch('/api/admin/pending-withdrawals')).json();
             const table = document.getElementById('withdraw-requests-table'); table.innerHTML = ''; 
@@ -137,20 +158,28 @@
         }
 
         async function handleWithdraw(withdrawId, action) {
-            if(!confirm(`Kya aap withdrawal ko ${action} karna chahte hain? (Reject karne par paise wapas user ko mil jayenge)`)) return;
+            if(!confirm(`Kya aap withdrawal ko ${action} karna chahte hain?`)) return;
             const res = await fetch('/api/admin/handle-withdrawal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ withdrawId, action }) });
-            alert((await res.json()).message); loadPendingWithdrawals(); 
+            alert((await res.json()).message); loadPendingWithdrawals(); loadAllUsers();
         }
 
         async function declareResult() {
             let nv = document.getElementById('win-nv').value, rr = document.getElementById('win-rr').value;
             let ry = document.getElementById('win-ry').value, ch = document.getElementById('win-ch').value;
+            let customDate = document.getElementById('custom-date').value.trim();
+            let customTime = document.getElementById('custom-time').value.trim();
+
             if(!nv || !rr || !ry || !ch) { alert("Sabhi fields bharein!"); return; }
-            if(!confirm(`Result nikalna chahte hain?`)) return;
-            let res = await fetch('/api/admin/result', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nv, rr, ry, ch }) });
+            if(!confirm(`Kya aap sach mein result daalna chahte hain?`)) return;
+
+            let res = await fetch('/api/admin/result', { 
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ nv, rr, ry, ch, customDate, customTime }) 
+            });
             alert((await res.json()).message);
-            ['win-nv','win-rr','win-ry','win-ch'].forEach(id => document.getElementById(id).value = "");
-            fetchLiveBets(); 
+            
+            ['win-nv','win-rr','win-ry','win-ch', 'custom-date', 'custom-time'].forEach(id => document.getElementById(id).value = "");
+            fetchLiveBets(); loadAllUsers();
         }
 
         async function modifyPoints(action) {
@@ -158,14 +187,58 @@
             if(!targetPhone || !points) return;
             let res = await fetch('/api/admin/modify-points', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetPhone, points, action }) });
             alert((await res.json()).message);
+            loadAllUsers(); 
+        }
+
+        async function loadAllUsers() {
+            try {
+                const res = await fetch('/api/admin/users');
+                const data = await res.json();
+                const tbody = document.getElementById('all-users-table');
+                tbody.innerHTML = '';
+                if (data.success && data.users.length > 0) {
+                    data.users.forEach(u => {
+                        // 🚀 NAYA: Delete button add kiya gaya har user ke aage
+                        tbody.innerHTML += `<tr>
+                            <td style="font-weight: bold;">${u.phone}</td>
+                            <td>${u.password}</td>
+                            <td style="color: green; font-weight: bold;">₹${u.balance.toFixed(2)}</td>
+                            <td><button class="btn btn-red" style="padding: 5px 10px; font-size: 11px;" onclick="deleteUser('${u.phone}')">🗑️ Remove</button></td>
+                        </tr>`;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4">Abhi tak kisi ne account nahi banaya hai.</td></tr>';
+                }
+            } catch (error) {
+                console.log("Users load nahi ho paye.");
+            }
+        }
+
+        // 🚀 NAYA: Delete User ka function
+        async function deleteUser(phone) {
+            if(!confirm(`⚠️ WARNING: Kya aap sach mein User ID ${phone} ko hamesha ke liye delete karna chahte hain? Data wapas nahi aayega!`)) return;
+            
+            try {
+                let res = await fetch('/api/admin/delete-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+                let data = await res.json();
+                alert(data.message);
+                loadAllUsers(); // Delete hone ke baad list turant refresh ho jayegi
+            } catch (error) {
+                alert("Error deleting user.");
+            }
         }
 
         function logoutAdmin() { window.location.href = "login.html"; }
 
         window.onload = function() {
             loadPendingDeposits();
-            loadPendingWithdrawals(); // Page khulte hi withdrawals load karo
+            loadPendingWithdrawals(); 
             fetchLiveBets();
+            loadAllUsers(); 
         };
     </script>
 </body>
