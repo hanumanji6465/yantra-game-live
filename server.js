@@ -96,45 +96,45 @@ app.post('/api/buy', async (req, res) => {
     } catch (error) { res.json({ success: false, message: "Server error" }); }
 });
 
-// --- CANCEL TICKET API ---
-app.post('/api/cancel', (req, res) => {
+// --- CANCEL TICKET API (UPDATED FOR MONGODB) ---
+app.post('/api/cancel', async (req, res) => {
     const { phone } = req.body;
+    try {
+        // 1. Asli MongoDB Database se User ko dhundo
+        let user = await User.findOne({ phone: phone });
+        if (!user) {
+            return res.json({ success: false, message: "User nahi mila!" });
+        }
 
-    // 1. User ko dhundo
-    let user = users.find(u => u.phone === phone);
-    if (!user) {
-        return res.json({ success: false, message: "User nahi mila!" });
+        // 2. Database se is user ki aakhiri (latest) ticket nikalo (date ke hisaab se reverse sort karke)
+        let lastTicket = await Ticket.findOne({ phone: phone }).sort({ date: -1 });
+        
+        if (!lastTicket) {
+            return res.json({ success: false, message: "Aapne abhi tak koi ticket nahi kharidi hai!" });
+        }
+
+        // 3. Agar ticket pehle hi cancel ho chuki hai
+        if (lastTicket.status === 'Cancelled') {
+            return res.json({ success: false, message: "Aakhiri ticket pehle se hi cancel ho chuki hai!" });
+        }
+
+        // 4. User ke account me paise wapas dalo
+        user.balance += lastTicket.totalCost;
+        await user.save(); // User ka naya balance database me save karo
+
+        // 5. Ticket ka status 'Cancelled' kar do
+        lastTicket.status = 'Cancelled';
+        await lastTicket.save(); // Ticket ka naya status database me save karo
+
+        res.json({ 
+            success: true, 
+            newBalance: user.balance, 
+            message: "Aakhiri ticket successfully cancel ho gayi aur paise wallet me wapas aa gaye!" 
+        });
+    } catch (error) {
+        console.log("Cancel API Error:", error);
+        res.json({ success: false, message: "Server error" });
     }
-
-    // 2. User ki history me se aakhiri ticket nikalo
-    let userTickets = history.filter(t => t.phone === phone);
-    if (userTickets.length === 0) {
-        return res.json({ success: false, message: "Aapne abhi tak koi ticket nahi kharidi hai!" });
-    }
-
-    let lastTicketIndex = history.map(t => t.phone).lastIndexOf(phone);
-    let lastTicket = history[lastTicketIndex];
-
-    // 3. Agar ticket pehle hi cancel ho chuki hai
-    if (lastTicket.status === 'Cancelled') {
-        return res.json({ success: false, message: "Aakhiri ticket pehle se hi cancel ho chuki hai!" });
-    }
-
-    // 4. Refund ka hisaab (Jitne points the, usko 10 se multiply karke wapas dena)
-    // (Agar aapne server par 1 point = 10 Rs set kiya hai, toh yahan refundAmount adjust kar lijiye)
-    let refundAmount = lastTicket.totalCost; 
-
-    // 5. User ke account me paise wapas dalo aur ticket ka status 'Cancelled' kar do
-    user.balance += refundAmount;
-    lastTicket.status = 'Cancelled';
-    
-    // Yahan tickets array me se us ticket ko delete bhi kar sakte hain agar zaroorat ho
-
-    res.json({ 
-        success: true, 
-        newBalance: user.balance, 
-        message: "Aakhiri ticket successfully cancel ho gayi aur paise wallet me wapas aa gaye!" 
-    });
 });
 
 app.post('/api/history', async (req, res) => {
