@@ -1,3 +1,6 @@
+// 🚀 INDIA TIMEZONE FIX
+process.env.TZ = 'Asia/Kolkata';
+
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -14,40 +17,8 @@ const DB_LINK = "mongodb://ranjay222_db_user:Ranjay8303@ac-w5tcwg9-shard-00-00.o
 mongoose.connect(DB_LINK, { family: 4, serverSelectionTimeoutMS: 10000 })
     .then(() => {
         console.log("✅ MongoDB Asli Database Connect Ho Gaya!");
-        addPuranaResult(); 
     })
     .catch((err) => console.log("❌ Database Error: ", err.message));
-
-async function addPuranaResult() {
-    try {
-        let totalResults = await Result.countDocuments();
-        if (totalResults < 100) {
-            console.log("⏳ 1 Saal ka purana data ban raha hai...");
-            let puranaData = [];
-            let aaj = new Date();
-            for (let i = 365; i > 0; i--) {
-                let pastDate = new Date(aaj);
-                pastDate.setDate(pastDate.getDate() - i);
-                let dd = String(pastDate.getDate()).padStart(2, '0');
-                let mm = String(pastDate.getMonth() + 1).padStart(2, '0');
-                let dateStr = `${dd}/${mm}/${pastDate.getFullYear()}`; 
-                
-                let times = ["10:15", "13:15", "16:15", "19:15"];
-                for (let t of times) {
-                    puranaData.push({
-                        date: dateStr, time: t,
-                        nv: Math.floor(Math.random() * 100).toString().padStart(2, '0'),
-                        rr: Math.floor(Math.random() * 100).toString().padStart(2, '0'),
-                        ry: Math.floor(Math.random() * 100).toString().padStart(2, '0'),
-                        ch: Math.floor(Math.random() * 100).toString().padStart(2, '0')
-                    });
-                }
-            }
-            await Result.insertMany(puranaData);
-            console.log("🎯 BINGO! Pichle 1 saal ka saara result jama ho gaya!");
-        }
-    } catch(e) {}
-}
 
 // ==========================================
 // 📝 DATABASE SCHEMAS
@@ -152,7 +123,10 @@ app.post('/api/purchase-summary', async (req, res) => {
     try {
         const tickets = await Ticket.find({ phone: req.body.phone });
         let totalSpent = 0, todaySpent = 0;
-        const today = new Date(); today.setHours(0, 0, 0, 0);
+        
+        let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+        let today = new Date(nowStr); today.setHours(0, 0, 0, 0);
+        
         tickets.forEach(t => { totalSpent += t.totalCost; if (new Date(t.date) >= today) todaySpent += t.totalCost; });
         res.json({ success: true, totalTickets: tickets.length, todaySpent, totalSpent });
     } catch (error) { res.json({ success: false }); }
@@ -161,10 +135,14 @@ app.post('/api/purchase-summary', async (req, res) => {
 app.post('/api/admin/result', async (req, res) => {
     const { nv, rr, ry, ch, customDate, customTime } = req.body;
     try {
-        let d = new Date();
+        let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+        let d = new Date(nowStr);
         let dd = String(d.getDate()).padStart(2, '0'); let mm = String(d.getMonth() + 1).padStart(2, '0');
         let finalDate = customDate ? customDate : `${dd}/${mm}/${d.getFullYear()}`; 
-        let finalTime = customTime ? customTime : d.toLocaleTimeString();
+        
+        let hh = String(d.getHours()).padStart(2, '0');
+        let mns = String(d.getMinutes()).padStart(2, '0');
+        let finalTime = customTime ? customTime : `${hh}:${mns}`;
 
         const newResult = new Result({ date: finalDate, time: finalTime, nv, rr, ry, ch });
         await newResult.save();
@@ -279,7 +257,6 @@ app.get('/api/admin/users', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 NAYA: User ko Remove (Delete) karne ka API
 app.post('/api/admin/delete-user', async (req, res) => {
     try {
         const deletedUser = await User.findOneAndDelete({ phone: req.body.phone });
@@ -294,21 +271,27 @@ app.post('/api/admin/delete-user', async (req, res) => {
 });
 
 // ==========================================
-// 🤖 SMART AUTO-RESULT BOT
+// 🤖 SMART AUTO-RESULT BOT (INDIA TIMEZONE FIX)
 // ==========================================
 let aakhiriAutoSlot = ""; 
 
 setInterval(async () => {
-    let now = new Date();
+    // 🚀 INDIA TIME (IST) FORCE KIYA GAYA HAI
+    let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+    let now = new Date(nowStr);
+    
     let min = now.getMinutes();
     let lastSlotMinutes = min - (min % 15);
+    
     let hh = String(now.getHours()).padStart(2, '0');
     let mm = String(lastSlotMinutes).padStart(2, '0');
     let currentSlotTime = `${hh}:${mm}`; 
+    
     let dd = String(now.getDate()).padStart(2, '0');
     let mo = String(now.getMonth() + 1).padStart(2, '0');
     let yyyy = now.getFullYear();
     let todayStr = `${dd}/${mo}/${yyyy}`;
+    
     let uniqueSlotCheck = todayStr + " " + currentSlotTime;
 
     if (aakhiriAutoSlot !== uniqueSlotCheck) {
