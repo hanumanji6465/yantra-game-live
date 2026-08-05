@@ -70,9 +70,6 @@
         .yantra-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; min-width: 400px; }
         .yantra-table th, .yantra-table td { border: 1px solid #ccc; padding: 6px; }
         .yantra-table th { background-color: #e0d9d3; color: #550022; }
-
-        #rotate-warning { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; color: #fff; z-index: 99999; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; padding: 20px; box-sizing: border-box; flex-direction: column; }
-        @media screen and (orientation: portrait) { #rotate-warning { display: flex !important; } .game-container { display: none !important; } }
     </style>
 
     <script>
@@ -82,18 +79,12 @@
             const scaleX = window.innerWidth / targetW;
             const scaleY = window.innerHeight / targetH;
             container.style.transform = `scale(${scaleX}, ${scaleY})`;
-            try { if (screen.orientation && screen.orientation.lock) { screen.orientation.lock('landscape').catch(function() {}); } } catch (error) {}
         }
         window.onload = makePerfectMobileApp;
         window.onresize = makePerfectMobileApp;
     </script>
 </head>
 <body>
-
-    <div id="rotate-warning">
-        <div style="font-size: 50px;">🔄</div><br>
-        <div style="text-align: center;">Game khelne ke liye kripya apne mobile ko ghumayein.</div>
-    </div>
 
     <!-- 🎵 HIDDEN AUDIO TAGS -->
     <audio id="sound-buy" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
@@ -134,8 +125,8 @@
             <div class="header-right">
                 <span style="background-color:#d1ccc0; padding:2px 10px; font-size:10px;">LOBBY</span><br>
                 Date: <span id="current-date"></span><br>
-                Gift Event Code: <span id="event-code">13:00</span><br>
-                Countdown: <span id="countdown-display" style="color: red;">00:00:00</span>
+                Gift Event Code: <span id="event-code">--:--</span><br>
+                Countdown: <span id="countdown-display" style="color: white; text-shadow: 1px 1px 2px #000;">00:00:00</span>
             </div>
         </div>
 
@@ -282,7 +273,6 @@
         function typeNumber(number) { if (activeBox) { activeBox.innerText = activeBox.innerText + number; updateCart(); } }
         function clearActiveCell() { if (activeBox) { activeBox.innerText = ""; updateCart(); } }
 
-        // 🚀 NAYA JAADU: 1 Point = 10.10 Rs Calculation
         function updateCart() {
             let totalQty = 0, totalPts = 0;
             let groupTotals = { "NV": {qty:0, pts:0}, "RR": {qty:0, pts:0}, "RY": {qty:0, pts:0}, "CH": {qty:0, pts:0}, "ALL": {qty:0, pts:0} };
@@ -293,7 +283,7 @@
                     let group = cell.getAttribute('data-group');
                     if(groupTotals[group]) { 
                         groupTotals[group].qty += 1; 
-                        groupTotals[group].pts += (points * 10.10); // 10.10 ka calculation
+                        groupTotals[group].pts += (points * 10.10);
                     }
                     totalQty += 1; 
                     totalPts += (points * 10.10);
@@ -304,7 +294,7 @@
                 let qCell = document.getElementById('qty-' + g), pCell = document.getElementById('pts-' + g);
                 if(qCell && pCell) { 
                     qCell.innerText = groupTotals[g].qty > 0 ? groupTotals[g].qty : ''; 
-                    pCell.innerText = groupTotals[g].pts > 0 ? groupTotals[g].pts.toFixed(2) : ''; // 2 Decimal Tak
+                    pCell.innerText = groupTotals[g].pts > 0 ? groupTotals[g].pts.toFixed(2) : ''; 
                 }
             });
 
@@ -430,12 +420,40 @@
         }
         function closePsumModal() { document.getElementById('psum-modal').style.display = 'none'; }
 
+        // 🚀 NAYA: Gift Event Code aur Timer (Red at 14 mins)
         function startEventTimer() {
-            let dateString = new Date().toLocaleDateString('en-GB'); 
-            document.getElementById('current-date').innerText = dateString; document.getElementById('event-code').innerText = "13:00";
             setInterval(() => {
-                let now = new Date(), min = now.getMinutes(), sec = now.getSeconds(); let mLeft = 15 - (min % 15) - 1, sLeft = 60 - sec; if (sLeft === 60) { sLeft = 0; mLeft += 1; }
-                document.getElementById('countdown-display').innerText = `00:${mLeft.toString().padStart(2, '0')}:${sLeft.toString().padStart(2, '0')}`;
+                let now = new Date();
+                let min = now.getMinutes();
+                let sec = now.getSeconds();
+                let hours = now.getHours();
+
+                // 1. Automatic Gift Event Code
+                let nextMin = min + (15 - (min % 15));
+                let nextHour = hours;
+                if (nextMin >= 60) {
+                    nextMin = 0;
+                    nextHour = (hours + 1) % 24;
+                }
+                let eventCodeStr = String(nextHour).padStart(2, '0') + ":" + String(nextMin).padStart(2, '0');
+                
+                document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB'); 
+                document.getElementById('event-code').innerText = eventCodeStr;
+
+                // 2. Countdown Timer
+                let mLeft = 15 - (min % 15) - 1; 
+                let sLeft = 60 - sec; 
+                if (sLeft === 60) { sLeft = 0; mLeft += 1; }
+                
+                let countdownDisplay = document.getElementById('countdown-display');
+                countdownDisplay.innerText = `00:${mLeft.toString().padStart(2, '0')}:${sLeft.toString().padStart(2, '0')}`;
+                
+                // 3. Color Check: Jab 14 minute guzar jayein (Yani mLeft == 0 bache) tab Laal (Red)
+                if (mLeft === 0) {
+                    countdownDisplay.style.color = "red";
+                } else {
+                    countdownDisplay.style.color = "white";
+                }
             }, 1000);
         }
         startEventTimer();
