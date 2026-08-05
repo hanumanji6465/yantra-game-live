@@ -428,14 +428,9 @@
                 let sec = now.getSeconds();
                 let hours = now.getHours();
 
-                // 1. Automatic Gift Event Code
-                let nextMin = min + (15 - (min % 15));
-                let nextHour = hours;
-                if (nextMin >= 60) {
-                    nextMin = 0;
-                    nextHour = (hours + 1) % 24;
-                }
-                let eventCodeStr = String(nextHour).padStart(2, '0') + ":" + String(nextMin).padStart(2, '0');
+                // 1. Automatic Gift Event Code (AB CURRENT SLOT DIKHAYEGA)
+                let lastSlotMinutes = min - (min % 15);
+                let eventCodeStr = String(hours).padStart(2, '0') + ":" + String(lastSlotMinutes).padStart(2, '0');
                 
                 document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB'); 
                 document.getElementById('event-code').innerText = eventCodeStr;
