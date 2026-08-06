@@ -142,7 +142,7 @@ app.post('/api/purchase-summary', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 ADMIN RESULT CONTROL
+// 🚀 ADMIN RESULT CONTROL (Fixed Ticket Settling Bug)
 app.post('/api/admin/result', async (req, res) => {
     const { nv, rr, ry, ch, customDate, customTime } = req.body;
     try {
@@ -181,16 +181,8 @@ app.post('/api/admin/result', async (req, res) => {
             return res.json({ success: true, message: `✅ Advance Result Saved for Time: ${finalTime}.\nJab time aayega, tabhi result game me dikhega!` });
         }
 
-        let cutoff = new Date(nowStr);
-        let finalDateParts = finalDate.split('/');
-        cutoff.setFullYear(parseInt(finalDateParts[2]));
-        cutoff.setMonth(parseInt(finalDateParts[1]) - 1);
-        cutoff.setDate(parseInt(finalDateParts[0]));
-        cutoff.setHours(parseInt(timeParts[0]));
-        cutoff.setMinutes(parseInt(timeParts[1]));
-        cutoff.setSeconds(0);
-
-        const pendingTickets = await Ticket.find({ status: 'Pending', date: { $lt: cutoff } });
+        // 🚀 BUG FIX: Server time mismatch ko dur karne ke liye ab saari "Pending" tickets check hongi
+        const pendingTickets = await Ticket.find({ status: 'Pending' });
         const resultsDict = { "NV": nv, "RR": rr, "RY": ry, "CH": ch };
 
         for (let ticket of pendingTickets) {
@@ -337,11 +329,7 @@ setInterval(async () => {
             let existingResult = await Result.findOne({ date: todayStr, time: currentSlotTime });
             
             if (existingResult) {
-                let cutoff = new Date(nowStr);
-                cutoff.setMinutes(lastSlotMinutes);
-                cutoff.setSeconds(0, 0);
-
-                const pendingTickets = await Ticket.find({ status: 'Pending', date: { $lt: cutoff } });
+                const pendingTickets = await Ticket.find({ status: 'Pending' });
                 const resultsDict = { "NV": existingResult.nv, "RR": existingResult.rr, "RY": existingResult.ry, "CH": existingResult.ch };
 
                 for (let ticket of pendingTickets) {
