@@ -87,6 +87,16 @@ app.post('/api/get-balance', async (req, res) => {
 });
 
 app.post('/api/buy', async (req, res) => {
+    // 🚀 TIME LOCK SECURITY SYSTEM
+    let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+    let now = new Date(nowStr);
+    let currentMins = now.getHours() * 60 + now.getMinutes();
+    
+    // Subah 8:30 (510 minutes) se Raat 11:00 (1380 minutes) tak ka Time Lock
+    if (currentMins < 510 || currentMins >= 1380) {
+        return res.json({ success: false, message: "❌ Game Band Hai! Khulne ka samay Subah 8:30 se Raat 11:00 baje tak hai." });
+    }
+
     const { phone, totalCost, cartData } = req.body; 
     try {
         const user = await User.findOne({ phone });
@@ -132,7 +142,7 @@ app.post('/api/purchase-summary', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 ADMIN RESULT CONTROL (Strict Manual Control)
+// 🚀 ADMIN RESULT CONTROL
 app.post('/api/admin/result', async (req, res) => {
     const { nv, rr, ry, ch, customDate, customTime } = req.body;
     try {
@@ -158,7 +168,6 @@ app.post('/api/admin/result', async (req, res) => {
             await newResult.save();
         }
 
-        // Check if future time
         let isFuture = false;
         let currentMinutes = d.getHours() * 60 + d.getMinutes();
         let timeParts = finalTime.split(':');
@@ -304,11 +313,7 @@ app.post('/api/admin/delete-user', async (req, res) => {
     }
 });
 
-// ==========================================
-// 🤖 STRICT MANUAL BOT (KOI RANDOM RESULT NAHI)
-// ==========================================
 let aakhiriAutoSlot = ""; 
-
 setInterval(async () => {
     let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
     let now = new Date(nowStr);
@@ -329,7 +334,6 @@ setInterval(async () => {
 
     if (aakhiriAutoSlot !== uniqueSlotCheck) {
         try {
-            // Sirf check karega ki kya Admin ne manually result dala hai
             let existingResult = await Result.findOne({ date: todayStr, time: currentSlotTime });
             
             if (existingResult) {
@@ -359,9 +363,8 @@ setInterval(async () => {
                     await ticket.save(); 
                 }
                 aakhiriAutoSlot = uniqueSlotCheck; 
-                console.log(`🎯 ADMIN KA RESULT SHOW HUA: Time ${currentSlotTime}`);
             }
-        } catch (err) { console.log("Bot error:", err); }
+        } catch (err) {}
     }
 }, 5000);
 
