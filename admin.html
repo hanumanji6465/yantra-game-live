@@ -2,530 +2,277 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Yantra Game Interface - Full Version</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yantra Game - Admin Panel</title>
     <style>
-        html, body {
-            margin: 0 !important; padding: 0 !important;
-            width: 100vw !important; height: 100vh !important;
-            overflow: hidden !important; 
-            background-color: #f78fb3 !important;
-            touch-action: none !important;
-            font-family: Arial, sans-serif;
-            box-sizing: border-box;
-        }
-
-        .game-container {
-            position: absolute !important;
-            top: 0 !important; left: 0 !important;
-            width: 1300px !important;  
-            height: 500px !important;  
-            max-width: none !important; 
-            margin: 0 !important;
-            border-radius: 0 !important;
-            border: none !important;
-            background-color: #f78fb3;
-            display: flex; flex-direction: column; padding: 10px;
-            box-sizing: border-box;
-            transform-origin: top left !important;
-        }
-
-        .header { display: flex; justify-content: space-between; color: #550022; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
-        .header-right { text-align: right; }
-        
-        .tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; justify-content: center; }
-        .tab { background-color: #d1ccc0; padding: 5px 15px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 1px solid #777; cursor: pointer; }
-        .tab.active { background-color: #574b90; color: white; }
-        
-        .main-content { display: flex; gap: 10px; flex-grow: 1; }
-        
-        .grid-section { width: 100%; overflow-x: auto; background-color: #fdf5f6; border: 1px solid #ccc; }
-        .grid-table { border-collapse: collapse; width: 100%; font-size: 12px; }
-        .grid-table th, .grid-table td { border: 1px solid #ccc; text-align: center; padding: 4px; height: 28px; }
-        .grid-table th { background-color: #e0d9d3; color: #550022; }
-        .group-name { background-color: #e0d9d3; font-weight: bold; text-align: left; padding-left: 5px; pointer-events: none; white-space: nowrap; }
-        .gift-coin { background-color: #e0d9d3; pointer-events: none; }
-        .input-cell { cursor: pointer; width: 40px; background-color: white; }
-        .selected-cell { background-color: #00ff00 !important; }
-        
-        .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .numpad { background-color: #e3dff0; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: center; }
-        .num-btn { background-color: white; border: 1px solid #ccc; border-radius: 5px; padding: 10px 15px; font-size: 16px; font-weight: bold; box-shadow: 0px 2px 2px rgba(0,0,0,0.2); cursor: pointer; }
-        .num-btn:active { background-color: #ddd; }
-        
-        .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-        .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 5px; padding: 10px 15px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
-        .action-btn.green { background-color: #008000; }
-        
-        /* Modals */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 100; padding: 10px; box-sizing: border-box; }
-        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #f78fb3; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
-        .btn-ok { background-color: #008000; color: white; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 5px; width: 100%; font-size: 16px;}
-        
-        .yantra-content { max-width: 650px; height: 80vh; display: flex; flex-direction: column; }
-        .modal-header { display: flex; justify-content: space-between; background-color: #f78fb3; padding: 8px; font-weight: bold; color: #550022; }
-        .close-btn { background-color: #d10000; color: white; border: 1px solid white; cursor: pointer; font-weight: bold; padding: 2px 10px; }
-        .table-scroll { overflow-y: auto; overflow-x: auto; margin-top: 10px; flex-grow: 1; }
-        .yantra-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; min-width: 400px; }
-        .yantra-table th, .yantra-table td { border: 1px solid #ccc; padding: 6px; }
-        .yantra-table th { background-color: #e0d9d3; color: #550022; }
+        body { background-color: #2c3e50; color: #ecf0f1; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .header { background-color: #e74c3c; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h1, h2, h3 { margin: 0; }
+        .dashboard-grid { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+        .card { background-color: #34495e; padding: 20px; border-radius: 8px; flex: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border-top: 4px solid #e74c3c; min-width: 300px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background-color: #ecf0f1; color: #2c3e50; border-radius: 5px; overflow: hidden; }
+        th, td { padding: 10px; text-align: center; border-bottom: 1px solid #bdc3c7; }
+        th { background-color: #bdc3c7; font-weight: bold; }
+        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-green { background-color: #27ae60; }
+        .btn-red { background-color: #c0392b; }
+        .btn-blue { background-color: #2980b9; }
+        .input-box { padding: 8px; width: 100%; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; text-align: center; color: #000; font-weight: bold;}
     </style>
-
-    <script>
-        function makePerfectMobileApp() {
-            const container = document.querySelector('.game-container');
-            const targetW = 1300; const targetH = 500;  
-            const scaleX = window.innerWidth / targetW;
-            const scaleY = window.innerHeight / targetH;
-            container.style.transform = `scale(${scaleX}, ${scaleY})`;
-        }
-        window.onload = makePerfectMobileApp;
-        window.onresize = makePerfectMobileApp;
-    </script>
 </head>
 <body>
-    <audio id="sound-buy" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
-    <audio id="sound-win" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" preload="auto"></audio>
-    <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
-    <div class="game-container">
-        <div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center; flex-wrap: wrap;">
-            <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">➕ Add Money</button>
-            <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">💸 Withdraw</button>
+    <div class="header">
+        <h1>🛠️ ADMIN CONTROL PANEL</h1>
+        <div><button class="btn btn-red" onclick="logoutAdmin()">Logout</button></div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- 1. LIVE BETS -->
+        <div class="card" style="border-top-color: #f1c40f;">
+            <h2>📊 Live Bets</h2>
+            <button class="btn btn-blue" onclick="fetchLiveBets()" style="margin: 10px 0; width: 100%;">🔄 Refresh Live Data</button>
+            <table>
+                <thead><tr><th>Group</th><th>Range</th><th>Total Points (₹)</th></tr></thead>
+                <tbody id="live-bets-body"></tbody>
+            </table>
         </div>
 
-        <div id="walletModal" class="modal-overlay">
-            <div class="modal-content">
-                <h3 style="color: black; margin-top: 0;">Add Points to Wallet</h3>
-                <img src="qrcode.jpeg" alt="UPI QR Code" style="width: 200px; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 10px;">
-                <p style="font-size: 14px; color: red;">Scan karke payment karein aur niche UTR number dalein.</p>
-                <input type="number" id="depositAmount" placeholder="Kitne Paise Bheje?" style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
-                <input type="text" id="utrNumber" placeholder="12-Digit UTR Number" style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
-                <button onclick="submitDeposit()" style="background: blue; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">Submit Request</button>
-                <button onclick="document.getElementById('walletModal').style.display='none'" style="background: red; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+        <!-- 2. RESULT -->
+        <div class="card" style="border-top-color: #2ecc71;">
+            <h2>🏆 Set Result</h2>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px;">
+                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Purani Date (DD/MM/YYYY):<br><span style="font-size: 10px; color: #bdc3c7;">Khali chhoda to aaj ki date aayegi</span></label>
+                    <input type="text" class="input-box" id="custom-date" placeholder="Jaise: 15/07/2026" style="width: 55%;">
+                </div>
+                
+                <!-- 🚀 Dropdown Menu -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px;">
+                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Result Time (Dropdown):<br><span style="font-size: 10px; color: #bdc3c7;">List se time select karein</span></label>
+                    <select class="input-box" id="custom-time" style="width: 55%; cursor: pointer; font-size: 14px;">
+                        <option value="">-- Select Time --</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra NV:</label><input type="number" class="input-box" id="win-nv" placeholder="47"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra RR:</label><input type="number" class="input-box" id="win-rr" placeholder="26"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra RY:</label><input type="number" class="input-box" id="win-ry" placeholder="39"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra CH:</label><input type="number" class="input-box" id="win-ch" placeholder="45"></div>
+                <button class="btn btn-green" style="margin-top: 10px; padding: 12px;" onclick="declareResult()">DECLARE RESULT</button>
             </div>
         </div>
+    </div>
 
-        <div id="withdrawModal" class="modal-overlay">
-            <div class="modal-content">
-                <h3 style="color: black; margin-top: 0;">Withdraw Points</h3>
-                <p style="font-size: 14px; color: #555;">Jeete huye paise nikalne ke liye details dalein.</p>
-                <input type="number" id="withdrawAmount" placeholder="Amount (Kam se kam 10)" style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
-                <input type="text" id="bankDetails" placeholder="UPI ID ya Bank A/C No." style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
-                <button onclick="submitWithdraw()" style="background: #27ae60; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">Send Request</button>
-                <button onclick="document.getElementById('withdrawModal').style.display='none'" style="background: red; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">Close</button>
-            </div>
+    <div class="dashboard-grid">
+        <!-- 3. ADD MONEY REQUESTS -->
+        <div class="card" style="border-top-color: #9b59b6;">
+            <h2>💰 Pending Deposit (Add Money)</h2>
+            <table>
+                <thead><tr><th>Phone</th><th>Amount</th><th>UTR Number</th><th>Action</th></tr></thead>
+                <tbody id="deposit-requests-table"></tbody>
+            </table>
         </div>
 
-        <div class="header">
-            <div>Welcome: <span id="welcome-phone">Guest</span><br>Balance Point: <span id="balance" style="font-size: 18px; color: #006400;">0.00</span></div>
-            <div class="header-right">
-                <span style="background-color:#d1ccc0; padding:2px 10px; font-size:10px;">LOBBY</span><br>
-                Date: <span id="current-date"></span><br>
-                Gift Event Code: <span id="event-code">--:--</span><br>
-                Countdown: <span id="countdown-display" style="color: white; text-shadow: 1px 1px 2px #000;">00:00:00</span>
-            </div>
+        <!-- 4. WITHDRAWAL REQUESTS -->
+        <div class="card" style="border-top-color: #e74c3c;">
+            <h2>💸 Pending Withdrawals (Paise Nikalna)</h2>
+            <table>
+                <thead><tr><th>Phone</th><th>Amount</th><th>Bank/UPI Details</th><th>Action</th></tr></thead>
+                <tbody id="withdraw-requests-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- 5. MANUAL ADD / DEDUCT -->
+        <div class="card" style="border-top-color: #e67e22;">
+            <h2>⚙️ User Management (+ Add / - Deduct)</h2>
+            <table>
+                <tr><th>User ID (Phone)</th><th>Points</th><th>Action</th></tr>
+                <tr>
+                    <td><input type="text" class="input-box" id="target-phone" placeholder="Phone No."></td>
+                    <td><input type="number" class="input-box" id="target-points" placeholder="Points"></td>
+                    <td>
+                        <button class="btn btn-green" onclick="modifyPoints('add')">+ Add</button>
+                        <button class="btn btn-red" onclick="modifyPoints('deduct')">- Deduct</button>
+                    </td>
+                </tr>
+            </table>
         </div>
 
-        <div class="tabs">
-            <div class="tab">Bulk Coupons [ A ]</div><div class="tab active">Bulk Coupons [ B ]</div><div class="tab">Pointwise Coupons</div><div class="tab">Loose Coupons</div><div class="tab">Loose Pointwise Coupons</div>
-        </div>
-
-        <div class="main-content">
-            <div class="grid-section">
-                <table class="grid-table" id="game-grid">
-                    <tr>
-                        <th>Product Group</th><th>Gift Coin</th><th>00-09</th><th>10-19</th><th>20-29</th><th>30-39</th><th>40-49</th><th>50-59</th><th>60-69</th><th>70-79</th><th>80-89</th><th>90-99</th><th>All</th>
-                        <th>Qty</th><th>Pts</th><th id="last-result-time" style="color: #333; font-weight: bold; width: 60px;">--:--</th>
-                    </tr>
-                    <tr>
-                        <td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td>
-                        <td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td>
-                        <td id="qty-NV" style="font-weight:bold; color:black;"></td><td id="pts-NV" style="font-weight:bold; color:black;"></td><td id="last-res-nv" style="font-weight:bold; background:#e0d9d3; color:#333;"></td>
-                    </tr>
-                    <tr>
-                        <td class="group-name">Yantra Group RR</td><td class="gift-coin">-</td>
-                        <td class="input-cell" data-group="RR" data-range="00-09"></td><td class="input-cell" data-group="RR" data-range="10-19"></td><td class="input-cell" data-group="RR" data-range="20-29"></td><td class="input-cell" data-group="RR" data-range="30-39"></td><td class="input-cell" data-group="RR" data-range="40-49"></td><td class="input-cell" data-group="RR" data-range="50-59"></td><td class="input-cell" data-group="RR" data-range="60-69"></td><td class="input-cell" data-group="RR" data-range="70-79"></td><td class="input-cell" data-group="RR" data-range="80-89"></td><td class="input-cell" data-group="RR" data-range="90-99"></td><td class="input-cell" data-group="RR" data-range="All"></td>
-                        <td id="qty-RR" style="font-weight:bold; color:black;"></td><td id="pts-RR" style="font-weight:bold; color:black;"></td><td id="last-res-rr" style="font-weight:bold; background:#e0d9d3; color:#333;"></td>
-                    </tr>
-                    <tr>
-                        <td class="group-name">Yantra Group RY</td><td class="gift-coin">-</td>
-                        <td class="input-cell" data-group="RY" data-range="00-09"></td><td class="input-cell" data-group="RY" data-range="10-19"></td><td class="input-cell" data-group="RY" data-range="20-29"></td><td class="input-cell" data-group="RY" data-range="30-39"></td><td class="input-cell" data-group="RY" data-range="40-49"></td><td class="input-cell" data-group="RY" data-range="50-59"></td><td class="input-cell" data-group="RY" data-range="60-69"></td><td class="input-cell" data-group="RY" data-range="70-79"></td><td class="input-cell" data-group="RY" data-range="80-89"></td><td class="input-cell" data-group="RY" data-range="90-99"></td><td class="input-cell" data-group="RY" data-range="All"></td>
-                        <td id="qty-RY" style="font-weight:bold; color:black;"></td><td id="pts-RY" style="font-weight:bold; color:black;"></td><td id="last-res-ry" style="font-weight:bold; background:#e0d9d3; color:#333;"></td>
-                    </tr>
-                    <tr>
-                        <td class="group-name">Yantra Group CH</td><td class="gift-coin">-</td>
-                        <td class="input-cell" data-group="CH" data-range="00-09"></td><td class="input-cell" data-group="CH" data-range="10-19"></td><td class="input-cell" data-group="CH" data-range="20-29"></td><td class="input-cell" data-group="CH" data-range="30-39"></td><td class="input-cell" data-group="CH" data-range="40-49"></td><td class="input-cell" data-group="CH" data-range="50-59"></td><td class="input-cell" data-group="CH" data-range="60-69"></td><td class="input-cell" data-group="CH" data-range="70-79"></td><td class="input-cell" data-group="CH" data-range="80-89"></td><td class="input-cell" data-group="CH" data-range="90-99"></td><td class="input-cell" data-group="CH" data-range="All"></td>
-                        <td id="qty-CH" style="font-weight:bold; color:black;"></td><td id="pts-CH" style="font-weight:bold; color:black;"></td><td id="last-res-ch" style="font-weight:bold; background:#e0d9d3; color:#333;"></td>
-                    </tr>
-                    <tr>
-                        <td class="group-name">All</td><td class="gift-coin">-</td>
-                        <td class="input-cell" data-group="ALL" data-range="00-09"></td><td class="input-cell" data-group="ALL" data-range="10-19"></td><td class="input-cell" data-group="ALL" data-range="20-29"></td><td class="input-cell" data-group="ALL" data-range="30-39"></td><td class="input-cell" data-group="ALL" data-range="40-49"></td><td class="input-cell" data-group="ALL" data-range="50-59"></td><td class="input-cell" data-group="ALL" data-range="60-69"></td><td class="input-cell" data-group="ALL" data-range="70-79"></td><td class="input-cell" data-group="ALL" data-range="80-89"></td><td class="input-cell" data-group="ALL" data-range="90-99"></td>
-                        <td style="font-weight:bold; background-color:#e0d9d3;">TOTAL</td>
-                        <td id="total-qty" style="font-weight:bold; background-color:#e0d9d3;"></td><td id="cart-total-pts" style="font-weight:bold; background-color:#e0d9d3;">₹0.00</td><td style="background-color:#e0d9d3;"></td>
-                    </tr>
+        <!-- 6. ALL USERS LIST WITH DELETE OPTION -->
+        <div class="card" style="border-top-color: #3498db;">
+            <h2>👥 All Registered Users</h2>
+            <button class="btn btn-blue" onclick="loadAllUsers()" style="margin: 10px 0; width: 100%;">🔄 Refresh Users List</button>
+            <div style="max-height: 250px; overflow-y: auto;">
+                <table>
+                    <thead><tr><th>Phone (ID)</th><th>Password</th><th>Balance (₹)</th><th>Action</th></tr></thead>
+                    <tbody id="all-users-table"></tbody>
                 </table>
-            </div>
-        </div>
-
-        <div class="bottom-controls">
-            <div class="numpad">
-                <button class="num-btn" onclick="typeNumber('1')">1</button><button class="num-btn" onclick="typeNumber('2')">2</button><button class="num-btn" onclick="typeNumber('3')">3</button>
-                <button class="num-btn" onclick="typeNumber('4')">4</button><button class="num-btn" onclick="typeNumber('5')">5</button><button class="num-btn" onclick="typeNumber('6')">6</button>
-                <button class="num-btn" onclick="typeNumber('7')">7</button><button class="num-btn" onclick="typeNumber('8')">8</button><button class="num-btn" onclick="typeNumber('9')">9</button>
-                <button class="num-btn" onclick="typeNumber('0')">0</button><button class="num-btn" onclick="clearActiveCell()" style="background-color: #ddd;">C</button>
-            </div>
-            <div class="action-bar">
-                <button class="action-btn green" onclick="buyTickets()">BUY</button>
-                <button class="action-btn" onclick="clearEntireGrid()">CLEAR</button>
-                <button class="action-btn" onclick="cancelLastTicket()">CANCEL</button>
-                <button class="action-btn" onclick="openDatePicker()">YANTRA</button>
-                <button class="action-btn" onclick="openHistoryModal()">C.DETAILS</button>
-                <button class="action-btn" onclick="openPsumModal()">P.SUM</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modals -->
-    <div class="modal-overlay" id="date-modal">
-        <div class="modal-content">
-            <h3 style="color: black; margin-top: 0; margin-bottom: 15px;">Purana Result Dekhein</h3>
-            <input type="date" id="yantra-date-input" style="width: 90%; padding: 10px; font-size: 16px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;"><br>
-            <button class="btn-ok" onclick="submitDateAndOpenYantra()">Check Result</button>
-            <button class="btn-ok" onclick="document.getElementById('date-modal').style.display='none'" style="background: red;">Cancel</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="yantra-modal">
-        <div class="modal-content yantra-content">
-            <div class="modal-header">
-                <span id="yantra-header-date"></span>
-                <button class="close-btn" onclick="closeYantraModal()">Close</button>
-            </div>
-            <div class="table-scroll">
-                <table class="yantra-table" id="yantra-results-table">
-                    <tr><th>Event Time</th><th>NV</th><th>RR</th><th>RY</th><th>CH</th></tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="history-modal">
-        <div class="modal-content yantra-content">
-            <div class="modal-header">
-                <span>My Coupon Details (Bet History)</span>
-                <button class="close-btn" onclick="closeHistoryModal()">Close</button>
-            </div>
-            <div class="table-scroll">
-                <table class="yantra-table" id="history-table">
-                    <tr><th>Date & Time</th><th>Group</th><th>Number Range</th><th>Points</th><th>Status</th></tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="psum-modal">
-        <div class="modal-content" style="text-align: left;">
-            <div class="modal-header" style="margin-bottom: 10px;">
-                <span>Purchase Summary (P.SUM)</span>
-                <button class="close-btn" onclick="closePsumModal()">Close</button>
-            </div>
-            <div style="padding: 10px; color: black; font-size: 16px;">
-                <p><strong>Total Tickets Bought:</strong> <span id="psum-total-tickets" style="color: blue;">0</span></p>
-                <p><strong>Points Spent Today:</strong> ₹<span id="psum-today-spent" style="color: green;">0.00</span></p>
-                <p><strong>Total Points Spent:</strong> ₹<span id="psum-total-spent" style="color: red;">0.00</span></p>
             </div>
         </div>
     </div>
 
     <script>
-        let activeBox = document.querySelector('.selected-cell');
-        const allInputCells = document.querySelectorAll('.input-cell');
-        let currentTotal = 0;
-        let currentUser = localStorage.getItem('userPhone') || "Guest";
-        let currentBalance = parseFloat(localStorage.getItem('userBalance')) || 0;
-        
-        let isBettingClosed = false;
-
-        document.getElementById('welcome-phone').innerText = currentUser;
-        const balanceElement = document.getElementById('balance');
-        balanceElement.innerText = currentBalance.toFixed(2);
-
-        function playSound(id) { let sound = document.getElementById(id); if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); } }
-
-        // 🚀 SUPERFAST BALANCE FETCH & UI FIX
-        async function fetchLiveBalance() {
-            if (currentUser === "Guest") return; 
-            try {
-                let response = await fetch('/api/get-balance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
-                let data = await response.json();
-                
-                if (data.success && data.balance !== currentBalance) { 
-                    let isWin = data.balance > currentBalance; // Check if balance increased
+        // 🕒 NAYA FUNCTION: Sirf saaf AM/PM dikhayega
+        function generateTimeOptions() {
+            const timeSelect = document.getElementById('custom-time');
+            
+            for (let h = 8; h <= 23; h++) {
+                for (let m = 0; m < 60; m += 15) {
+                    let currentMins = (h * 60) + m;
                     
-                    // 1. Sabse pehle Screen par Balance Update karein
-                    currentBalance = data.balance; 
-                    balanceElement.innerText = currentBalance.toFixed(2); 
-                    localStorage.setItem('userBalance', currentBalance); 
-                    
-                    // 2. Uske baad Popup dikhayein (Taki screen hang na ho)
-                    if (isWin) {
-                        playSound('sound-win');
-                        setTimeout(() => {
-                            alert(`🎉 BADHAI HO!\nAap Jeet Gaye Hain!\nAapka naya balance hai: ₹${data.balance.toFixed(2)}`);
-                        }, 500); // Aadhe second ka intezar
+                    if (currentMins >= 510 && currentMins <= 1380) {
+                        // Backend ke liye format (Jaise 08:30)
+                        let hh = String(h).padStart(2, '0');
+                        let mm = String(m).padStart(2, '0');
+                        let timeStr = `${hh}:${mm}`; 
+
+                        // User ko dikhane ke liye format (Jaise 8:30 AM)
+                        let ampm = h >= 12 ? 'PM' : 'AM';
+                        let displayH = h % 12;
+                        if (displayH === 0) displayH = 12;
+                        let displayTime = `${displayH}:${mm} ${ampm}`; // Yahan clean kar diya gaya hai
+
+                        let option = document.createElement('option');
+                        option.value = timeStr; // Server ko jayega
+                        option.text = displayTime; // Admin ko dikhega
+                        timeSelect.appendChild(option);
                     }
                 }
-            } catch(e) {}
-        }
-        
-        // 🚀 1 Second mein Check (Pehle 3s tha)
-        setInterval(fetchLiveBalance, 1000); 
-
-        allInputCells.forEach(cell => { cell.addEventListener('click', function() { if (activeBox) activeBox.classList.remove('selected-cell'); activeBox = this; activeBox.classList.add('selected-cell'); }); });
-        function typeNumber(number) { if (activeBox) { activeBox.innerText = activeBox.innerText + number; updateCart(); } }
-        function clearActiveCell() { if (activeBox) { activeBox.innerText = ""; updateCart(); } }
-
-        function updateCart() {
-            let totalQty = 0, totalPts = 0;
-            let groupTotals = { "NV": {qty:0, pts:0}, "RR": {qty:0, pts:0}, "RY": {qty:0, pts:0}, "CH": {qty:0, pts:0}, "ALL": {qty:0, pts:0} };
-
-            allInputCells.forEach(cell => {
-                let points = parseInt(cell.innerText);
-                if (!isNaN(points) && points > 0) {
-                    let group = cell.getAttribute('data-group');
-                    if(groupTotals[group]) { 
-                        groupTotals[group].qty += 1; 
-                        groupTotals[group].pts += (points * 10.10);
-                    }
-                    totalQty += 1; 
-                    totalPts += (points * 10.10);
-                }
-            });
-
-            ['NV', 'RR', 'RY', 'CH'].forEach(g => {
-                let qCell = document.getElementById('qty-' + g), pCell = document.getElementById('pts-' + g);
-                if(qCell && pCell) { 
-                    qCell.innerText = groupTotals[g].qty > 0 ? groupTotals[g].qty : ''; 
-                    pCell.innerText = groupTotals[g].pts > 0 ? groupTotals[g].pts.toFixed(2) : ''; 
-                }
-            });
-
-            document.getElementById('total-qty').innerText = totalQty > 0 ? totalQty : '';
-            document.getElementById('cart-total-pts').innerText = totalPts > 0 ? "₹" + totalPts.toFixed(2) : '₹0.00';
-            currentTotal = parseFloat(totalPts.toFixed(2));
-        }
-
-        function clearEntireGrid() { allInputCells.forEach(cell => cell.innerText = ""); updateCart(); }
-
-        async function buyTickets() {
-            if (isBettingClosed) {
-                playSound('sound-error');
-                alert("Game abhi Band Hai! Ya aakhiri 1 minute bacha hai.");
-                return;
-            }
-
-            if (currentTotal === 0) { playSound('sound-error'); alert("Board khali hai!"); return; }
-            let myTickets = [];
-            allInputCells.forEach(cell => { let points = parseInt(cell.innerText); if (!isNaN(points) && points > 0) { myTickets.push({ group: cell.getAttribute('data-group'), number: cell.getAttribute('data-range'), points: points }); } });
-            try {
-                let response = await fetch('/api/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, totalCost: currentTotal, cartData: myTickets }) });
-                let data = await response.json();
-                if (data.success) { playSound('sound-buy'); currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); alert("Ticket Khareedi Gayi!\nBalance: ₹" + currentBalance.toFixed(2)); clearEntireGrid(); } 
-                else { playSound('sound-error'); alert("Error: " + data.message); }
-            } catch (error) { alert("Server connection error!"); }
-        }
-
-        async function cancelLastTicket() {
-            if (currentUser === "Guest") { alert("Pehle login karein!"); return; }
-            if (confirm("Kya aap apni aakhiri kharidi hui ticket sach mein Cancel karna chahte hain? Paise turant wapas aa jayenge.")) {
-                try {
-                    let response = await fetch('/api/cancel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
-                    let data = await response.json();
-                    if (data.success) { playSound('sound-win'); currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); alert("✅ " + data.message + "\nAapka naya balance: ₹" + currentBalance.toFixed(2)); } 
-                    else { playSound('sound-error'); alert("❌ Error: " + data.message); }
-                } catch (error) { alert("Server error!"); }
             }
         }
 
-        async function submitDeposit() {
-            const amount = document.getElementById('depositAmount').value, utr = document.getElementById('utrNumber').value;
-            if (!amount || !utr || utr.length < 12) { alert("Sahi Details dalein!"); return; }
-            const res = await fetch('/api/deposit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, amount: Number(amount), utr }) });
-            alert((await res.json()).message); document.getElementById('walletModal').style.display = 'none';
-        }
-
-        async function submitWithdraw() {
-            const amount = document.getElementById('withdrawAmount').value, bankDetails = document.getElementById('bankDetails').value;
-            if (!amount || amount <= 0) { alert("Kripya sahi amount dalein!"); return; }
-            if (amount < 10) { alert("Kam se kam 10 points nikal sakte hain!"); return; }
-            if (!bankDetails) { alert("Kripya apni UPI ID ya Bank Account Number dalein!"); return; }
+        async function fetchLiveBets() {
             try {
-                const response = await fetch('/api/withdraw', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, amount: Number(amount), bankDetails }) });
-                const data = await response.json(); alert(data.message);
-                if(data.success) { document.getElementById('withdrawModal').style.display = 'none'; currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); }
-            } catch(err) { alert("Server error!"); }
+                const data = await (await fetch('/api/admin/live-bets')).json();
+                const tbody = document.getElementById('live-bets-body'); tbody.innerHTML = '';
+                if (data.success) {
+                    let hasBets = false;
+                    for (let g in data.liveData) {
+                        for (let r in data.liveData[g]) {
+                            hasBets = true;
+                            tbody.innerHTML += `<tr><td>${g}</td><td>${r}</td><td style="color: red; font-weight: bold;">${data.liveData[g][r]} Pts</td></tr>`;
+                        }
+                    }
+                    if(!hasBets) tbody.innerHTML = '<tr><td colspan="3">Koi bet nahi hai.</td></tr>';
+                }
+            } catch (error) {}
         }
 
-        function openDatePicker() { 
-            document.getElementById('date-modal').style.display = 'flex'; 
-            let today = new Date();
-            let yyyy = today.getFullYear();
-            let mm = String(today.getMonth() + 1).padStart(2, '0');
-            let dd = String(today.getDate()).padStart(2, '0');
-            document.getElementById('yantra-date-input').value = `${yyyy}-${mm}-${dd}`;
-        }
-        
-        function submitDateAndOpenYantra() { 
-            let dateVal = document.getElementById('yantra-date-input').value;
-            if (!dateVal) return alert("Kripya date select karein!");
-            let parts = dateVal.split("-"); let formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-            document.getElementById('date-modal').style.display = 'none'; 
-            document.getElementById('yantra-modal').style.display = 'flex'; 
-            document.getElementById('yantra-header-date').innerText = "Result for: " + formattedDate;
-            fetchYantraResults(formattedDate); 
+        async function loadPendingDeposits() {
+            const data = await (await fetch('/api/admin/pending-deposits')).json();
+            const table = document.getElementById('deposit-requests-table'); table.innerHTML = ''; 
+            if(data.success && data.deposits.length > 0) {
+                data.deposits.forEach(dep => {
+                    table.innerHTML += `<tr><td>${dep.phone}</td><td style="color: green; font-weight: bold;">₹${dep.amount}</td><td>${dep.utr}</td>
+                        <td><button class="btn btn-green" onclick="handleDeposit('${dep._id}', 'Approved')">Approve</button> <button class="btn btn-red" onclick="handleDeposit('${dep._id}', 'Rejected')">Reject</button></td></tr>`;
+                });
+            } else table.innerHTML = '<tr><td colspan="4">Koi request nahi hai.</td></tr>';
         }
 
-        async function fetchYantraResults(selectedDate) {
-            const table = document.getElementById('yantra-results-table'); 
-            table.innerHTML = `<tr><th>Event Time</th><th>NV</th><th>RR</th><th>RY</th><th>CH</th></tr>`; 
+        async function handleDeposit(depositId, action) {
+            if(!confirm(`Kya aap isko ${action} karna chahte hain?`)) return;
+            const res = await fetch('/api/admin/handle-deposit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ depositId, action }) });
+            alert((await res.json()).message); loadPendingDeposits(); loadAllUsers();
+        }
+
+        async function loadPendingWithdrawals() {
+            const data = await (await fetch('/api/admin/pending-withdrawals')).json();
+            const table = document.getElementById('withdraw-requests-table'); table.innerHTML = ''; 
+            if(data.success && data.withdrawals.length > 0) {
+                data.withdrawals.forEach(req => {
+                    table.innerHTML += `<tr><td>${req.phone}</td><td style="color: red; font-weight: bold;">₹${req.amount}</td><td>${req.bankDetails}</td>
+                        <td><button class="btn btn-green" onclick="handleWithdraw('${req._id}', 'Approved')">Approve</button> <button class="btn btn-red" onclick="handleWithdraw('${req._id}', 'Rejected')">Reject</button></td></tr>`;
+                });
+            } else table.innerHTML = '<tr><td colspan="4">Koi naya withdrawal nahi hai.</td></tr>';
+        }
+
+        async function handleWithdraw(withdrawId, action) {
+            if(!confirm(`Kya aap withdrawal ko ${action} karna chahte hain?`)) return;
+            const res = await fetch('/api/admin/handle-withdrawal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ withdrawId, action }) });
+            alert((await res.json()).message); loadPendingWithdrawals(); loadAllUsers();
+        }
+
+        async function declareResult() {
+            let nv = document.getElementById('win-nv').value, rr = document.getElementById('win-rr').value;
+            let ry = document.getElementById('win-ry').value, ch = document.getElementById('win-ch').value;
+            let customDate = document.getElementById('custom-date').value.trim();
+            
+            let customTime = document.getElementById('custom-time').value;
+
+            if(!customTime) { alert("❌ Kripya Result ka Time Dropdown se zaroor select karein!"); return; }
+            if(!nv || !rr || !ry || !ch) { alert("Sabhi fields bharein!"); return; }
+            if(!confirm(`Kya aap sach mein result daalna chahte hain?`)) return;
+
+            let res = await fetch('/api/admin/result', { 
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ nv, rr, ry, ch, customDate, customTime }) 
+            });
+            alert((await res.json()).message);
+            
+            ['win-nv','win-rr','win-ry','win-ch', 'custom-date', 'custom-time'].forEach(id => document.getElementById(id).value = "");
+            fetchLiveBets(); loadAllUsers();
+        }
+
+        async function modifyPoints(action) {
+            let targetPhone = document.getElementById('target-phone').value, points = document.getElementById('target-points').value;
+            if(!targetPhone || !points) return;
+            let res = await fetch('/api/admin/modify-points', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetPhone, points, action }) });
+            alert((await res.json()).message);
+            loadAllUsers(); 
+        }
+
+        async function loadAllUsers() {
             try {
-                const response = await fetch('/api/results', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: selectedDate }) });
-                const data = await response.json();
-                if(data.success && data.results.length > 0) { 
-                    data.results.forEach(res => { table.innerHTML += `<tr><td style="font-weight: bold; color: blue;">${res.time}</td><td>${res.nv || '-'}</td><td>${res.rr || '-'}</td><td>${res.ry || '-'}</td><td>${res.ch || '-'}</td></tr>`; });
-                } else { table.innerHTML += `<tr><td colspan="5">Is date par koi result declare nahi hua hai.</td></tr>`; }
-            } catch(e) {}
-        }
-        function closeYantraModal() { document.getElementById('yantra-modal').style.display = 'none'; }
-
-        async function openHistoryModal() {
-            document.getElementById('history-modal').style.display = 'flex'; const table = document.getElementById('history-table'); table.innerHTML = `<tr><th>Date & Time</th><th>Group</th><th>Number Range</th><th>Points</th><th>Status</th></tr>`;
-            try {
-                const response = await fetch('/api/history', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
-                const data = await response.json();
-                let hasWonAny = false; 
-                if (data.success && data.tickets.length > 0) {
-                    data.tickets.forEach(ticket => {
-                        let dateObj = new Date(ticket.date); let dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString(); 
-                        let statusColor = ticket.status === 'Won' ? 'green' : (ticket.status === 'Lost' ? 'red' : (ticket.status === 'Cancelled' ? 'gray' : 'blue'));
-                        if (ticket.status === 'Won') hasWonAny = true; 
-                        ticket.tickets.forEach(bet => { table.innerHTML += `<tr><td>${dateStr}</td><td>${bet.group}</td><td>${bet.number}</td><td>${bet.points}</td><td style="color: ${statusColor}; font-weight: bold;">${ticket.status}</td></tr>`; });
+                const res = await fetch('/api/admin/users');
+                const data = await res.json();
+                const tbody = document.getElementById('all-users-table');
+                tbody.innerHTML = '';
+                if (data.success && data.users.length > 0) {
+                    data.users.forEach(u => {
+                        tbody.innerHTML += `<tr>
+                            <td style="font-weight: bold;">${u.phone}</td>
+                            <td>${u.password}</td>
+                            <td style="color: green; font-weight: bold;">₹${u.balance.toFixed(2)}</td>
+                            <td><button class="btn btn-red" style="padding: 5px 10px; font-size: 11px;" onclick="deleteUser('${u.phone}')">🗑️ Remove</button></td>
+                        </tr>`;
                     });
-                } else table.innerHTML += `<tr><td colspan="5">Aapne abhi tak koi ticket nahi kharidi hai.</td></tr>`;
-            } catch (err) { table.innerHTML += `<tr><td colspan="5">History load nahi ho payi.</td></tr>`; }
-        }
-        function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
-
-        async function openPsumModal() {
-            document.getElementById('psum-modal').style.display = 'flex';
-            try {
-                const response = await fetch('/api/purchase-summary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
-                const data = await response.json();
-                if (data.success) { document.getElementById('psum-total-tickets').innerText = data.totalTickets; document.getElementById('psum-today-spent').innerText = data.todaySpent.toFixed(2); document.getElementById('psum-total-spent').innerText = data.totalSpent.toFixed(2); }
-            } catch (err) {}
-        }
-        function closePsumModal() { document.getElementById('psum-modal').style.display = 'none'; }
-
-        function startEventTimer() {
-            setInterval(() => {
-                let now = new Date();
-                let min = now.getMinutes();
-                let sec = now.getSeconds();
-                let hours = now.getHours();
-
-                let currentMins = hours * 60 + min;
-                let startMins = 510; // 8:30 AM
-                let endMins = 1380; // 11:00 PM
-
-                if (currentMins < startMins || currentMins >= endMins) {
-                    document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB'); 
-                    document.getElementById('event-code').innerText = "--:--";
-                    let countdownDisplay = document.getElementById('countdown-display');
-                    countdownDisplay.innerText = "GAME CLOSED";
-                    countdownDisplay.style.color = "red";
-                    isBettingClosed = true;
-                    return;
-                }
-
-                let lastSlotMinutes = min - (min % 15);
-                let eventCodeStr = String(hours).padStart(2, '0') + ":" + String(lastSlotMinutes).padStart(2, '0');
-                
-                document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB'); 
-                document.getElementById('event-code').innerText = eventCodeStr;
-
-                let mLeft = 15 - (min % 15) - 1; 
-                let sLeft = 60 - sec; 
-                if (sLeft === 60) { sLeft = 0; mLeft += 1; }
-                
-                let countdownDisplay = document.getElementById('countdown-display');
-                countdownDisplay.innerText = `00:${mLeft.toString().padStart(2, '0')}:${sLeft.toString().padStart(2, '0')}`;
-                
-                if (mLeft === 0) {
-                    countdownDisplay.style.color = "red";
-                    isBettingClosed = true;
                 } else {
-                    countdownDisplay.style.color = "white";
-                    isBettingClosed = false;
+                    tbody.innerHTML = '<tr><td colspan="4">Abhi tak kisi ne account nahi banaya hai.</td></tr>';
                 }
-            }, 1000);
-        }
-        startEventTimer();
-
-        function updateLiveResultColumn() {
-            let now = new Date();
-            let minutes = now.getMinutes(); let hours = now.getHours();
-            
-            let currentMins = hours * 60 + minutes;
-            if (currentMins < 510 || currentMins >= 1380) {
-                document.getElementById('last-result-time').innerText = "CLOSED";
-                document.getElementById('last-res-nv').innerText = ""; 
-                document.getElementById('last-res-rr').innerText = ""; 
-                document.getElementById('last-res-ry').innerText = ""; 
-                document.getElementById('last-res-ch').innerText = "";
-                return;
+            } catch (error) {
+                console.log("Users load nahi ho paye.");
             }
-
-            let lastSlotMinutes = minutes - (minutes % 15);
-            let hh = hours.toString().padStart(2, '0'); let mmSlot = lastSlotMinutes.toString().padStart(2, '0');
-            let expectedTimeStr = hh + ":" + mmSlot;
-            
-            document.getElementById('last-result-time').innerText = expectedTimeStr;
-
-            let dd = String(now.getDate()).padStart(2, '0'); 
-            let mm = String(now.getMonth() + 1).padStart(2, '0'); 
-            let yyyy = now.getFullYear();
-            let todayStr = `${dd}/${mm}/${yyyy}`;
-
-            fetch('/api/results', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: todayStr })
-            }).then(res => res.json()).then(data => {
-                if (data.success && data.results.length > 0) {
-                    let exactResult = data.results.find(r => r.time === expectedTimeStr);
-                    if (exactResult) {
-                        document.getElementById('last-res-nv').innerText = exactResult.nv ? "NV" + exactResult.nv : "-";
-                        document.getElementById('last-res-rr').innerText = exactResult.rr ? "RR" + exactResult.rr : "-";
-                        document.getElementById('last-res-ry').innerText = exactResult.ry ? "RY" + exactResult.ry : "-";
-                        document.getElementById('last-res-ch').innerText = exactResult.ch ? "CH" + exactResult.ch : "-";
-                    } else {
-                        document.getElementById('last-res-nv').innerText = ""; 
-                        document.getElementById('last-res-rr').innerText = ""; 
-                        document.getElementById('last-res-ry').innerText = ""; 
-                        document.getElementById('last-res-ch').innerText = "";
-                    }
-                } else {
-                    document.getElementById('last-res-nv').innerText = ""; 
-                    document.getElementById('last-res-rr').innerText = ""; 
-                    document.getElementById('last-res-ry').innerText = ""; 
-                    document.getElementById('last-res-ch').innerText = "";
-                }
-            }).catch(e => console.log("Result fetch error:", e));
         }
-        
-        // 🚀 2 Seconds mein Result Update (Pehle 10s tha)
-        setInterval(updateLiveResultColumn, 2000); 
-        updateLiveResultColumn();
+
+        async function deleteUser(phone) {
+            if(!confirm(`⚠️ WARNING: Kya aap sach mein User ID ${phone} ko hamesha ke liye delete karna chahte hain? Data wapas nahi aayega!`)) return;
+            
+            try {
+                let res = await fetch('/api/admin/delete-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+                let data = await res.json();
+                alert(data.message);
+                loadAllUsers(); 
+            } catch (error) {
+                alert("Error deleting user.");
+            }
+        }
+
+        function logoutAdmin() { window.location.href = "login.html"; }
+
+        window.onload = function() {
+            generateTimeOptions(); // Page khulte hi List ready ho jayegi
+            loadPendingDeposits();
+            loadPendingWithdrawals(); 
+            fetchLiveBets();
+            loadAllUsers(); 
+        };
     </script>
 </body>
 </html>
