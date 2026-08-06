@@ -132,7 +132,7 @@ app.post('/api/purchase-summary', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 NAYA CHANGE: Admin Result Smart Fix
+// 🚀 NAYA CHANGE: Advance/Pre-Set Result Logic
 app.post('/api/admin/result', async (req, res) => {
     const { nv, rr, ry, ch, customDate, customTime } = req.body;
     try {
@@ -141,16 +141,40 @@ app.post('/api/admin/result', async (req, res) => {
         let dd = String(d.getDate()).padStart(2, '0'); let mm = String(d.getMonth() + 1).padStart(2, '0');
         let finalDate = customDate ? customDate : `${dd}/${mm}/${d.getFullYear()}`; 
         
-        // Agar admin custom time na dale, toh current 15-min slot nikal lo
-        let hh = String(d.getHours()).padStart(2, '0');
-        let mns = d.getMinutes();
-        let slotMns = String(mns - (mns % 15)).padStart(2, '0');
-        
-        let finalTime = customTime ? customTime : `${hh}:${slotMns}`;
+        let finalTime = customTime;
+        if (!finalTime) {
+            let hh = String(d.getHours()).padStart(2, '0');
+            let mns = d.getMinutes();
+            let slotMns = String(mns - (mns % 15)).padStart(2, '0');
+            finalTime = `${hh}:${slotMns}`;
+        }
 
-        const newResult = new Result({ date: finalDate, time: finalTime, nv, rr, ry, ch });
-        await newResult.save();
+        // Agar admin ne pehle se koi result set kiya tha, aur abhi edit kar raha hai toh update hoga
+        let existing = await Result.findOne({ date: finalDate, time: finalTime });
+        if (existing) {
+            existing.nv = nv; existing.rr = rr; existing.ry = ry; existing.ch = ch;
+            await existing.save();
+        } else {
+            const newResult = new Result({ date: finalDate, time: finalTime, nv, rr, ry, ch });
+            await newResult.save();
+        }
 
+        // Check karte hain ki kya ye time Future (aage) ka hai?
+        let isFuture = false;
+        if (finalDate === `${dd}/${mm}/${d.getFullYear()}`) {
+            let currentMinutes = d.getHours() * 60 + d.getMinutes();
+            let timeParts = finalTime.split(':');
+            let resultMinutes = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
+            if (resultMinutes > currentMinutes) {
+                isFuture = true; // Haan, yeh future ka time hai
+            }
+        }
+
+        if (isFuture) {
+            return res.json({ success: true, message: `✅ Advance Result Saved for Time: ${finalTime}.\nJab time aayega, bot automatically result ghoshit karega!` });
+        }
+
+        // Agar Past ya Current time ka result hai, toh turant tickets settle kar do
         const pendingTickets = await Ticket.find({ status: 'Pending' });
         const resultsDict = { "NV": nv, "RR": rr, "RY": ry, "CH": ch };
 
@@ -171,7 +195,7 @@ app.post('/api/admin/result', async (req, res) => {
             } else { ticket.status = 'Lost'; }
             await ticket.save(); 
         }
-        res.json({ success: true, message: `Admin Result Saved for Time: ${finalTime}` });
+        res.json({ success: true, message: `✅ Result Saved & Tickets Settled for Time: ${finalTime}` });
     } catch (error) { res.json({ success: false }); }
 });
 
@@ -275,7 +299,7 @@ app.post('/api/admin/delete-user', async (req, res) => {
 });
 
 // ==========================================
-// 🤖 SMART AUTO-RESULT BOT (INDIA TIMEZONE FIX)
+// 🤖 SMART AUTO-RESULT BOT (WITH PRE-SET CAPABILITY)
 // ==========================================
 let aakhiriAutoSlot = ""; 
 
@@ -299,43 +323,58 @@ setInterval(async () => {
 
     if (aakhiriAutoSlot !== uniqueSlotCheck) {
         try {
+            // Check karte hain kya Admin ne is time ka result pehle se banakar save kiya hai?
             let existingResult = await Result.findOne({ date: todayStr, time: currentSlotTime });
+            
+            let finalNv, finalRr, finalRy, finalCh;
+
             if (existingResult) {
-                aakhiriAutoSlot = uniqueSlotCheck; 
+                // Haan! Admin ne pehle se set kar rakha tha, toh usko hi use karo!
+                finalNv = existingResult.nv;
+                finalRr = existingResult.rr;
+                finalRy = existingResult.ry;
+                finalCh = existingResult.ch;
+                console.log(`🎯 ADVANCE ADMIN RESULT USED: Time ${currentSlotTime}`);
             } else {
-                aakhiriAutoSlot = uniqueSlotCheck;
-                
-                let rNV = Math.floor(Math.random() * 100).toString().padStart(2, '0');
-                let rRR = Math.floor(Math.random() * 100).toString().padStart(2, '0');
-                let rRY = Math.floor(Math.random() * 100).toString().padStart(2, '0');
-                let rCH = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+                // Nahi kiya tha, toh Bot naya random number banayega
+                finalNv = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+                finalRr = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+                finalRy = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+                finalCh = Math.floor(Math.random() * 100).toString().padStart(2, '0');
 
-                const botResult = new Result({ date: todayStr, time: currentSlotTime, nv: rNV, rr: rRR, ry: rRY, ch: rCH });
+                const botResult = new Result({ date: todayStr, time: currentSlotTime, nv: finalNv, rr: finalRr, ry: finalRy, ch: finalCh });
                 await botResult.save();
-
-                const pendingTickets = await Ticket.find({ status: 'Pending' });
-                const resultsDict = { "NV": rNV, "RR": rRR, "RY": rRY, "CH": rCH };
-
-                for (let ticket of pendingTickets) {
-                    let totalWinningAmount = 0;
-                    ticket.tickets.forEach(bet => {
-                        let winningNumber = resultsDict[bet.group]; 
-                        if (winningNumber && bet.number.includes("-")) {
-                            let winNum = parseInt(winningNumber);
-                            let minVal = parseInt(bet.number.split("-")[0]);
-                            let maxVal = parseInt(bet.number.split("-")[1]);
-                            if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 9); 
-                        }
-                    });
-                    if (totalWinningAmount > 0) {
-                        ticket.status = 'Won';
-                        const user = await User.findOne({ phone: ticket.phone });
-                        if (user) { user.balance += totalWinningAmount; await user.save(); }
-                    } else { ticket.status = 'Lost'; }
-                    await ticket.save(); 
-                }
                 console.log(`🤖 SMART BOT NE RESULT NIKAL DIYA: Time ${currentSlotTime}`);
             }
+
+            // Aakhiri 15-minute slot ke pehle kharidi gayi sabhi pending tickets uthao (Safety Feature)
+            let cutoff = new Date();
+            cutoff.setMinutes(cutoff.getMinutes() - (cutoff.getMinutes() % 15));
+            cutoff.setSeconds(0, 0); // Excatly 08:30:00
+
+            const pendingTickets = await Ticket.find({ status: 'Pending', date: { $lt: cutoff } });
+            const resultsDict = { "NV": finalNv, "RR": finalRr, "RY": finalRy, "CH": finalCh };
+
+            // Ab un pending tickets ko jeet-haar mein baanto
+            for (let ticket of pendingTickets) {
+                let totalWinningAmount = 0;
+                ticket.tickets.forEach(bet => {
+                    let winningNumber = resultsDict[bet.group]; 
+                    if (winningNumber && bet.number.includes("-")) {
+                        let winNum = parseInt(winningNumber);
+                        let minVal = parseInt(bet.number.split("-")[0]);
+                        let maxVal = parseInt(bet.number.split("-")[1]);
+                        if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 9); 
+                    }
+                });
+                if (totalWinningAmount > 0) {
+                    ticket.status = 'Won';
+                    const user = await User.findOne({ phone: ticket.phone });
+                    if (user) { user.balance += totalWinningAmount; await user.save(); }
+                } else { ticket.status = 'Lost'; }
+                await ticket.save(); 
+            }
+            aakhiriAutoSlot = uniqueSlotCheck; // Done for this 15-min slot
         } catch (err) { console.log("Auto-Bot error:", err); }
     }
 }, 5000);
