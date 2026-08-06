@@ -10,7 +10,7 @@
         h1, h2 { color: #333; text-align: center; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .card { background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
-        input, button { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        input, select, button { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; } /* 👈 Select tag joda gaya */
         button { background-color: #008000; color: white; border: none; cursor: pointer; font-weight: bold; font-size: 16px; border-radius: 5px;}
         button.red { background-color: #d10000; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;}
@@ -29,8 +29,11 @@
                 <label style="font-size: 14px; font-weight: bold; color: blue;">1. Date (Aaj ke liye khali chhod dein):</label>
                 <input type="date" id="resDate">
                 
-                <label style="font-size: 14px; font-weight: bold; color: red; margin-top: 10px; display: block;">2. Time Select Karein (Jaroori Hai):</label>
-                <input type="time" id="resTime" style="border: 2px solid red; font-size: 18px;">
+                <label style="font-size: 14px; font-weight: bold; color: red; margin-top: 10px; display: block;">2. Kis Time Ke Liye Result Dalna Hai? (Select Karein):</label>
+                <!-- 🚀 NAYA: Time Dropdown Menu -->
+                <select id="resTime" style="border: 2px solid red; font-size: 16px; font-weight: bold; cursor: pointer;">
+                    <option value="">-- Time Select Karein --</option>
+                </select>
                 
                 <label style="font-size: 14px; font-weight: bold; color: blue; margin-top: 10px; display: block;">3. Winning Numbers Dalein:</label>
                 <div style="display: flex; gap: 10px;">
@@ -80,6 +83,23 @@
     </div>
 
     <script>
+        // 🕒 NAYA FUNCTION: Time Dropdown banane ke liye (Har 15 minute ka slot)
+        function generateTimeOptions() {
+            const timeSelect = document.getElementById('resTime');
+            for (let h = 0; h < 24; h++) {
+                for (let m = 0; m < 60; m += 15) {
+                    let hh = String(h).padStart(2, '0');
+                    let mm = String(m).padStart(2, '0');
+                    let timeStr = `${hh}:${mm}`;
+                    let option = document.createElement('option');
+                    option.value = timeStr;
+                    option.text = timeStr + " (Result Time)";
+                    timeSelect.appendChild(option);
+                }
+            }
+        }
+        generateTimeOptions(); // Page khulte hi Options ban jayenge
+
         async function submitResult() {
             let dateVal = document.getElementById('resDate').value;
             let timeVal = document.getElementById('resTime').value;
@@ -91,7 +111,7 @@
             }
 
             if(!timeVal) {
-                alert("❌ Kripya Result ka Time zaroor select karein! (Jaise 09:30 ya 10:00)");
+                alert("❌ Kripya Result ka Time Box (Options) se zaroor select karein!");
                 return;
             }
 
@@ -107,6 +127,7 @@
             if (ans.success) {
                 document.getElementById('nv').value = ""; document.getElementById('rr').value = "";
                 document.getElementById('ry').value = ""; document.getElementById('ch').value = "";
+                document.getElementById('resTime').value = ""; // Time ko wapas khali kar dega
             }
         }
 
