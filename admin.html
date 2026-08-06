@@ -17,7 +17,7 @@
         .btn-green { background-color: #27ae60; }
         .btn-red { background-color: #c0392b; }
         .btn-blue { background-color: #2980b9; }
-        .input-box { padding: 8px; width: 100%; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; text-align: center; font-size: 14px; }
+        .input-box { padding: 8px; width: 100%; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; text-align: center; }
     </style>
 </head>
 <body>
@@ -43,16 +43,12 @@
             <h2>🏆 Set Result</h2>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px;">
-                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Date (DD/MM/YYYY):<br><span style="font-size: 10px; color: #bdc3c7;">Khali chhoda to aaj ki date aayegi</span></label>
+                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Purani Date (DD/MM/YYYY):<br><span style="font-size: 10px; color: #bdc3c7;">Khali chhoda to aaj ki date aayegi</span></label>
                     <input type="text" class="input-box" id="custom-date" placeholder="Jaise: 15/07/2026" style="width: 55%;">
                 </div>
-                
-                <!-- 🚀 NAYA: Time Dropdown Menu -->
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px;">
-                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Result Time (Select):<br><span style="font-size: 10px; color: #bdc3c7;">Jaroori Hai</span></label>
-                    <select class="input-box" id="custom-time" style="width: 55%; cursor: pointer;">
-                        <option value="">-- Time Select --</option>
-                    </select>
+                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Purana Time:<br><span style="font-size: 10px; color: #bdc3c7;">Khali chhoda to abhi ka time aayega</span></label>
+                    <input type="text" class="input-box" id="custom-time" placeholder="Jaise: 14:15:00" style="width: 55%;">
                 </div>
 
                 <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra NV:</label><input type="text" class="input-box" id="win-nv" placeholder="47"></div>
@@ -107,6 +103,7 @@
             <button class="btn btn-blue" onclick="loadAllUsers()" style="margin: 10px 0; width: 100%;">🔄 Refresh Users List</button>
             <div style="max-height: 250px; overflow-y: auto;">
                 <table>
+                    <!-- 🚀 NAYA: Action column add kiya -->
                     <thead><tr><th>Phone (ID)</th><th>Password</th><th>Balance (₹)</th><th>Action</th></tr></thead>
                     <tbody id="all-users-table"></tbody>
                 </table>
@@ -115,22 +112,6 @@
     </div>
 
     <script>
-        // 🕒 NAYA FUNCTION: Time Menu Banane Ke Liye
-        function generateTimeOptions() {
-            const timeSelect = document.getElementById('custom-time');
-            for (let h = 0; h < 24; h++) {
-                for (let m = 0; m < 60; m += 15) {
-                    let hh = String(h).padStart(2, '0');
-                    let mm = String(m).padStart(2, '0');
-                    let timeStr = `${hh}:${mm}`;
-                    let option = document.createElement('option');
-                    option.value = timeStr;
-                    option.text = timeStr;
-                    timeSelect.appendChild(option);
-                }
-            }
-        }
-
         async function fetchLiveBets() {
             try {
                 const data = await (await fetch('/api/admin/live-bets')).json();
@@ -186,11 +167,8 @@
             let nv = document.getElementById('win-nv').value, rr = document.getElementById('win-rr').value;
             let ry = document.getElementById('win-ry').value, ch = document.getElementById('win-ch').value;
             let customDate = document.getElementById('custom-date').value.trim();
-            
-            // 🚀 NAYA: Time ab dropdown menu se aayega
-            let customTime = document.getElementById('custom-time').value;
+            let customTime = document.getElementById('custom-time').value.trim();
 
-            if(!customTime) { alert("❌ Kripya Result ka Time zaroor select karein!"); return; }
             if(!nv || !rr || !ry || !ch) { alert("Sabhi fields bharein!"); return; }
             if(!confirm(`Kya aap sach mein result daalna chahte hain?`)) return;
 
@@ -200,7 +178,6 @@
             });
             alert((await res.json()).message);
             
-            // Clear karne ka function
             ['win-nv','win-rr','win-ry','win-ch', 'custom-date', 'custom-time'].forEach(id => document.getElementById(id).value = "");
             fetchLiveBets(); loadAllUsers();
         }
@@ -221,6 +198,7 @@
                 tbody.innerHTML = '';
                 if (data.success && data.users.length > 0) {
                     data.users.forEach(u => {
+                        // 🚀 NAYA: Delete button add kiya gaya har user ke aage
                         tbody.innerHTML += `<tr>
                             <td style="font-weight: bold;">${u.phone}</td>
                             <td>${u.password}</td>
@@ -236,6 +214,7 @@
             }
         }
 
+        // 🚀 NAYA: Delete User ka function
         async function deleteUser(phone) {
             if(!confirm(`⚠️ WARNING: Kya aap sach mein User ID ${phone} ko hamesha ke liye delete karna chahte hain? Data wapas nahi aayega!`)) return;
             
@@ -247,7 +226,7 @@
                 });
                 let data = await res.json();
                 alert(data.message);
-                loadAllUsers(); 
+                loadAllUsers(); // Delete hone ke baad list turant refresh ho jayegi
             } catch (error) {
                 alert("Error deleting user.");
             }
@@ -256,7 +235,6 @@
         function logoutAdmin() { window.location.href = "login.html"; }
 
         window.onload = function() {
-            generateTimeOptions(); // 🚀 NAYA: Page khulte hi time list ban jayegi
             loadPendingDeposits();
             loadPendingWithdrawals(); 
             fetchLiveBets();
