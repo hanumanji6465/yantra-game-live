@@ -303,7 +303,7 @@
         async function buyTickets() {
             if (isBettingClosed) {
                 playSound('sound-error');
-                alert("Time up! Aakhiri 1 minute mein ticket nahi khareed sakte.");
+                alert("Game abhi Band Hai! Ya aakhiri 1 minute bacha hai.");
                 return;
             }
 
@@ -417,6 +417,21 @@
                 let sec = now.getSeconds();
                 let hours = now.getHours();
 
+                // 🚀 GAME TIME LOCK LOGIC
+                let currentMins = hours * 60 + min;
+                let startMins = 510; // 8:30 AM
+                let endMins = 1380; // 11:00 PM
+
+                if (currentMins < startMins || currentMins >= endMins) {
+                    document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB'); 
+                    document.getElementById('event-code').innerText = "--:--";
+                    let countdownDisplay = document.getElementById('countdown-display');
+                    countdownDisplay.innerText = "GAME CLOSED";
+                    countdownDisplay.style.color = "red";
+                    isBettingClosed = true;
+                    return;
+                }
+
                 let lastSlotMinutes = min - (min % 15);
                 let eventCodeStr = String(hours).padStart(2, '0') + ":" + String(lastSlotMinutes).padStart(2, '0');
                 
@@ -444,6 +459,18 @@
         function updateLiveResultColumn() {
             let now = new Date();
             let minutes = now.getMinutes(); let hours = now.getHours();
+            
+            // 🚀 RESULT TIME LOCK LOGIC
+            let currentMins = hours * 60 + minutes;
+            if (currentMins < 510 || currentMins >= 1380) {
+                document.getElementById('last-result-time').innerText = "CLOSED";
+                document.getElementById('last-res-nv').innerText = ""; 
+                document.getElementById('last-res-rr').innerText = ""; 
+                document.getElementById('last-res-ry').innerText = ""; 
+                document.getElementById('last-res-ch').innerText = "";
+                return;
+            }
+
             let lastSlotMinutes = minutes - (minutes % 15);
             let hh = hours.toString().padStart(2, '0'); let mmSlot = lastSlotMinutes.toString().padStart(2, '0');
             let expectedTimeStr = hh + ":" + mmSlot;
