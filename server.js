@@ -114,7 +114,7 @@ app.post('/api/cancel', async (req, res) => {
 
 app.post('/api/history', async (req, res) => {
     try {
-        const tickets = await Ticket.find({ phone: req.body.phone }).sort({ date: -1 }).limit(20);
+        const tickets = await Ticket.find({ phone: req.body.phone }).sort({ date: -1 });
         res.json({ success: true, tickets });
     } catch (error) { res.json({ success: false }); }
 });
@@ -132,6 +132,7 @@ app.post('/api/purchase-summary', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
+// 🚀 NAYA CHANGE: Admin Result Smart Fix
 app.post('/api/admin/result', async (req, res) => {
     const { nv, rr, ry, ch, customDate, customTime } = req.body;
     try {
@@ -140,9 +141,12 @@ app.post('/api/admin/result', async (req, res) => {
         let dd = String(d.getDate()).padStart(2, '0'); let mm = String(d.getMonth() + 1).padStart(2, '0');
         let finalDate = customDate ? customDate : `${dd}/${mm}/${d.getFullYear()}`; 
         
+        // Agar admin custom time na dale, toh current 15-min slot nikal lo
         let hh = String(d.getHours()).padStart(2, '0');
-        let mns = String(d.getMinutes()).padStart(2, '0');
-        let finalTime = customTime ? customTime : `${hh}:${mns}`;
+        let mns = d.getMinutes();
+        let slotMns = String(mns - (mns % 15)).padStart(2, '0');
+        
+        let finalTime = customTime ? customTime : `${hh}:${slotMns}`;
 
         const newResult = new Result({ date: finalDate, time: finalTime, nv, rr, ry, ch });
         await newResult.save();
@@ -167,7 +171,7 @@ app.post('/api/admin/result', async (req, res) => {
             } else { ticket.status = 'Lost'; }
             await ticket.save(); 
         }
-        res.json({ success: true, message: "Admin dwara Result Save Ho Gaya!" });
+        res.json({ success: true, message: `Admin Result Saved for Time: ${finalTime}` });
     } catch (error) { res.json({ success: false }); }
 });
 
@@ -276,7 +280,6 @@ app.post('/api/admin/delete-user', async (req, res) => {
 let aakhiriAutoSlot = ""; 
 
 setInterval(async () => {
-    // 🚀 INDIA TIME (IST) FORCE KIYA GAYA HAI
     let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
     let now = new Date(nowStr);
     
