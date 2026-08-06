@@ -17,7 +17,7 @@
         .btn-green { background-color: #27ae60; }
         .btn-red { background-color: #c0392b; }
         .btn-blue { background-color: #2980b9; }
-        .input-box { padding: 8px; width: 100%; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; text-align: center; color: #000; }
+        .input-box { padding: 8px; width: 100%; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; text-align: center; color: #000; font-weight: bold;}
     </style>
 </head>
 <body>
@@ -47,10 +47,10 @@
                     <input type="text" class="input-box" id="custom-date" placeholder="Jaise: 15/07/2026" style="width: 55%;">
                 </div>
                 
-                <!-- 🚀 NAYA: Time ke liye Dropdown Menu lagaya gaya hai -->
+                <!-- 🚀 NAYA: Time Dropdown Menu -->
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px;">
                     <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Result Time (Dropdown):<br><span style="font-size: 10px; color: #bdc3c7;">List se time select karein</span></label>
-                    <select class="input-box" id="custom-time" style="width: 55%; cursor: pointer; font-weight: bold;">
+                    <select class="input-box" id="custom-time" style="width: 55%; cursor: pointer; font-size: 14px;">
                         <option value="">-- Select Time --</option>
                     </select>
                 </div>
@@ -115,17 +115,24 @@
     </div>
 
     <script>
-        // 🕒 NAYA FUNCTION: Time Dropdown me options bharne ke liye
+        // 🕒 NAYA FUNCTION: Dropdown me AM/PM dikhane ke liye
         function generateTimeOptions() {
             const timeSelect = document.getElementById('custom-time');
             for (let h = 0; h < 24; h++) {
                 for (let m = 0; m < 60; m += 15) {
                     let hh = String(h).padStart(2, '0');
                     let mm = String(m).padStart(2, '0');
-                    let timeStr = `${hh}:${mm}`;
+                    let timeStr = `${hh}:${mm}`; // 24 Ghante ka time (Database ke liye)
+
+                    // AM/PM Format Banane ke liye
+                    let ampm = h >= 12 ? 'PM' : 'AM';
+                    let displayH = h % 12;
+                    if (displayH === 0) displayH = 12;
+                    let displayTime = `${String(displayH).padStart(2, '0')}:${mm} ${ampm}`;
+
                     let option = document.createElement('option');
-                    option.value = timeStr;
-                    option.text = timeStr;
+                    option.value = timeStr; 
+                    option.text = `${timeStr} (Yani ${displayTime})`; // List me dono dikhenge
                     timeSelect.appendChild(option);
                 }
             }
@@ -187,10 +194,8 @@
             let ry = document.getElementById('win-ry').value, ch = document.getElementById('win-ch').value;
             let customDate = document.getElementById('custom-date').value.trim();
             
-            // 🚀 NAYA: Dropdown se value nikalna
             let customTime = document.getElementById('custom-time').value;
 
-            // 🚀 NAYA: Time check karna zaroori kar diya gaya hai
             if(!customTime) { alert("❌ Kripya Result ka Time Dropdown se zaroor select karein!"); return; }
             if(!nv || !rr || !ry || !ch) { alert("Sabhi fields bharein!"); return; }
             if(!confirm(`Kya aap sach mein result daalna chahte hain?`)) return;
@@ -256,7 +261,7 @@
         function logoutAdmin() { window.location.href = "login.html"; }
 
         window.onload = function() {
-            generateTimeOptions(); // 🚀 NAYA: Page khulte hi List ready ho jayegi
+            generateTimeOptions(); // Page khulte hi List ready ho jayegi
             loadPendingDeposits();
             loadPendingWithdrawals(); 
             fetchLiveBets();
