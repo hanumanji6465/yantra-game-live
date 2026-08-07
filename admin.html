@@ -1,365 +1,276 @@
-// 🚀 INDIA TIMEZONE FIX
-process.env.TZ = 'Asia/Kolkata';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yantra Game - Admin Panel</title>
+    <style>
+        body { background-color: #2c3e50; color: #ecf0f1; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .header { background-color: #e74c3c; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h1, h2, h3 { margin: 0; }
+        .dashboard-grid { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+        .card { background-color: #34495e; padding: 20px; border-radius: 8px; flex: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border-top: 4px solid #e74c3c; min-width: 300px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background-color: #ecf0f1; color: #2c3e50; border-radius: 5px; overflow: hidden; }
+        th, td { padding: 10px; text-align: center; border-bottom: 1px solid #bdc3c7; }
+        th { background-color: #bdc3c7; font-weight: bold; }
+        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-green { background-color: #27ae60; }
+        .btn-red { background-color: #c0392b; }
+        .btn-blue { background-color: #2980b9; }
+        .input-box { padding: 8px; width: 100%; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; text-align: center; color: #000; font-weight: bold;}
+    </style>
+</head>
+<body>
 
-const express = require('express');
-const path = require('path');
-const mongoose = require('mongoose');
-const app = express();
+    <div class="header">
+        <h1>🛠️ ADMIN CONTROL PANEL</h1>
+        <div><button class="btn btn-red" onclick="logoutAdmin()">Logout</button></div>
+    </div>
 
-app.use(express.json());
-app.use(express.static(__dirname));
+    <div class="dashboard-grid">
+        <!-- 1. LIVE BETS -->
+        <div class="card" style="border-top-color: #f1c40f;">
+            <h2>📊 Live Bets</h2>
+            <button class="btn btn-blue" onclick="fetchLiveBets()" style="margin: 10px 0; width: 100%;">🔄 Refresh Live Data</button>
+            <table>
+                <thead><tr><th>Group</th><th>Range</th><th>Total Points (₹)</th></tr></thead>
+                <tbody id="live-bets-body"></tbody>
+            </table>
+        </div>
 
-// ==========================================
-// 🗄️ ASLI DATABASE CONNECTION (MongoDB Cloud)
-// ==========================================
-const DB_LINK = "mongodb://ranjay222_db_user:Ranjay8303@ac-w5tcwg9-shard-00-00.oxuypkt.mongodb.net:27017,ac-w5tcwg9-shard-00-01.oxuypkt.mongodb.net:27017,ac-w5tcwg9-shard-00-02.oxuypkt.mongodb.net:27017/?ssl=true&replicaSet=atlas-k0tlsu-shard-0&authSource=admin&appName=Cluster0"; 
+        <!-- 2. RESULT -->
+        <div class="card" style="border-top-color: #2ecc71;">
+            <h2>🏆 Set Result</h2>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px;">
+                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Purani Date (DD/MM/YYYY):<br><span style="font-size: 10px; color: #bdc3c7;">Khali chhoda to aaj ki date aayegi</span></label>
+                    <input type="text" class="input-box" id="custom-date" placeholder="Jaise: 15/07/2026" style="width: 55%;">
+                </div>
+                
+                <!-- 🚀 Dropdown Menu -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px;">
+                    <label style="color: #f1c40f; font-size: 12px; max-width: 40%;">Result Time (Dropdown):<br><span style="font-size: 10px; color: #bdc3c7;">List se time select karein</span></label>
+                    <select class="input-box" id="custom-time" style="width: 55%; cursor: pointer; font-size: 14px;">
+                        <option value="">-- Select Time --</option>
+                    </select>
+                </div>
 
-mongoose.connect(DB_LINK, { family: 4, serverSelectionTimeoutMS: 10000 })
-    .then(() => {
-        console.log("✅ MongoDB Asli Database Connect Ho Gaya!");
-    })
-    .catch((err) => console.log("❌ Database Error: ", err.message));
+                <!-- 🚀 Yahan placeholders ko 00 kar diya gaya hai -->
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra NV:</label><input type="number" class="input-box" id="win-nv" placeholder="00"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra RR:</label><input type="number" class="input-box" id="win-rr" placeholder="00"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra RY:</label><input type="number" class="input-box" id="win-ry" placeholder="00"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;"><label>Yantra CH:</label><input type="number" class="input-box" id="win-ch" placeholder="00"></div>
+                <button class="btn btn-green" style="margin-top: 10px; padding: 12px;" onclick="declareResult()">DECLARE RESULT</button>
+            </div>
+        </div>
+    </div>
 
-// ==========================================
-// 📝 DATABASE SCHEMAS
-// ==========================================
-const userSchema = new mongoose.Schema({
-    phone: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    role: { type: String, default: "user" },
-    balance: { type: Number, default: 0 }
-});
-const User = mongoose.model('User', userSchema);
+    <div class="dashboard-grid">
+        <!-- 3. ADD MONEY REQUESTS -->
+        <div class="card" style="border-top-color: #9b59b6;">
+            <h2>💰 Pending Deposit (Add Money)</h2>
+            <table>
+                <thead><tr><th>Phone</th><th>Amount</th><th>UTR Number</th><th>Action</th></tr></thead>
+                <tbody id="deposit-requests-table"></tbody>
+            </table>
+        </div>
 
-const resultSchema = new mongoose.Schema({
-    date: String, time: String, nv: String, rr: String, ry: String, ch: String
-});
-const Result = mongoose.model('Result', resultSchema);
+        <!-- 4. WITHDRAWAL REQUESTS -->
+        <div class="card" style="border-top-color: #e74c3c;">
+            <h2>💸 Pending Withdrawals (Paise Nikalna)</h2>
+            <table>
+                <thead><tr><th>Phone</th><th>Amount</th><th>Bank/UPI Details</th><th>Action</th></tr></thead>
+                <tbody id="withdraw-requests-table"></tbody>
+            </table>
+        </div>
+    </div>
 
-const ticketSchema = new mongoose.Schema({
-    phone: String, tickets: Array, totalCost: Number,
-    date: { type: Date, default: Date.now },
-    status: { type: String, default: 'Pending' } 
-});
-const Ticket = mongoose.model('Ticket', ticketSchema);
+    <div class="dashboard-grid">
+        <!-- 5. MANUAL ADD / DEDUCT -->
+        <div class="card" style="border-top-color: #e67e22;">
+            <h2>⚙️ User Management (+ Add / - Deduct)</h2>
+            <table>
+                <tr><th>User ID (Phone)</th><th>Points</th><th>Action</th></tr>
+                <tr>
+                    <td><input type="text" class="input-box" id="target-phone" placeholder="Phone No."></td>
+                    <td><input type="number" class="input-box" id="target-points" placeholder="Points"></td>
+                    <td>
+                        <button class="btn btn-green" onclick="modifyPoints('add')">+ Add</button>
+                        <button class="btn btn-red" onclick="modifyPoints('deduct')">- Deduct</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-const depositSchema = new mongoose.Schema({
-    phone: String, amount: Number, utr: String,
-    status: { type: String, default: 'Pending' }, date: { type: Date, default: Date.now }
-});
-const Deposit = mongoose.model('Deposit', depositSchema);
+        <!-- 6. ALL USERS LIST WITH DELETE OPTION -->
+        <div class="card" style="border-top-color: #3498db;">
+            <h2>👥 All Registered Users</h2>
+            <button class="btn btn-blue" onclick="loadAllUsers()" style="margin: 10px 0; width: 100%;">🔄 Refresh Users List</button>
+            <div style="max-height: 250px; overflow-y: auto;">
+                <table>
+                    <thead><tr><th>Phone (ID)</th><th>Password</th><th>Balance (₹)</th><th>Action</th></tr></thead>
+                    <tbody id="all-users-table"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-const withdrawSchema = new mongoose.Schema({
-    phone: String, amount: Number, bankDetails: String,
-    status: { type: String, default: 'Pending' }, date: { type: Date, default: Date.now }
-});
-const Withdraw = mongoose.model('Withdraw', withdrawSchema);
-
-// ==========================================
-// 🌐 API ROUTES 
-// ==========================================
-
-app.post('/api/register', async (req, res) => {
-    const { phone, password } = req.body;
-    try {
-        const existingUser = await User.findOne({ phone });
-        if (existingUser) return res.json({ success: false, message: "User ID already exists!" });
-        const newUser = new User({ phone, password, role: "user", balance: 0 });
-        await newUser.save(); 
-        res.json({ success: true, message: "Account Created! Please Login." });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/login', async (req, res) => {
-    const { phone, password } = req.body;
-    try {
-        const user = await User.findOne({ phone });
-        if (!user || user.password !== password) return res.json({ success: false, message: "Invalid Phone/Password!" });
-        res.json({ success: true, role: user.role, balance: user.balance });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/get-balance', async (req, res) => {
-    try {
-        const user = await User.findOne({ phone: req.body.phone });
-        res.json(user ? { success: true, balance: user.balance } : { success: false });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/buy', async (req, res) => {
-    // 🚀 TIME LOCK SECURITY SYSTEM
-    let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-    let now = new Date(nowStr);
-    let currentMins = now.getHours() * 60 + now.getMinutes();
-    
-    // Subah 8:30 (510 minutes) se Raat 11:00 (1380 minutes) tak ka Time Lock
-    if (currentMins < 510 || currentMins >= 1380) {
-        return res.json({ success: false, message: "❌ Game Band Hai! Khulne ka samay Subah 8:30 se Raat 11:00 baje tak hai." });
-    }
-
-    const { phone, totalCost, cartData } = req.body; 
-    try {
-        const user = await User.findOne({ phone });
-        if (!user) return res.json({ success: false, message: "User not found!" });
-        if (user.balance < totalCost) return res.json({ success: false, message: "Insufficient Balance!" });
-        user.balance -= totalCost; await user.save(); 
-        const newTicket = new Ticket({ phone, tickets: cartData, totalCost });
-        await newTicket.save();
-        res.json({ success: true, newBalance: user.balance, message: "Tickets Purchased Successfully!" });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/cancel', async (req, res) => {
-    try {
-        let user = await User.findOne({ phone: req.body.phone });
-        let lastTicket = await Ticket.findOne({ phone: req.body.phone }).sort({ date: -1 });
-        if (!lastTicket) return res.json({ success: false, message: "Koi ticket nahi mili!" });
-        if (lastTicket.status === 'Cancelled') return res.json({ success: false, message: "Pehle hi cancel ho chuki hai!" });
-
-        user.balance += lastTicket.totalCost; await user.save();
-        lastTicket.status = 'Cancelled'; await lastTicket.save();
-        res.json({ success: true, newBalance: user.balance, message: "Ticket cancel ho gayi!" });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/history', async (req, res) => {
-    try {
-        const tickets = await Ticket.find({ phone: req.body.phone }).sort({ date: -1 });
-        res.json({ success: true, tickets });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/purchase-summary', async (req, res) => {
-    try {
-        const tickets = await Ticket.find({ phone: req.body.phone });
-        let totalSpent = 0, todaySpent = 0;
-        
-        let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-        let today = new Date(nowStr); today.setHours(0, 0, 0, 0);
-        
-        tickets.forEach(t => { totalSpent += t.totalCost; if (new Date(t.date) >= today) todaySpent += t.totalCost; });
-        res.json({ success: true, totalTickets: tickets.length, todaySpent, totalSpent });
-    } catch (error) { res.json({ success: false }); }
-});
-
-// 🚀 ADMIN RESULT CONTROL (Prize money updated to 90 multiplier)
-app.post('/api/admin/result', async (req, res) => {
-    const { nv, rr, ry, ch, customDate, customTime } = req.body;
-    try {
-        let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-        let d = new Date(nowStr);
-        let dd = String(d.getDate()).padStart(2, '0'); let mm = String(d.getMonth() + 1).padStart(2, '0');
-        let finalDate = customDate ? customDate : `${dd}/${mm}/${d.getFullYear()}`; 
-        
-        let finalTime = customTime;
-        if (!finalTime) {
-            let hh = String(d.getHours()).padStart(2, '0');
-            let mns = d.getMinutes();
-            let slotMns = String(mns - (mns % 15)).padStart(2, '0');
-            finalTime = `${hh}:${slotMns}`;
-        }
-
-        let existing = await Result.findOne({ date: finalDate, time: finalTime });
-        if (existing) {
-            existing.nv = nv; existing.rr = rr; existing.ry = ry; existing.ch = ch;
-            await existing.save();
-        } else {
-            const newResult = new Result({ date: finalDate, time: finalTime, nv, rr, ry, ch });
-            await newResult.save();
-        }
-
-        let isFuture = false;
-        let currentMinutes = d.getHours() * 60 + d.getMinutes();
-        let timeParts = finalTime.split(':');
-        let resultMinutes = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
-
-        if (finalDate === `${dd}/${mm}/${d.getFullYear()}` && resultMinutes > currentMinutes) {
-            isFuture = true;
-        }
-
-        if (isFuture) {
-            return res.json({ success: true, message: `✅ Advance Result Saved for Time: ${finalTime}.\nJab time aayega, tabhi result game me dikhega!` });
-        }
-
-        const pendingTickets = await Ticket.find({ status: 'Pending' });
-        const resultsDict = { "NV": nv, "RR": rr, "RY": ry, "CH": ch };
-
-        for (let ticket of pendingTickets) {
-            let totalWinningAmount = 0;
-            ticket.tickets.forEach(bet => {
-                let winningNumber = resultsDict[bet.group]; 
-                if (winningNumber && bet.number.includes("-")) {
-                    let winNum = parseInt(winningNumber);
-                    let minVal = parseInt(bet.number.split("-")[0]); let maxVal = parseInt(bet.number.split("-")[1]);
-                    // 🚀 CHANGED TO 90
-                    if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 90);
-                }
-            });
-            if (totalWinningAmount > 0) {
-                ticket.status = 'Won';
-                const user = await User.findOne({ phone: ticket.phone });
-                if (user) { user.balance += totalWinningAmount; await user.save(); }
-            } else { ticket.status = 'Lost'; }
-            await ticket.save(); 
-        }
-        res.json({ success: true, message: `✅ Result Saved & Tickets Settled for Time: ${finalTime}` });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/results', async (req, res) => {
-    try {
-        let query = req.body.date ? { date: req.body.date } : {}; 
-        const results = await Result.find(query).sort({ _id: -1 }).limit(100);
-        res.json({ success: true, results });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.get('/api/admin/live-bets', async (req, res) => {
-    try {
-        const pendingTickets = await Ticket.find({ status: 'Pending' });
-        let liveData = { "NV": {}, "RR": {}, "RY": {}, "CH": {} };
-        pendingTickets.forEach(ticket => {
-            ticket.tickets.forEach(bet => {
-                if(liveData[bet.group]) {
-                    if(!liveData[bet.group][bet.number]) liveData[bet.group][bet.number] = 0;
-                    liveData[bet.group][bet.number] += bet.points;
-                }
-            });
-        });
-        res.json({ success: true, liveData });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/admin/modify-points', async (req, res) => {
-    try {
-        const user = await User.findOne({ phone: req.body.targetPhone });
-        if (!user) return res.json({ success: false, message: "User nahi mila!" });
-        let amount = parseFloat(req.body.points);
-        if (req.body.action === 'add') user.balance += amount;
-        else if (req.body.action === 'deduct') { if (user.balance < amount) return res.json({ success: false, message: "Insufficient balance!" }); user.balance -= amount; }
-        await user.save(); 
-        res.json({ success: true, newBalance: user.balance, message: `Points update ho gaye!` });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/deposit', async (req, res) => {
-    try {
-        await new Deposit(req.body).save();
-        res.json({ success: true, message: "Request Bhej Di Gayi Hai!" });
-    } catch (error) { res.json({ success: false }); }
-});
-app.get('/api/admin/pending-deposits', async (req, res) => { res.json({ success: true, deposits: await Deposit.find({ status: 'Pending' }) }); });
-app.post('/api/admin/handle-deposit', async (req, res) => {
-    try {
-        const deposit = await Deposit.findById(req.body.depositId);
-        if (!deposit || deposit.status !== 'Pending') return res.json({ success: false });
-        deposit.status = req.body.action; await deposit.save();
-        if (req.body.action === 'Approved') {
-            const user = await User.findOne({ phone: deposit.phone });
-            if (user) { user.balance += deposit.amount; await user.save(); }
-        }
-        res.json({ success: true, message: `Payment ${req.body.action}!` });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/withdraw', async (req, res) => {
-    try {
-        const user = await User.findOne({ phone: req.body.phone });
-        if (user.balance < req.body.amount) return res.json({ success: false, message: "Balance kam hai!" });
-        user.balance -= req.body.amount; await user.save();
-        await new Withdraw(req.body).save();
-        res.json({ success: true, message: "Withdrawal request bheji gayi!" });
-    } catch (error) { res.json({ success: false }); }
-});
-app.get('/api/admin/pending-withdrawals', async (req, res) => { res.json({ success: true, withdrawals: await Withdraw.find({ status: 'Pending' }) }); });
-app.post('/api/admin/handle-withdrawal', async (req, res) => {
-    try {
-        const request = await Withdraw.findById(req.body.withdrawId);
-        if (!request || request.status !== 'Pending') return res.json({ success: false });
-        request.status = req.body.action; await request.save();
-        if (req.body.action === 'Rejected') {
-            const user = await User.findOne({ phone: request.phone });
-            if (user) { user.balance += request.amount; await user.save(); }
-        }
-        res.json({ success: true, message: `Withdrawal ${req.body.action} ho gaya!` });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.get('/api/admin/users', async (req, res) => {
-    try {
-        const users = await User.find({ role: 'user' }).sort({ _id: -1 });
-        res.json({ success: true, users });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/admin/delete-user', async (req, res) => {
-    try {
-        const deletedUser = await User.findOneAndDelete({ phone: req.body.phone });
-        if (deletedUser) {
-            res.json({ success: true, message: `User ID ${req.body.phone} hamesha ke liye delete kar diya gaya hai.` });
-        } else {
-            res.json({ success: false, message: "User nahi mila." });
-        }
-    } catch (error) {
-        res.json({ success: false, message: "Server error" });
-    }
-});
-
-let aakhiriAutoSlot = ""; 
-setInterval(async () => {
-    let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-    let now = new Date(nowStr);
-    
-    let min = now.getMinutes();
-    let lastSlotMinutes = min - (min % 15);
-    
-    let hh = String(now.getHours()).padStart(2, '0');
-    let mm = String(lastSlotMinutes).padStart(2, '0');
-    let currentSlotTime = `${hh}:${mm}`; 
-    
-    let dd = String(now.getDate()).padStart(2, '0');
-    let mo = String(now.getMonth() + 1).padStart(2, '0');
-    let yyyy = now.getFullYear();
-    let todayStr = `${dd}/${mo}/${yyyy}`;
-    
-    let uniqueSlotCheck = todayStr + " " + currentSlotTime;
-
-    if (aakhiriAutoSlot !== uniqueSlotCheck) {
-        try {
-            let existingResult = await Result.findOne({ date: todayStr, time: currentSlotTime });
+    <script>
+        function generateTimeOptions() {
+            const timeSelect = document.getElementById('custom-time');
             
-            if (existingResult) {
-                const pendingTickets = await Ticket.find({ status: 'Pending' });
-                const resultsDict = { "NV": existingResult.nv, "RR": existingResult.rr, "RY": existingResult.ry, "CH": existingResult.ch };
+            for (let h = 8; h <= 23; h++) {
+                for (let m = 0; m < 60; m += 15) {
+                    let currentMins = (h * 60) + m;
+                    
+                    if (currentMins >= 510 && currentMins <= 1380) {
+                        let hh = String(h).padStart(2, '0');
+                        let mm = String(m).padStart(2, '0');
+                        let timeStr = `${hh}:${mm}`; 
 
-                for (let ticket of pendingTickets) {
-                    let totalWinningAmount = 0;
-                    ticket.tickets.forEach(bet => {
-                        let winningNumber = resultsDict[bet.group]; 
-                        if (winningNumber && bet.number.includes("-")) {
-                            let winNum = parseInt(winningNumber);
-                            let minVal = parseInt(bet.number.split("-")[0]);
-                            let maxVal = parseInt(bet.number.split("-")[1]);
-                            // 🚀 CHANGED TO 90
-                            if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 90); 
-                        }
-                    });
-                    if (totalWinningAmount > 0) {
-                        ticket.status = 'Won';
-                        const user = await User.findOne({ phone: ticket.phone });
-                        if (user) { user.balance += totalWinningAmount; await user.save(); }
-                    } else { ticket.status = 'Lost'; }
-                    await ticket.save(); 
+                        let ampm = h >= 12 ? 'PM' : 'AM';
+                        let displayH = h % 12;
+                        if (displayH === 0) displayH = 12;
+                        let displayTime = `${displayH}:${mm} ${ampm}`;
+
+                        let option = document.createElement('option');
+                        option.value = timeStr; 
+                        option.text = displayTime; 
+                        timeSelect.appendChild(option);
+                    }
                 }
-                aakhiriAutoSlot = uniqueSlotCheck; 
             }
-        } catch (err) {}
-    }
-}, 5000);
+        }
 
-app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'login.html')); });
-app.listen(3000, () => {
-    console.log("=======================================");
-    console.log("🚀 YANTRA GAME SERVER IS RUNNING!");
-    console.log("=======================================");
-});
+        async function fetchLiveBets() {
+            try {
+                const data = await (await fetch('/api/admin/live-bets')).json();
+                const tbody = document.getElementById('live-bets-body'); tbody.innerHTML = '';
+                if (data.success) {
+                    let hasBets = false;
+                    for (let g in data.liveData) {
+                        for (let r in data.liveData[g]) {
+                            hasBets = true;
+                            tbody.innerHTML += `<tr><td>${g}</td><td>${r}</td><td style="color: red; font-weight: bold;">${data.liveData[g][r]} Pts</td></tr>`;
+                        }
+                    }
+                    if(!hasBets) tbody.innerHTML = '<tr><td colspan="3">Koi bet nahi hai.</td></tr>';
+                }
+            } catch (error) {}
+        }
+
+        async function loadPendingDeposits() {
+            const data = await (await fetch('/api/admin/pending-deposits')).json();
+            const table = document.getElementById('deposit-requests-table'); table.innerHTML = ''; 
+            if(data.success && data.deposits.length > 0) {
+                data.deposits.forEach(dep => {
+                    table.innerHTML += `<tr><td>${dep.phone}</td><td style="color: green; font-weight: bold;">₹${dep.amount}</td><td>${dep.utr}</td>
+                        <td><button class="btn btn-green" onclick="handleDeposit('${dep._id}', 'Approved')">Approve</button> <button class="btn btn-red" onclick="handleDeposit('${dep._id}', 'Rejected')">Reject</button></td></tr>`;
+                });
+            } else table.innerHTML = '<tr><td colspan="4">Koi request nahi hai.</td></tr>';
+        }
+
+        async function handleDeposit(depositId, action) {
+            if(!confirm(`Kya aap isko ${action} karna chahte hain?`)) return;
+            const res = await fetch('/api/admin/handle-deposit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ depositId, action }) });
+            alert((await res.json()).message); loadPendingDeposits(); loadAllUsers();
+        }
+
+        async function loadPendingWithdrawals() {
+            const data = await (await fetch('/api/admin/pending-withdrawals')).json();
+            const table = document.getElementById('withdraw-requests-table'); table.innerHTML = ''; 
+            if(data.success && data.withdrawals.length > 0) {
+                data.withdrawals.forEach(req => {
+                    table.innerHTML += `<tr><td>${req.phone}</td><td style="color: red; font-weight: bold;">₹${req.amount}</td><td>${req.bankDetails}</td>
+                        <td><button class="btn btn-green" onclick="handleWithdraw('${req._id}', 'Approved')">Approve</button> <button class="btn btn-red" onclick="handleWithdraw('${req._id}', 'Rejected')">Reject</button></td></tr>`;
+                });
+            } else table.innerHTML = '<tr><td colspan="4">Koi naya withdrawal nahi hai.</td></tr>';
+        }
+
+        async function handleWithdraw(withdrawId, action) {
+            if(!confirm(`Kya aap withdrawal ko ${action} karna chahte hain?`)) return;
+            const res = await fetch('/api/admin/handle-withdrawal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ withdrawId, action }) });
+            alert((await res.json()).message); loadPendingWithdrawals(); loadAllUsers();
+        }
+
+        async function declareResult() {
+            let nv = document.getElementById('win-nv').value, rr = document.getElementById('win-rr').value;
+            let ry = document.getElementById('win-ry').value, ch = document.getElementById('win-ch').value;
+            let customDate = document.getElementById('custom-date').value.trim();
+            
+            let customTime = document.getElementById('custom-time').value;
+
+            if(!customTime) { alert("❌ Kripya Result ka Time Dropdown se zaroor select karein!"); return; }
+            if(!nv || !rr || !ry || !ch) { alert("Sabhi fields bharein!"); return; }
+            if(!confirm(`Kya aap sach mein result daalna chahte hain?`)) return;
+
+            let res = await fetch('/api/admin/result', { 
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ nv, rr, ry, ch, customDate, customTime }) 
+            });
+            alert((await res.json()).message);
+            
+            ['win-nv','win-rr','win-ry','win-ch', 'custom-date', 'custom-time'].forEach(id => document.getElementById(id).value = "");
+            fetchLiveBets(); loadAllUsers();
+        }
+
+        async function modifyPoints(action) {
+            let targetPhone = document.getElementById('target-phone').value, points = document.getElementById('target-points').value;
+            if(!targetPhone || !points) return;
+            let res = await fetch('/api/admin/modify-points', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetPhone, points, action }) });
+            alert((await res.json()).message);
+            loadAllUsers(); 
+        }
+
+        async function loadAllUsers() {
+            try {
+                const res = await fetch('/api/admin/users');
+                const data = await res.json();
+                const tbody = document.getElementById('all-users-table');
+                tbody.innerHTML = '';
+                if (data.success && data.users.length > 0) {
+                    data.users.forEach(u => {
+                        tbody.innerHTML += `<tr>
+                            <td style="font-weight: bold;">${u.phone}</td>
+                            <td>${u.password}</td>
+                            <td style="color: green; font-weight: bold;">₹${u.balance.toFixed(2)}</td>
+                            <td><button class="btn btn-red" style="padding: 5px 10px; font-size: 11px;" onclick="deleteUser('${u.phone}')">🗑️ Remove</button></td>
+                        </tr>`;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4">Abhi tak kisi ne account nahi banaya hai.</td></tr>';
+                }
+            } catch (error) {
+                console.log("Users load nahi ho paye.");
+            }
+        }
+
+        async function deleteUser(phone) {
+            if(!confirm(`⚠️ WARNING: Kya aap sach mein User ID ${phone} ko hamesha ke liye delete karna chahte hain? Data wapas nahi aayega!`)) return;
+            
+            try {
+                let res = await fetch('/api/admin/delete-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+                let data = await res.json();
+                alert(data.message);
+                loadAllUsers(); 
+            } catch (error) {
+                alert("Error deleting user.");
+            }
+        }
+
+        function logoutAdmin() { window.location.href = "login.html"; }
+
+        window.onload = function() {
+            generateTimeOptions(); 
+            loadPendingDeposits();
+            loadPendingWithdrawals(); 
+            fetchLiveBets();
+            loadAllUsers(); 
+        };
+    </script>
+</body>
+</html>
