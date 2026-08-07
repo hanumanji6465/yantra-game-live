@@ -142,7 +142,7 @@ app.post('/api/purchase-summary', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 ADMIN RESULT CONTROL (Fixed Ticket Settling Bug)
+// 🚀 ADMIN RESULT CONTROL (Prize money updated to 90 multiplier)
 app.post('/api/admin/result', async (req, res) => {
     const { nv, rr, ry, ch, customDate, customTime } = req.body;
     try {
@@ -181,7 +181,6 @@ app.post('/api/admin/result', async (req, res) => {
             return res.json({ success: true, message: `✅ Advance Result Saved for Time: ${finalTime}.\nJab time aayega, tabhi result game me dikhega!` });
         }
 
-        // 🚀 BUG FIX: Server time mismatch ko dur karne ke liye ab saari "Pending" tickets check hongi
         const pendingTickets = await Ticket.find({ status: 'Pending' });
         const resultsDict = { "NV": nv, "RR": rr, "RY": ry, "CH": ch };
 
@@ -192,7 +191,8 @@ app.post('/api/admin/result', async (req, res) => {
                 if (winningNumber && bet.number.includes("-")) {
                     let winNum = parseInt(winningNumber);
                     let minVal = parseInt(bet.number.split("-")[0]); let maxVal = parseInt(bet.number.split("-")[1]);
-                    if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 9);
+                    // 🚀 CHANGED TO 90
+                    if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 90);
                 }
             });
             if (totalWinningAmount > 0) {
@@ -340,7 +340,8 @@ setInterval(async () => {
                             let winNum = parseInt(winningNumber);
                             let minVal = parseInt(bet.number.split("-")[0]);
                             let maxVal = parseInt(bet.number.split("-")[1]);
-                            if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 9); 
+                            // 🚀 CHANGED TO 90
+                            if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 90); 
                         }
                     });
                     if (totalWinningAmount > 0) {
