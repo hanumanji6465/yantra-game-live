@@ -254,7 +254,6 @@
 
         function playSound(id) { let sound = document.getElementById(id); if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); } }
 
-        // 🚀 SUPERFAST BALANCE FETCH & UI FIX
         async function fetchLiveBalance() {
             if (currentUser === "Guest") return; 
             try {
@@ -262,25 +261,21 @@
                 let data = await response.json();
                 
                 if (data.success && data.balance !== currentBalance) { 
-                    let isWin = data.balance > currentBalance; // Check if balance increased
-                    
-                    // 1. Sabse pehle Screen par Balance Update karein
+                    let isWin = data.balance > currentBalance; 
                     currentBalance = data.balance; 
                     balanceElement.innerText = currentBalance.toFixed(2); 
                     localStorage.setItem('userBalance', currentBalance); 
                     
-                    // 2. Uske baad Popup dikhayein (Taki screen hang na ho)
                     if (isWin) {
                         playSound('sound-win');
                         setTimeout(() => {
                             alert(`🎉 BADHAI HO!\nAap Jeet Gaye Hain!\nAapka naya balance hai: ₹${data.balance.toFixed(2)}`);
-                        }, 500); // Aadhe second ka intezar
+                        }, 500);
                     }
                 }
             } catch(e) {}
         }
         
-        // 🚀 1 Second mein Check
         setInterval(fetchLiveBalance, 1000); 
 
         allInputCells.forEach(cell => { cell.addEventListener('click', function() { if (activeBox) activeBox.classList.remove('selected-cell'); activeBox = this; activeBox.classList.add('selected-cell'); }); });
@@ -296,11 +291,9 @@
                 if (!isNaN(points) && points > 0) {
                     let group = cell.getAttribute('data-group');
                     if(groupTotals[group]) { 
-                        // 🚀 NAYA FIX: Ab kitne dabbe hain ye nahi ginega, balki andar ke points ko jodega!
                         groupTotals[group].qty += points; 
                         groupTotals[group].pts += (points * 10.10);
                     }
-                    // 🚀 NAYA FIX: Niche wale total mein bhi points hi jodega!
                     totalQty += points; 
                     totalPts += (points * 10.10);
                 }
@@ -420,16 +413,6 @@
         }
         function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
 
-        async function openPsumModal() {
-            document.getElementById('psum-modal').style.display = 'flex';
-            try {
-                const response = await fetch('/api/purchase-summary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
-                const data = await response.json();
-                if (data.success) { document.getElementById('psum-total-tickets').innerText = data.totalTickets; document.getElementById('psum-today-spent').innerText = data.todaySpent.toFixed(2); document.getElementById('psum-total-spent').innerText = data.totalSpent.toFixed(2); }
-            } catch (err) {}
-        }
-        function closePsumModal() { document.getElementById('psum-modal').style.display = 'none'; }
-
         function startEventTimer() {
             setInterval(() => {
                 let now = new Date();
@@ -451,8 +434,18 @@
                     return;
                 }
 
-                let lastSlotMinutes = min - (min % 15);
-                let eventCodeStr = String(hours).padStart(2, '0') + ":" + String(lastSlotMinutes).padStart(2, '0');
+                // 🚀 NAYA FIX: Event Code hamesha agle (upcoming) slot ka dikhayega
+                let nextSlotMinutes = min - (min % 15) + 15;
+                let nextHours = hours;
+                if (nextSlotMinutes >= 60) {
+                    nextSlotMinutes = 0;
+                    nextHours += 1;
+                }
+                if (nextHours >= 24) {
+                    nextHours = 0;
+                }
+                
+                let eventCodeStr = String(nextHours).padStart(2, '0') + ":" + String(nextSlotMinutes).padStart(2, '0');
                 
                 document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB'); 
                 document.getElementById('event-code').innerText = eventCodeStr;
