@@ -87,12 +87,11 @@ app.post('/api/get-balance', async (req, res) => {
 });
 
 app.post('/api/buy', async (req, res) => {
-    // 🚀 TIME LOCK SECURITY SYSTEM
     let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
     let now = new Date(nowStr);
     let currentMins = now.getHours() * 60 + now.getMinutes();
     
-    // Subah 8:30 (510 minutes) se Raat 11:00 (1380 minutes) tak ka Time Lock
+    // Subah 8:30 se Raat 11:00 baje tak ka Time Lock
     if (currentMins < 510 || currentMins >= 1380) {
         return res.json({ success: false, message: "❌ Game Band Hai! Khulne ka samay Subah 8:30 se Raat 11:00 baje tak hai." });
     }
@@ -142,7 +141,7 @@ app.post('/api/purchase-summary', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 ADMIN RESULT CONTROL (Prize money updated to 90 multiplier)
+// 🚀 ADMIN RESULT CONTROL
 app.post('/api/admin/result', async (req, res) => {
     const { nv, rr, ry, ch, customDate, customTime } = req.body;
     try {
@@ -191,8 +190,8 @@ app.post('/api/admin/result', async (req, res) => {
                 if (winningNumber && bet.number.includes("-")) {
                     let winNum = parseInt(winningNumber);
                     let minVal = parseInt(bet.number.split("-")[0]); let maxVal = parseInt(bet.number.split("-")[1]);
-                    // 🚀 CHANGED TO 90
-                    if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 90);
+                    // 🚀 NAYA HISAAB: Ab 100 GUNA inam milega
+                    if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 100);
                 }
             });
             if (totalWinningAmount > 0) {
@@ -340,8 +339,8 @@ setInterval(async () => {
                             let winNum = parseInt(winningNumber);
                             let minVal = parseInt(bet.number.split("-")[0]);
                             let maxVal = parseInt(bet.number.split("-")[1]);
-                            // 🚀 CHANGED TO 90
-                            if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 90); 
+                            // 🚀 CHANGED TO 100
+                            if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 100); 
                         }
                     });
                     if (totalWinningAmount > 0) {
