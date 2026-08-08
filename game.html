@@ -254,7 +254,7 @@
 
         function playSound(id) { let sound = document.getElementById(id); if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); } }
 
-        // 🚀 BUG FIX: Balance refresh logic aur JEETNE par POPUP/SOUND
+        // 🚀 SUPERFAST BALANCE FETCH & UI FIX
         async function fetchLiveBalance() {
             if (currentUser === "Guest") return; 
             try {
@@ -262,19 +262,26 @@
                 let data = await response.json();
                 
                 if (data.success && data.balance !== currentBalance) { 
-                    // Agar balance badh gaya (Jeet gaya)
-                    if (data.balance > currentBalance) {
-                        playSound('sound-win');
-                        alert(`🎉 BADHAI HO!\nAap Jeet Gaye Hain!\nAapka naya balance hai: ₹${data.balance.toFixed(2)}`);
-                    }
+                    let isWin = data.balance > currentBalance; // Check if balance increased
                     
+                    // 1. Sabse pehle Screen par Balance Update karein
                     currentBalance = data.balance; 
                     balanceElement.innerText = currentBalance.toFixed(2); 
                     localStorage.setItem('userBalance', currentBalance); 
+                    
+                    // 2. Uske baad Popup dikhayein (Taki screen hang na ho)
+                    if (isWin) {
+                        playSound('sound-win');
+                        setTimeout(() => {
+                            alert(`🎉 BADHAI HO!\nAap Jeet Gaye Hain!\nAapka naya balance hai: ₹${data.balance.toFixed(2)}`);
+                        }, 500); // Aadhe second ka intezar
+                    }
                 }
             } catch(e) {}
         }
-        setInterval(fetchLiveBalance, 3000);
+        
+        // 🚀 1 Second mein Check
+        setInterval(fetchLiveBalance, 1000); 
 
         allInputCells.forEach(cell => { cell.addEventListener('click', function() { if (activeBox) activeBox.classList.remove('selected-cell'); activeBox = this; activeBox.classList.add('selected-cell'); }); });
         function typeNumber(number) { if (activeBox) { activeBox.innerText = activeBox.innerText + number; updateCart(); } }
@@ -289,10 +296,12 @@
                 if (!isNaN(points) && points > 0) {
                     let group = cell.getAttribute('data-group');
                     if(groupTotals[group]) { 
-                        groupTotals[group].qty += 1; 
+                        // 🚀 NAYA FIX: Ab kitne dabbe hain ye nahi ginega, balki andar ke points ko jodega!
+                        groupTotals[group].qty += points; 
                         groupTotals[group].pts += (points * 10.10);
                     }
-                    totalQty += 1; 
+                    // 🚀 NAYA FIX: Niche wale total mein bhi points hi jodega!
+                    totalQty += points; 
                     totalPts += (points * 10.10);
                 }
             });
@@ -428,7 +437,6 @@
                 let sec = now.getSeconds();
                 let hours = now.getHours();
 
-                // 🚀 GAME TIME LOCK LOGIC
                 let currentMins = hours * 60 + min;
                 let startMins = 510; // 8:30 AM
                 let endMins = 1380; // 11:00 PM
@@ -471,7 +479,6 @@
             let now = new Date();
             let minutes = now.getMinutes(); let hours = now.getHours();
             
-            // 🚀 RESULT TIME LOCK LOGIC
             let currentMins = hours * 60 + minutes;
             if (currentMins < 510 || currentMins >= 1380) {
                 document.getElementById('last-result-time').innerText = "CLOSED";
@@ -517,7 +524,8 @@
                 }
             }).catch(e => console.log("Result fetch error:", e));
         }
-        setInterval(updateLiveResultColumn, 10000);
+        
+        setInterval(updateLiveResultColumn, 2000); 
         updateLiveResultColumn();
     </script>
 </body>
