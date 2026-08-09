@@ -10,7 +10,7 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
-            background-color: #eb458b !important; /* Photo jaisa Neon Pink BG */
+            background-color: #eb458b !important;
             touch-action: none !important;
             font-family: Arial, sans-serif;
             box-sizing: border-box;
@@ -31,11 +31,15 @@
             transform-origin: top left !important;
         }
 
-        /* TOP HEADER EXACT COLORS */
-        .header { display: flex; justify-content: space-between; color: #7a1a44; font-size: 11px; margin-bottom: 8px; }
-        .header-right { text-align: right; line-height: 1.5; color: #7a1a44; }
-        .header span { font-weight: normal; color: #551133; }
+        /* 🚀 TOP HEADER STYLES */
+        .header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        
+        /* ALIGNMENT TABLES FOR PERFECT SPACING */
+        .header-table { border-collapse: collapse; font-size: 11px; color: #7a1a44; }
+        .header-table td { padding: 1px 5px; border: none; }
+        
         #welcome-phone, #balance { color: #551133; font-weight: normal; }
+        #countdown-display { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-weight: bold;}
         
         .lobby-badge { background-color: #e6b800; color: #a30000; padding: 2px 20px; font-size: 11px; font-weight: bold; border-radius: 2px; display: inline-block; margin-bottom: 2px;}
         
@@ -64,7 +68,7 @@
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        /* EXACT TABLE DESIGN (Zebra Rows) */
+        /* EXACT TABLE DESIGN */
         .grid-section { width: 100%; overflow-x: auto; }
         .grid-table { 
             border-collapse: collapse !important; 
@@ -81,7 +85,6 @@
             color: #4a4a4a;
         }
         
-        /* Zebra Match from Photo */
         .grid-table tr:nth-child(1) { background-color: #eaddb6 !important; } 
         .grid-table tr:nth-child(2) { background-color: #cfbe96 !important; } 
         .grid-table tr:nth-child(3) { background-color: #eaddb6 !important; } 
@@ -101,7 +104,6 @@
             font-weight: normal;
         }
         
-        /* NEON GREEN SELECTION */
         .selected-cell { 
             background-color: #00d200 !important; 
             color: black !important; 
@@ -110,7 +112,6 @@
         
         td[id^="last-res-"] { font-size: 13px; color: #4a4a4a !important; }
 
-        /* 🚀 Niche Ka Layout Fix Kar Diya */
         .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; width: 100%; gap: 10px;}
         
         /* NUMPAD COLORS */
@@ -128,7 +129,7 @@
         .num-btn:active { background-color: #ddd; }
         .clear-btn { width: 45px; color: #0033cc; font-size: 16px; }
         
-        /* 🚀 Action Buttons Wapas Purane Jaisi */
+        /* Action Buttons */
         .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; flex-grow: 1; }
         .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 4px; padding: 10px 15px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
         .action-btn.green { background-color: #008000; }
@@ -165,7 +166,6 @@
     <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
     <div class="game-container">
-        <!-- Add Money / Withdraw wapas upar theek jagah par -->
         <div style="display: flex; gap: 10px; margin-bottom: 5px; justify-content: center; flex-wrap: wrap;">
             <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">➕ Add Money</button>
             <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">💸 Withdraw</button>
@@ -194,16 +194,41 @@
             </div>
         </div>
 
+        <!-- 🚀 100% PERFECTLY ALIGNED HEADER -->
         <div class="header">
             <div>
-                Welcome : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="welcome-phone">Guest</span><br>
-                Balance Point : &nbsp;&nbsp;<span id="balance">0.00</span>
+                <table class="header-table">
+                    <tr>
+                        <td style="text-align: right; padding-right: 15px;">Welcome :</td>
+                        <td style="text-align: left;"><span id="welcome-phone">Guest</span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; padding-right: 15px;">Balance Point :</td>
+                        <td style="text-align: left;"><span id="balance">0.00</span></td>
+                    </tr>
+                </table>
             </div>
             <div class="header-right">
-                <span class="lobby-badge">LOBBY</span><br>
-                Date : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="current-date"></span><br>
-                Gift Event Code : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="event-code">--:--</span><br>
-                Countdown : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="countdown-display">00:00:00</span>
+                <table class="header-table" style="margin-left: auto;">
+                    <tr>
+                        <td></td>
+                        <td style="text-align: center; padding-bottom: 4px;">
+                            <span class="lobby-badge">LOBBY</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; padding-right: 8px;">Date :</td>
+                        <td style="text-align: center; width: 80px;"><span id="current-date"></span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; padding-right: 8px;">Gift Event Code :</td>
+                        <td style="text-align: center;"><span id="event-code">--:--</span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; padding-right: 8px;">Countdown :</td>
+                        <td style="text-align: center;"><span id="countdown-display">00:00:00</span></td>
+                    </tr>
+                </table>
             </div>
         </div>
 
@@ -267,7 +292,6 @@
                 <button class="clear-btn" onclick="clearActiveCell()">🗑️</button>
             </div>
             
-            <!-- 🚀 Wapas Niche Aa Gaye Tumhare Buttons! -->
             <div class="action-bar">
                 <button class="action-btn green" onclick="buyTickets()">BUY</button>
                 <button class="action-btn" onclick="clearEntireGrid()">CLEAR</button>
