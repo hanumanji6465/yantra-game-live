@@ -10,8 +10,8 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
-            /* 🚀 EXACT NEON PINK BACKGROUND */
-            background-color: #ff1493 !important;
+            /* 🚀 NEON PINK BACKGROUND */
+            background-color: #ff007f !important;
             touch-action: none !important;
             font-family: Arial, sans-serif;
             box-sizing: border-box;
@@ -26,20 +26,19 @@
             margin: 0 !important;
             border-radius: 0 !important;
             border: none !important;
-            background-color: #ff1493;
+            background-color: #ff007f;
             display: flex; flex-direction: column; padding: 10px;
             box-sizing: border-box;
             transform-origin: top left !important;
         }
 
-        /* 🚀 TOP HEADER TEXT COLORS */
-        .header { display: flex; justify-content: space-between; color: #5a0028; font-size: 13px; margin-bottom: 5px; }
-        .header-right { text-align: right; color: #5a0028; font-size: 12px; }
-        #welcome-phone, #balance { color: #800040; font-weight: bold; font-size: 14px;}
-        #countdown-display { color: white; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-        .lobby-badge { background-color: #ffcc00; color: #cc0000; padding: 2px 15px; font-size: 11px; font-weight: bold; border-radius: 2px; }
+        /* TOP HEADER COLORS */
+        .header { display: flex; justify-content: space-between; color: #610023; font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+        .header-right { text-align: right; color: #610023; }
+        #welcome-phone, #balance { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-size: 16px;}
+        #countdown-display { color: white; text-shadow: 1px 1px 2px #000; }
         
-        /* 🚀 TABS COLOR ROW FIXED (Left Side Se Start, Folder Shape) */
+        /* 🚀 TABS COLOR ROW FIXED (Left Side Se Start) */
         .tabs { 
             display: flex; 
             flex-wrap: nowrap; 
@@ -50,67 +49,56 @@
             width: 100%;
         }
         .tab { 
-            background-color: #9900cc; /* Purple color */
+            background-color: #d500f9; /* Bright Purple/Magenta color */
             color: white; 
             padding: 8px 18px; 
-            border-radius: 6px 6px 0 0; /* Folder shape */
+            border-radius: 4px 4px 0 0; 
             font-size: 11px; 
             font-weight: bold; 
             border: none; 
             cursor: pointer; 
         }
         .tab.active { 
-            background-color: #0022cc; /* Dark Blue active tab */
+            background-color: #00008b; /* Dark Blue active tab */
             color: white; 
         }
         .tab:nth-child(1) {
-            background-color: #e4d4ad; /* Beige tab A */
-            color: #cc0000; /* Red text */
+            background-color: #e2d2a4; /* Matti/Beige background */
+            color: #d10000; /* Laal text */
         }
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        /* 🚀 MAGIC TRICK: THE BEIGE TRAY AND SEPARATED WHITE BOXES */
-        .grid-section { 
-            width: 100%; 
-            overflow-x: auto; 
-            background-color: #e4d4ad; /* Table ka Base Beige color */
-            padding-bottom: 5px;
-        }
+        /* 🚀 TABLE BORDER AND BACKGROUND MATCHING */
+        .grid-section { width: 100%; overflow-x: auto; background-color: transparent; border: none; }
         .grid-table { 
-            border-collapse: separate !important; /* Isse dabbe alag-alag dikhenge */
-            border-spacing: 4px 4px !important;   /* Dabbon ke beech ka gap (Beige line) */
-            width: 100%; 
-            font-size: 11px; 
+            border-collapse: collapse !important; 
+            width: 100%; font-size: 12px; 
+            background-color: #e2d2a4 !important; /* Table ka base Beige color */
+            border: 2px solid #b5a27f !important; /* Table ka bahari border */
         }
         
-        /* HEADERS AND NON-INPUT CELLS */
-        .grid-table th {
-            color: #997a5c; /* Halka brownish color */
-            font-weight: normal;
-            padding-bottom: 2px;
-        }
-        .grid-table td {
-            color: #553a21; /* Text color */
+        /* THIN BORDER FOR EVERY CELL */
+        .grid-table th, .grid-table td {
+            border: 1px solid #b5a27f !important; /* Andar ke dabbon ka patla border */
             text-align: center; 
-            height: 24px; 
+            padding: 4px; 
+            height: 28px; 
+            color: #5c0011;
         }
         
-        .group-name { text-align: left !important; padding-left: 8px; pointer-events: none; white-space: nowrap; }
+        .group-name { font-weight: bold; text-align: left !important; padding-left: 5px; pointer-events: none; white-space: nowrap; }
         .gift-coin { pointer-events: none; }
         
-        /* 🚀 WHITE INPUT CELLS (Photo jaise safed dabbe) */
+        /* 🚀 WHITE INPUT CELLS (Number bharne wale dabbe) */
         .input-cell { 
             background-color: #ffffff !important; 
-            cursor: pointer; 
-            width: 32px !important; 
-            border-radius: 2px;
+            cursor: pointer; width: 40px; 
             font-weight: bold;
             color: #000000 !important;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.15); /* Halka sa 3D look */
         }
         
-        /* 🚀 NEON GREEN SELECTED CELL */
+        /* NEON GREEN SELECTED CELL */
         .selected-cell { background-color: #00ff00 !important; color: black !important; }
         
         /* RESULT COLUMN SPECIFIC */
@@ -118,27 +106,27 @@
 
         .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         
-        /* 🚀 NUMPAD COLORS (Photo jaisa Icy Blue Tray aur White Buttons) */
-        .numpad { background-color: #dbe2ef; display: flex; flex-wrap: wrap; gap: 5px; padding: 8px; border-radius: 5px; justify-content: flex-start; }
-        .num-btn { background-color: white; color: #627eb3; border: 1px solid #c0cbe0; border-radius: 4px; padding: 10px 18px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        /* 🚀 NUMPAD COLORS (Photo jaisa Icy Blue) */
+        .numpad { background-color: #c4d4e6; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: flex-start; }
+        .num-btn { background-color: white; color: #5c6bc0; border: none; border-radius: 5px; padding: 10px 15px; font-size: 16px; font-weight: bold; box-shadow: 0px 2px 2px rgba(0,0,0,0.1); cursor: pointer; }
         .num-btn:active { background-color: #ddd; }
         
         .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-        .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 4px; padding: 10px 15px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
+        .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 5px; padding: 10px 15px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
         .action-btn.green { background-color: #008000; }
         
         /* Modals */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 100; padding: 10px; box-sizing: border-box; }
-        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #ff1493; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
+        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #ff007f; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
         .btn-ok { background-color: #008000; color: white; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 5px; width: 100%; font-size: 16px;}
         
         .yantra-content { max-width: 650px; height: 80vh; display: flex; flex-direction: column; }
-        .modal-header { display: flex; justify-content: space-between; background-color: #ff1493; padding: 8px; font-weight: bold; color: white; }
+        .modal-header { display: flex; justify-content: space-between; background-color: #ff007f; padding: 8px; font-weight: bold; color: white; }
         .close-btn { background-color: #d10000; color: white; border: 1px solid white; cursor: pointer; font-weight: bold; padding: 2px 10px; }
         .table-scroll { overflow-y: auto; overflow-x: auto; margin-top: 10px; flex-grow: 1; }
         .yantra-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; min-width: 400px; }
         .yantra-table th, .yantra-table td { border: 1px solid #ccc; padding: 6px; }
-        .yantra-table th { background-color: #e4d4ad; color: #5c0011; }
+        .yantra-table th { background-color: #e2d2a4; color: #5c0011; }
     </style>
 
     <script>
@@ -190,10 +178,10 @@
         <div class="header">
             <div>Welcome : <span id="welcome-phone">Guest</span><br>Balance Point : <span id="balance">0.00</span></div>
             <div class="header-right">
-                <span class="lobby-badge">LOBBY</span><br>
-                Date : <span id="current-date"></span><br>
-                Gift Event Code : <span id="event-code">--:--</span><br>
-                Countdown : <span id="countdown-display">00:00:00</span>
+                <span style="background-color:#ff9800; color: white; padding:2px 10px; font-size:11px; border-radius: 2px;">LOBBY</span><br>
+                Date: <span id="current-date" style="color: white;"></span><br>
+                Gift Event Code: <span id="event-code" style="color: white;">--:--</span><br>
+                Countdown: <span id="countdown-display">00:00:00</span>
             </div>
         </div>
 
@@ -231,7 +219,7 @@
                     <tr>
                         <td class="group-name">All</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="ALL" data-range="00-09"></td><td class="input-cell" data-group="ALL" data-range="10-19"></td><td class="input-cell" data-group="ALL" data-range="20-29"></td><td class="input-cell" data-group="ALL" data-range="30-39"></td><td class="input-cell" data-group="ALL" data-range="40-49"></td><td class="input-cell" data-group="ALL" data-range="50-59"></td><td class="input-cell" data-group="ALL" data-range="60-69"></td><td class="input-cell" data-group="ALL" data-range="70-79"></td><td class="input-cell" data-group="ALL" data-range="80-89"></td><td class="input-cell" data-group="ALL" data-range="90-99"></td>
-                        <td style="color: #7b6244;">TOTAL</td>
+                        <td style="font-weight:bold;">TOTAL</td>
                         <td id="total-qty" style="font-weight:bold;"></td><td id="cart-total-pts" style="font-weight:bold;">₹0.00</td><td></td>
                     </tr>
                 </table>
@@ -243,7 +231,7 @@
                 <button class="num-btn" onclick="typeNumber('1')">1</button><button class="num-btn" onclick="typeNumber('2')">2</button><button class="num-btn" onclick="typeNumber('3')">3</button>
                 <button class="num-btn" onclick="typeNumber('4')">4</button><button class="num-btn" onclick="typeNumber('5')">5</button><button class="num-btn" onclick="typeNumber('6')">6</button>
                 <button class="num-btn" onclick="typeNumber('7')">7</button><button class="num-btn" onclick="typeNumber('8')">8</button><button class="num-btn" onclick="typeNumber('9')">9</button>
-                <button class="num-btn" onclick="typeNumber('0')">0</button><button class="num-btn" onclick="clearActiveCell()" style="background-color: white; border: 1px solid #c0cbe0;">🗑️</button>
+                <button class="num-btn" onclick="typeNumber('0')">0</button><button class="num-btn" onclick="clearActiveCell()" style="background-color: #5c6bc0; color: white;">🗑️</button>
             </div>
             <div class="action-bar">
                 <button class="action-btn green" onclick="buyTickets()">BUY</button>
