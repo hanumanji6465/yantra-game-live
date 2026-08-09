@@ -10,7 +10,8 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
-            background-color: #f78fb3 !important;
+            /* 🚀 NAYA NEON PINK BACKGROUND */
+            background-color: #fa1182 !important;
             touch-action: none !important;
             font-family: Arial, sans-serif;
             box-sizing: border-box;
@@ -25,33 +26,69 @@
             margin: 0 !important;
             border-radius: 0 !important;
             border: none !important;
-            background-color: #f78fb3;
+            /* 🚀 BACKGROUND MATCHED */
+            background-color: #fa1182;
             display: flex; flex-direction: column; padding: 10px;
             box-sizing: border-box;
             transform-origin: top left !important;
         }
 
-        .header { display: flex; justify-content: space-between; color: #550022; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
-        .header-right { text-align: right; }
+        /* 🚀 TOP HEADER COLORS */
+        .header { display: flex; justify-content: space-between; color: #610023; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+        .header-right { text-align: right; color: #610023; }
+        #welcome-phone, #balance { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-size: 16px;}
+        #countdown-display { color: white; text-shadow: 1px 1px 2px #000; }
         
+        /* 🚀 TABS COLOR UPDATED (Dark Blue & Purple) */
         .tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; justify-content: center; }
-        .tab { background-color: #d1ccc0; padding: 5px 15px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 1px solid #777; cursor: pointer; }
-        .tab.active { background-color: #574b90; color: white; }
+        .tab { background-color: #b9218c; color: white; padding: 5px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; border: none; cursor: pointer; }
+        .tab.active { background-color: #121c9e; color: white; } /* Dark Blue active tab */
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        .grid-section { width: 100%; overflow-x: auto; background-color: #fdf5f6; border: 1px solid #ccc; }
-        .grid-table { border-collapse: collapse; width: 100%; font-size: 12px; }
-        .grid-table th, .grid-table td { border: 1px solid #ccc; text-align: center; padding: 4px; height: 28px; }
-        .grid-table th { background-color: #e0d9d3; color: #550022; }
-        .group-name { background-color: #e0d9d3; font-weight: bold; text-align: left; padding-left: 5px; pointer-events: none; white-space: nowrap; }
-        .gift-coin { background-color: #e0d9d3; pointer-events: none; }
-        .input-cell { cursor: pointer; width: 40px; background-color: white; }
-        .selected-cell { background-color: #00ff00 !important; }
+        /* 🚀 TABLE STRUCTURE (SEPARATE BOXES) */
+        .grid-section { width: 100%; overflow-x: auto; background-color: transparent; border: none; }
+        .grid-table { 
+            border-collapse: separate !important; /* Dabbe alag karne ke liye */
+            border-spacing: 3px !important;       /* Dabbon ke beech ka gap */
+            width: 100%; font-size: 12px; 
+            background-color: transparent; 
+        }
         
+        /* 🚀 TAN/BEIGE COLOR FOR HEADERS AND NON-INPUT CELLS */
+        .grid-table th, .grid-table td:not(.input-cell) { 
+            background-color: #e0d0a6 !important; /* Tan/Beige */
+            color: #7d1c1c; /* Dark reddish text */
+            border: none !important; 
+            text-align: center; padding: 4px; height: 28px; 
+            border-radius: 2px;
+        }
+        
+        .group-name { font-weight: bold; text-align: left !important; padding-left: 5px; pointer-events: none; white-space: nowrap; }
+        .gift-coin { pointer-events: none; }
+        
+        /* 🚀 WHITE INPUT CELLS */
+        .input-cell { 
+            cursor: pointer; width: 40px; 
+            background-color: white !important; 
+            border: none !important; 
+            border-radius: 2px;
+            text-align: center;
+            font-weight: bold;
+            color: #000;
+        }
+        
+        /* 🚀 SELECTED CELL (NEON GREEN) */
+        .selected-cell { background-color: #00ff00 !important; color: black !important; }
+        
+        /* RESULT COLUMN SPECIFIC */
+        #last-result-time, td[id^="last-res-"] { color: #d32f2f !important; font-weight: bold; }
+
         .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .numpad { background-color: #e3dff0; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: center; }
-        .num-btn { background-color: white; border: 1px solid #ccc; border-radius: 5px; padding: 10px 15px; font-size: 16px; font-weight: bold; box-shadow: 0px 2px 2px rgba(0,0,0,0.2); cursor: pointer; }
+        
+        /* 🚀 NUMPAD COLORS (Light Blue/Grey) */
+        .numpad { background-color: #d8e0f0; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: center; }
+        .num-btn { background-color: white; color: #5c6bc0; border: none; border-radius: 5px; padding: 10px 15px; font-size: 16px; font-weight: bold; box-shadow: 0px 2px 2px rgba(0,0,0,0.1); cursor: pointer; }
         .num-btn:active { background-color: #ddd; }
         
         .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
@@ -60,16 +97,16 @@
         
         /* Modals */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 100; padding: 10px; box-sizing: border-box; }
-        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #f78fb3; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
+        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #fa1182; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
         .btn-ok { background-color: #008000; color: white; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 5px; width: 100%; font-size: 16px;}
         
         .yantra-content { max-width: 650px; height: 80vh; display: flex; flex-direction: column; }
-        .modal-header { display: flex; justify-content: space-between; background-color: #f78fb3; padding: 8px; font-weight: bold; color: #550022; }
+        .modal-header { display: flex; justify-content: space-between; background-color: #fa1182; padding: 8px; font-weight: bold; color: white; }
         .close-btn { background-color: #d10000; color: white; border: 1px solid white; cursor: pointer; font-weight: bold; padding: 2px 10px; }
         .table-scroll { overflow-y: auto; overflow-x: auto; margin-top: 10px; flex-grow: 1; }
         .yantra-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; min-width: 400px; }
         .yantra-table th, .yantra-table td { border: 1px solid #ccc; padding: 6px; }
-        .yantra-table th { background-color: #e0d9d3; color: #550022; }
+        .yantra-table th { background-color: #e0d0a6; color: #7d1c1c; }
     </style>
 
     <script>
@@ -119,12 +156,12 @@
         </div>
 
         <div class="header">
-            <div>Welcome: <span id="welcome-phone">Guest</span><br>Balance Point: <span id="balance" style="font-size: 18px; color: #006400;">0.00</span></div>
+            <div>Welcome : <span id="welcome-phone">Guest</span><br>Balance Point : <span id="balance">0.00</span></div>
             <div class="header-right">
-                <span style="background-color:#d1ccc0; padding:2px 10px; font-size:10px;">LOBBY</span><br>
-                Date: <span id="current-date"></span><br>
-                Gift Event Code: <span id="event-code">--:--</span><br>
-                Countdown: <span id="countdown-display" style="color: white; text-shadow: 1px 1px 2px #000;">00:00:00</span>
+                <span style="background-color:#ff9800; color: white; padding:2px 10px; font-size:11px; border-radius: 2px;">LOBBY</span><br>
+                Date: <span id="current-date" style="color: white;"></span><br>
+                Gift Event Code: <span id="event-code" style="color: white;">--:--</span><br>
+                Countdown: <span id="countdown-display">00:00:00</span>
             </div>
         </div>
 
@@ -134,36 +171,37 @@
 
         <div class="main-content">
             <div class="grid-section">
+                <!-- 🚀 Removed inline backgrounds/colors from table so CSS takes over -->
                 <table class="grid-table" id="game-grid">
                     <tr>
                         <th>Product Group</th><th>Gift Coin</th><th>00-09</th><th>10-19</th><th>20-29</th><th>30-39</th><th>40-49</th><th>50-59</th><th>60-69</th><th>70-79</th><th>80-89</th><th>90-99</th><th>All</th>
-                        <th>Qty</th><th>Pts</th><th id="last-result-time" style="color: #333; font-weight: bold; width: 60px;">--:--</th>
+                        <th>Qty</th><th>Pts</th><th id="last-result-time">--:--</th>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td>
-                        <td id="qty-NV" style="font-weight:bold; color:black;"></td><td id="pts-NV" style="font-weight:bold; color:black;"></td><td id="last-res-nv" style="font-weight:bold; background:#e0d9d3; color:#333;"></td>
+                        <td id="qty-NV"></td><td id="pts-NV"></td><td id="last-res-nv"></td>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group RR</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="RR" data-range="00-09"></td><td class="input-cell" data-group="RR" data-range="10-19"></td><td class="input-cell" data-group="RR" data-range="20-29"></td><td class="input-cell" data-group="RR" data-range="30-39"></td><td class="input-cell" data-group="RR" data-range="40-49"></td><td class="input-cell" data-group="RR" data-range="50-59"></td><td class="input-cell" data-group="RR" data-range="60-69"></td><td class="input-cell" data-group="RR" data-range="70-79"></td><td class="input-cell" data-group="RR" data-range="80-89"></td><td class="input-cell" data-group="RR" data-range="90-99"></td><td class="input-cell" data-group="RR" data-range="All"></td>
-                        <td id="qty-RR" style="font-weight:bold; color:black;"></td><td id="pts-RR" style="font-weight:bold; color:black;"></td><td id="last-res-rr" style="font-weight:bold; background:#e0d9d3; color:#333;"></td>
+                        <td id="qty-RR"></td><td id="pts-RR"></td><td id="last-res-rr"></td>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group RY</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="RY" data-range="00-09"></td><td class="input-cell" data-group="RY" data-range="10-19"></td><td class="input-cell" data-group="RY" data-range="20-29"></td><td class="input-cell" data-group="RY" data-range="30-39"></td><td class="input-cell" data-group="RY" data-range="40-49"></td><td class="input-cell" data-group="RY" data-range="50-59"></td><td class="input-cell" data-group="RY" data-range="60-69"></td><td class="input-cell" data-group="RY" data-range="70-79"></td><td class="input-cell" data-group="RY" data-range="80-89"></td><td class="input-cell" data-group="RY" data-range="90-99"></td><td class="input-cell" data-group="RY" data-range="All"></td>
-                        <td id="qty-RY" style="font-weight:bold; color:black;"></td><td id="pts-RY" style="font-weight:bold; color:black;"></td><td id="last-res-ry" style="font-weight:bold; background:#e0d9d3; color:#333;"></td>
+                        <td id="qty-RY"></td><td id="pts-RY"></td><td id="last-res-ry"></td>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group CH</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="CH" data-range="00-09"></td><td class="input-cell" data-group="CH" data-range="10-19"></td><td class="input-cell" data-group="CH" data-range="20-29"></td><td class="input-cell" data-group="CH" data-range="30-39"></td><td class="input-cell" data-group="CH" data-range="40-49"></td><td class="input-cell" data-group="CH" data-range="50-59"></td><td class="input-cell" data-group="CH" data-range="60-69"></td><td class="input-cell" data-group="CH" data-range="70-79"></td><td class="input-cell" data-group="CH" data-range="80-89"></td><td class="input-cell" data-group="CH" data-range="90-99"></td><td class="input-cell" data-group="CH" data-range="All"></td>
-                        <td id="qty-CH" style="font-weight:bold; color:black;"></td><td id="pts-CH" style="font-weight:bold; color:black;"></td><td id="last-res-ch" style="font-weight:bold; background:#e0d9d3; color:#333;"></td>
+                        <td id="qty-CH"></td><td id="pts-CH"></td><td id="last-res-ch"></td>
                     </tr>
                     <tr>
                         <td class="group-name">All</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="ALL" data-range="00-09"></td><td class="input-cell" data-group="ALL" data-range="10-19"></td><td class="input-cell" data-group="ALL" data-range="20-29"></td><td class="input-cell" data-group="ALL" data-range="30-39"></td><td class="input-cell" data-group="ALL" data-range="40-49"></td><td class="input-cell" data-group="ALL" data-range="50-59"></td><td class="input-cell" data-group="ALL" data-range="60-69"></td><td class="input-cell" data-group="ALL" data-range="70-79"></td><td class="input-cell" data-group="ALL" data-range="80-89"></td><td class="input-cell" data-group="ALL" data-range="90-99"></td>
-                        <td style="font-weight:bold; background-color:#e0d9d3;">TOTAL</td>
-                        <td id="total-qty" style="font-weight:bold; background-color:#e0d9d3;"></td><td id="cart-total-pts" style="font-weight:bold; background-color:#e0d9d3;">₹0.00</td><td style="background-color:#e0d9d3;"></td>
+                        <td style="font-weight:bold;">TOTAL</td>
+                        <td id="total-qty" style="font-weight:bold;"></td><td id="cart-total-pts" style="font-weight:bold;">₹0.00</td><td></td>
                     </tr>
                 </table>
             </div>
@@ -174,7 +212,7 @@
                 <button class="num-btn" onclick="typeNumber('1')">1</button><button class="num-btn" onclick="typeNumber('2')">2</button><button class="num-btn" onclick="typeNumber('3')">3</button>
                 <button class="num-btn" onclick="typeNumber('4')">4</button><button class="num-btn" onclick="typeNumber('5')">5</button><button class="num-btn" onclick="typeNumber('6')">6</button>
                 <button class="num-btn" onclick="typeNumber('7')">7</button><button class="num-btn" onclick="typeNumber('8')">8</button><button class="num-btn" onclick="typeNumber('9')">9</button>
-                <button class="num-btn" onclick="typeNumber('0')">0</button><button class="num-btn" onclick="clearActiveCell()" style="background-color: #ddd;">C</button>
+                <button class="num-btn" onclick="typeNumber('0')">0</button><button class="num-btn" onclick="clearActiveCell()" style="background-color: #5c6bc0; color: white;">🗑️</button>
             </div>
             <div class="action-bar">
                 <button class="action-btn green" onclick="buyTickets()">BUY</button>
@@ -190,10 +228,10 @@
     <!-- Modals -->
     <div class="modal-overlay" id="date-modal">
         <div class="modal-content">
-            <h3 style="color: black; margin-top: 0; margin-bottom: 15px;">Purana Result Dekhein</h3>
+            <h3 style="color: #610023; margin-top: 0; margin-bottom: 15px;">Purana Result Dekhein</h3>
             <input type="date" id="yantra-date-input" style="width: 90%; padding: 10px; font-size: 16px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;"><br>
             <button class="btn-ok" onclick="submitDateAndOpenYantra()">Check Result</button>
-            <button class="btn-ok" onclick="document.getElementById('date-modal').style.display='none'" style="background: red;">Cancel</button>
+            <button class="btn-ok" onclick="document.getElementById('date-modal').style.display='none'" style="background: #d10000;">Cancel</button>
         </div>
     </div>
 
@@ -434,7 +472,6 @@
                     return;
                 }
 
-                // 🚀 NAYA FIX: Event Code hamesha agle (upcoming) slot ka dikhayega
                 let nextSlotMinutes = min - (min % 15) + 15;
                 let nextHours = hours;
                 if (nextSlotMinutes >= 60) {
