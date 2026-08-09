@@ -10,8 +10,7 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
-            /* 🚀 EXACT NEON PINK BACKGROUND FROM PHOTO */
-            background-color: #eb458b !important;
+            background-color: #eb458b !important; /* Photo jaisa Neon Pink BG */
             touch-action: none !important;
             font-family: Arial, sans-serif;
             box-sizing: border-box;
@@ -32,7 +31,7 @@
             transform-origin: top left !important;
         }
 
-        /* 🚀 TOP HEADER TEXT COLORS (Dark Reddish Purple) */
+        /* TOP HEADER EXACT COLORS */
         .header { display: flex; justify-content: space-between; color: #7a1a44; font-size: 11px; margin-bottom: 8px; }
         .header-right { text-align: right; line-height: 1.5; color: #7a1a44; }
         .header span { font-weight: normal; color: #551133; }
@@ -40,82 +39,81 @@
         
         .lobby-badge { background-color: #e6b800; color: #a30000; padding: 2px 20px; font-size: 11px; font-weight: bold; border-radius: 2px; display: inline-block; margin-bottom: 2px;}
         
-        /* 🚀 EXACT TABS DESIGN (Floating Buttons, Not Folders) */
+        /* TABS DESIGN */
         .tabs { 
             display: flex; 
             flex-wrap: nowrap; 
             gap: 5px; 
-            margin-bottom: 6px; /* Table se thoda gap */
+            margin-bottom: 6px; 
             padding-left: 2px;
+            align-items: flex-end;
         }
         .tab { 
             padding: 7px 16px; 
-            border-radius: 4px; /* Charo taraf se gol */
+            border-radius: 4px; 
             font-size: 10px; 
             border: none; 
             cursor: pointer; 
             font-weight: normal;
         }
-        /* Tab Colors matching the photo perfectly */
-        .tab:nth-child(1) { background-color: #fdf6e3; color: #6b8e23; } /* Cream BG, Olive Text */
-        .tab:nth-child(2) { background-color: #002277; color: white; } /* Dark Blue */
-        .tab:nth-child(3) { background-color: #774499; color: white; } /* Purple */
-        .tab:nth-child(4) { background-color: #002277; color: white; } /* Dark Blue */
-        .tab:nth-child(5) { background-color: #774499; color: white; } /* Purple */
+        .tab:nth-child(1) { background-color: #fdf6e3; color: #6b8e23; } 
+        .tab:nth-child(2) { background-color: #002277; color: white; } 
+        .tab:nth-child(3) { background-color: #774499; color: white; } 
+        .tab:nth-child(4) { background-color: #002277; color: white; } 
+        .tab:nth-child(5) { background-color: #774499; color: white; } 
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        /* 🚀 EXACT TABLE DESIGN (Collapsed Borders, Zebra Striping Rows) */
+        /* EXACT TABLE DESIGN (Zebra Rows) */
         .grid-section { width: 100%; overflow-x: auto; }
         .grid-table { 
-            border-collapse: collapse !important; /* Table ekdum judi hui */
+            border-collapse: collapse !important; 
             width: 100%; 
             font-size: 11px; 
-            border: 1px solid #a09078 !important; /* Outer Border */
+            border: 1px solid #a09078 !important; 
         }
         
-        /* THIN INNER BORDERS */
         .grid-table th, .grid-table td {
-            border: 1px solid #a09078 !important; /* Halka brownish/grey border */
+            border: 1px solid #a09078 !important; 
             text-align: center; 
             height: 25px; 
             padding: 2px;
             color: #4a4a4a;
         }
         
-        /* 🚀 MAGIC TRICK: ROW BACKGROUND COLORS (Zebra Match) */
-        .grid-table tr:nth-child(1) { background-color: #eaddb6 !important; } /* Header: Light Beige */
-        .grid-table tr:nth-child(2) { background-color: #cfbe96 !important; } /* NV: Darker Khaki */
-        .grid-table tr:nth-child(3) { background-color: #eaddb6 !important; } /* RR: Light Beige */
-        .grid-table tr:nth-child(4) { background-color: #cfbe96 !important; } /* RY: Darker Khaki */
-        .grid-table tr:nth-child(5) { background-color: #eaddb6 !important; } /* CH: Light Beige */
-        .grid-table tr:nth-child(6) { background-color: #eaddb6 !important; } /* ALL: Light Beige */
+        /* Zebra Match from Photo */
+        .grid-table tr:nth-child(1) { background-color: #eaddb6 !important; } 
+        .grid-table tr:nth-child(2) { background-color: #cfbe96 !important; } 
+        .grid-table tr:nth-child(3) { background-color: #eaddb6 !important; } 
+        .grid-table tr:nth-child(4) { background-color: #cfbe96 !important; } 
+        .grid-table tr:nth-child(5) { background-color: #eaddb6 !important; } 
+        .grid-table tr:nth-child(6) { background-color: #eaddb6 !important; } 
         
         .group-name { text-align: left !important; padding-left: 8px; pointer-events: none; white-space: nowrap; color: #4a4a4a !important; }
         .gift-coin { pointer-events: none; }
         
-        /* 🚀 THE WHITE INPUT BOXES (Always White inside colored rows) */
+        /* WHITE INPUT BOXES */
         .input-cell { 
-            background-color: #ffffff !important; /* Ye dabbe hamesha safed rahenge */
+            background-color: #ffffff !important; 
             cursor: pointer; 
             width: 33px !important; 
             color: #000000 !important;
             font-weight: normal;
         }
         
-        /* NEON GREEN SELECTION (With black cursor effect) */
+        /* NEON GREEN SELECTION */
         .selected-cell { 
             background-color: #00d200 !important; 
             color: black !important; 
-            border-right: 2px solid black !important; /* Faking typing cursor */
+            border-right: 2px solid black !important; 
         }
         
-        /* RESULT COLUMN SPECIFIC */
         td[id^="last-res-"] { font-size: 13px; color: #4a4a4a !important; }
 
-        .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        /* 🚀 Niche Ka Layout Fix Kar Diya */
+        .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; width: 100%; gap: 10px;}
         
-        /* 🚀 NUMPAD EXACT COLORS (Icy Blue Tray, White Buttons) */
+        /* NUMPAD COLORS */
         .numpad { background-color: #e4e9f2; display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; border-radius: 4px; justify-content: flex-start; }
         .num-btn, .clear-btn { 
             background-color: #ffffff; 
@@ -130,8 +128,10 @@
         .num-btn:active { background-color: #ddd; }
         .clear-btn { width: 45px; color: #0033cc; font-size: 16px; }
         
-        .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-        .action-btn { background-color: transparent; color: transparent; border: none; padding: 0; width: 0; height: 0; overflow: hidden; } /* Hiding old buttons to match pure UI if needed, but keeping functionality visible for you below */
+        /* 🚀 Action Buttons Wapas Purane Jaisi */
+        .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; flex-grow: 1; }
+        .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 4px; padding: 10px 15px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
+        .action-btn.green { background-color: #008000; }
         
         /* Modals */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 100; padding: 10px; box-sizing: border-box; }
@@ -165,18 +165,10 @@
     <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
     <div class="game-container">
-        <!-- Add Money / Withdraw Buttons hidden on the main game UI area to exactly match photo -->
+        <!-- Add Money / Withdraw wapas upar theek jagah par -->
         <div style="display: flex; gap: 10px; margin-bottom: 5px; justify-content: center; flex-wrap: wrap;">
-            <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 5px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:10px;">➕ Add Money</button>
-            <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 5px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:10px;">💸 Withdraw</button>
-            
-            <!-- Kept action buttons visible here for functionality, but stylized to be small -->
-            <button style="background: #d10000; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 10px; cursor: pointer;" onclick="buyTickets()">BUY</button>
-            <button style="background: #555; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 10px; cursor: pointer;" onclick="clearEntireGrid()">CLEAR</button>
-            <button style="background: #555; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 10px; cursor: pointer;" onclick="cancelLastTicket()">CANCEL</button>
-            <button style="background: #555; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 10px; cursor: pointer;" onclick="openDatePicker()">YANTRA</button>
-            <button style="background: #555; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 10px; cursor: pointer;" onclick="openHistoryModal()">C.DETAILS</button>
-            <button style="background: #555; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 10px; cursor: pointer;" onclick="openPsumModal()">P.SUM</button>
+            <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">➕ Add Money</button>
+            <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">💸 Withdraw</button>
         </div>
 
         <div id="walletModal" class="modal-overlay">
@@ -274,6 +266,16 @@
                 <button class="num-btn" onclick="typeNumber('0')">0</button>
                 <button class="clear-btn" onclick="clearActiveCell()">🗑️</button>
             </div>
+            
+            <!-- 🚀 Wapas Niche Aa Gaye Tumhare Buttons! -->
+            <div class="action-bar">
+                <button class="action-btn green" onclick="buyTickets()">BUY</button>
+                <button class="action-btn" onclick="clearEntireGrid()">CLEAR</button>
+                <button class="action-btn" onclick="cancelLastTicket()">CANCEL</button>
+                <button class="action-btn" onclick="openDatePicker()">YANTRA</button>
+                <button class="action-btn" onclick="openHistoryModal()">C.DETAILS</button>
+                <button class="action-btn" onclick="openPsumModal()">P.SUM</button>
+            </div>
         </div>
     </div>
 
@@ -370,7 +372,6 @@
 
         allInputCells.forEach(cell => { cell.addEventListener('click', function() { if (activeBox) activeBox.classList.remove('selected-cell'); activeBox = this; activeBox.classList.add('selected-cell'); }); });
         
-        // 🔒 Max 3 digits typing lock
         function typeNumber(number) { 
             if (activeBox) { 
                 if (activeBox.innerText.length < 3) {
