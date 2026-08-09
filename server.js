@@ -15,9 +15,7 @@ app.use(express.static(__dirname));
 const DB_LINK = "mongodb://ranjay222_db_user:Ranjay8303@ac-w5tcwg9-shard-00-00.oxuypkt.mongodb.net:27017,ac-w5tcwg9-shard-00-01.oxuypkt.mongodb.net:27017,ac-w5tcwg9-shard-00-02.oxuypkt.mongodb.net:27017/?ssl=true&replicaSet=atlas-k0tlsu-shard-0&authSource=admin&appName=Cluster0"; 
 
 mongoose.connect(DB_LINK, { family: 4, serverSelectionTimeoutMS: 10000 })
-    .then(() => {
-        console.log("✅ MongoDB Asli Database Connect Ho Gaya!");
-    })
+    .then(() => console.log("✅ MongoDB Asli Database Connect Ho Gaya!"))
     .catch((err) => console.log("❌ Database Error: ", err.message));
 
 // ==========================================
@@ -27,7 +25,8 @@ const userSchema = new mongoose.Schema({
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, default: "user" },
-    balance: { type: Number, default: 0 }
+    balance: { type: Number, default: 0 },
+    status: { type: String, default: "Active" } // 🚀 NAYA: Account Status
 });
 const User = mongoose.model('User', userSchema);
 
@@ -38,6 +37,7 @@ const Result = mongoose.model('Result', resultSchema);
 
 const ticketSchema = new mongoose.Schema({
     phone: String, tickets: Array, totalCost: Number,
+    wonAmount: { type: Number, default: 0 }, // 🚀 NAYA: Profit/Loss Calculation ke liye
     date: { type: Date, default: Date.now },
     status: { type: String, default: 'Pending' } 
 });
@@ -63,8 +63,8 @@ app.post('/api/register', async (req, res) => {
     const { phone, password } = req.body;
     try {
         const existingUser = await User.findOne({ phone });
-        if (existingUser) return res.json({ success: false, message: "User ID already exists!" });
-        const newUser = new User({ phone, password, role: "user", balance: 0 });
+        if (existingUser) return res.json({ success: false, message: "User ID already exists! Naya number use karein." });
+        const newUser = new User({ phone, password, role: "user", balance: 0, status: "Active" });
         await newUser.save(); 
         res.json({ success: true, message: "Account Created! Please Login." });
     } catch (error) { res.json({ success: false }); }
@@ -75,6 +75,10 @@ app.post('/api/login', async (req, res) => {
     try {
         const user = await User.findOne({ phone });
         if (!user || user.password !== password) return res.json({ success: false, message: "Invalid Phone/Password!" });
+        
+        // 🚀 NAYA: Agar block hai toh login nahi hoga
+        if (user.status === 'Blocked') return res.json({ success: false, message: "🚫 Aapka account Admin dwara BLOCK kar diya gaya hai!" });
+
         res.json({ success: true, role: user.role, balance: user.balance });
     } catch (error) { res.json({ success: false }); }
 });
@@ -91,7 +95,6 @@ app.post('/api/buy', async (req, res) => {
     let now = new Date(nowStr);
     let currentMins = now.getHours() * 60 + now.getMinutes();
     
-    // Subah 8:30 se Raat 11:00 baje tak ka Time Lock
     if (currentMins < 510 || currentMins >= 1380) {
         return res.json({ success: false, message: "❌ Game Band Hai! Khulne ka samay Subah 8:30 se Raat 11:00 baje tak hai." });
     }
@@ -99,10 +102,11 @@ app.post('/api/buy', async (req, res) => {
     const { phone, totalCost, cartData } = req.body; 
     try {
         const user = await User.findOne({ phone });
-        if (!user) return res.json({ success: false, message: "User not found!" });
+        if (!user || user.status === 'Blocked') return res.json({ success: false, message: "User blocked or not found!" });
         if (user.balance < totalCost) return res.json({ success: false, message: "Insufficient Balance!" });
+        
         user.balance -= totalCost; await user.save(); 
-        const newTicket = new Ticket({ phone, tickets: cartData, totalCost });
+        const newTicket = new Ticket({ phone, tickets: cartData, totalCost, wonAmount: 0 });
         await newTicket.save();
         res.json({ success: true, newBalance: user.balance, message: "Tickets Purchased Successfully!" });
     } catch (error) { res.json({ success: false }); }
@@ -130,7 +134,7 @@ app.post('/api/history', async (req, res) => {
 
 app.post('/api/purchase-summary', async (req, res) => {
     try {
-        const tickets = await Ticket.find({ phone: req.body.phone });
+        const tickets = await Ticket.find({ phone: req.body.phone, status: { $ne: 'Cancelled' } });
         let totalSpent = 0, todaySpent = 0;
         
         let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
@@ -152,19 +156,15 @@ app.post('/api/admin/result', async (req, res) => {
         
         let finalTime = customTime;
         if (!finalTime) {
-            let hh = String(d.getHours()).padStart(2, '0');
-            let mns = d.getMinutes();
-            let slotMns = String(mns - (mns % 15)).padStart(2, '0');
-            finalTime = `${hh}:${slotMns}`;
+            let hh = String(d.getHours()).padStart(2, '0'); let mns = d.getMinutes();
+            let slotMns = String(mns - (mns % 15)).padStart(2, '0'); finalTime = `${hh}:${slotMns}`;
         }
 
         let existing = await Result.findOne({ date: finalDate, time: finalTime });
         if (existing) {
-            existing.nv = nv; existing.rr = rr; existing.ry = ry; existing.ch = ch;
-            await existing.save();
+            existing.nv = nv; existing.rr = rr; existing.ry = ry; existing.ch = ch; await existing.save();
         } else {
-            const newResult = new Result({ date: finalDate, time: finalTime, nv, rr, ry, ch });
-            await newResult.save();
+            const newResult = new Result({ date: finalDate, time: finalTime, nv, rr, ry, ch }); await newResult.save();
         }
 
         let isFuture = false;
@@ -173,11 +173,7 @@ app.post('/api/admin/result', async (req, res) => {
         let resultMinutes = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
 
         if (finalDate === `${dd}/${mm}/${d.getFullYear()}` && resultMinutes > currentMinutes) {
-            isFuture = true;
-        }
-
-        if (isFuture) {
-            return res.json({ success: true, message: `✅ Advance Result Saved for Time: ${finalTime}.\nJab time aayega, tabhi result game me dikhega!` });
+            return res.json({ success: true, message: `✅ Advance Result Saved. Time aane par dikhega!` });
         }
 
         const pendingTickets = await Ticket.find({ status: 'Pending' });
@@ -190,26 +186,18 @@ app.post('/api/admin/result', async (req, res) => {
                 if (winningNumber && bet.number.includes("-")) {
                     let winNum = parseInt(winningNumber);
                     let minVal = parseInt(bet.number.split("-")[0]); let maxVal = parseInt(bet.number.split("-")[1]);
-                    // 🚀 NAYA HISAAB: Ab 100 GUNA inam milega
                     if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 100);
                 }
             });
             if (totalWinningAmount > 0) {
                 ticket.status = 'Won';
+                ticket.wonAmount = totalWinningAmount; // 🚀 NAYA: Save Win Amount for P&L
                 const user = await User.findOne({ phone: ticket.phone });
                 if (user) { user.balance += totalWinningAmount; await user.save(); }
-            } else { ticket.status = 'Lost'; }
+            } else { ticket.status = 'Lost'; ticket.wonAmount = 0; }
             await ticket.save(); 
         }
-        res.json({ success: true, message: `✅ Result Saved & Tickets Settled for Time: ${finalTime}` });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/results', async (req, res) => {
-    try {
-        let query = req.body.date ? { date: req.body.date } : {}; 
-        const results = await Result.find(query).sort({ _id: -1 }).limit(100);
-        res.json({ success: true, results });
+        res.json({ success: true, message: `✅ Result Saved & Tickets Settled!` });
     } catch (error) { res.json({ success: false }); }
 });
 
@@ -229,6 +217,45 @@ app.get('/api/admin/live-bets', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
+// 🚀 PROFIT / LOSS API
+app.get('/api/admin/profit-loss', async (req, res) => {
+    try {
+        // Sirf un tickets ka hisaab jo cancel nahi hui hain
+        const tickets = await Ticket.find({ status: { $ne: 'Cancelled' } });
+        let totalBets = 0;
+        let totalWins = 0;
+        
+        tickets.forEach(t => {
+            totalBets += (t.totalCost || 0); // Game mein kitna paisa laga
+            totalWins += (t.wonAmount || 0); // Game se kitna inam nikla
+        });
+        
+        let netProfit = totalBets - totalWins; // Game ka fayda ya nuksan
+        
+        res.json({ success: true, totalBets, totalWins, netProfit });
+    } catch(e) { res.json({ success: false }); }
+});
+
+// 🚀 BLOCK / UNBLOCK USER API
+app.post('/api/admin/toggle-block', async (req, res) => {
+    try {
+        const user = await User.findOne({ phone: req.body.phone });
+        if(!user) return res.json({ success: false, message: "User nahi mila!" });
+        
+        user.status = user.status === 'Blocked' ? 'Active' : 'Blocked';
+        await user.save();
+        res.json({ success: true, message: `User ID ${user.phone} ab ${user.status} ho gaya hai.` });
+    } catch (error) { res.json({ success: false }); }
+});
+
+app.post('/api/results', async (req, res) => {
+    try {
+        let query = req.body.date ? { date: req.body.date } : {}; 
+        const results = await Result.find(query).sort({ _id: -1 }).limit(100);
+        res.json({ success: true, results });
+    } catch (error) { res.json({ success: false }); }
+});
+
 app.post('/api/admin/modify-points', async (req, res) => {
     try {
         const user = await User.findOne({ phone: req.body.targetPhone });
@@ -242,10 +269,7 @@ app.post('/api/admin/modify-points', async (req, res) => {
 });
 
 app.post('/api/deposit', async (req, res) => {
-    try {
-        await new Deposit(req.body).save();
-        res.json({ success: true, message: "Request Bhej Di Gayi Hai!" });
-    } catch (error) { res.json({ success: false }); }
+    try { await new Deposit(req.body).save(); res.json({ success: true, message: "Request Bhej Di Gayi Hai!" }); } catch (error) { res.json({ success: false }); }
 });
 app.get('/api/admin/pending-deposits', async (req, res) => { res.json({ success: true, deposits: await Deposit.find({ status: 'Pending' }) }); });
 app.post('/api/admin/handle-deposit', async (req, res) => {
@@ -285,23 +309,7 @@ app.post('/api/admin/handle-withdrawal', async (req, res) => {
 });
 
 app.get('/api/admin/users', async (req, res) => {
-    try {
-        const users = await User.find({ role: 'user' }).sort({ _id: -1 });
-        res.json({ success: true, users });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/admin/delete-user', async (req, res) => {
-    try {
-        const deletedUser = await User.findOneAndDelete({ phone: req.body.phone });
-        if (deletedUser) {
-            res.json({ success: true, message: `User ID ${req.body.phone} hamesha ke liye delete kar diya gaya hai.` });
-        } else {
-            res.json({ success: false, message: "User nahi mila." });
-        }
-    } catch (error) {
-        res.json({ success: false, message: "Server error" });
-    }
+    try { res.json({ success: true, users: await User.find({ role: 'user' }).sort({ _id: -1 }) }); } catch (error) { res.json({ success: false }); }
 });
 
 let aakhiriAutoSlot = ""; 
@@ -326,7 +334,6 @@ setInterval(async () => {
     if (aakhiriAutoSlot !== uniqueSlotCheck) {
         try {
             let existingResult = await Result.findOne({ date: todayStr, time: currentSlotTime });
-            
             if (existingResult) {
                 const pendingTickets = await Ticket.find({ status: 'Pending' });
                 const resultsDict = { "NV": existingResult.nv, "RR": existingResult.rr, "RY": existingResult.ry, "CH": existingResult.ch };
@@ -339,15 +346,15 @@ setInterval(async () => {
                             let winNum = parseInt(winningNumber);
                             let minVal = parseInt(bet.number.split("-")[0]);
                             let maxVal = parseInt(bet.number.split("-")[1]);
-                            // 🚀 CHANGED TO 100
                             if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 100); 
                         }
                     });
                     if (totalWinningAmount > 0) {
                         ticket.status = 'Won';
+                        ticket.wonAmount = totalWinningAmount;
                         const user = await User.findOne({ phone: ticket.phone });
                         if (user) { user.balance += totalWinningAmount; await user.save(); }
-                    } else { ticket.status = 'Lost'; }
+                    } else { ticket.status = 'Lost'; ticket.wonAmount = 0; }
                     await ticket.save(); 
                 }
                 aakhiriAutoSlot = uniqueSlotCheck; 
