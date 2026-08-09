@@ -10,8 +10,8 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
-            /* 🚀 NAYA NEON PINK BACKGROUND */
-            background-color: #fa1182 !important;
+            /* 🚀 NEON PINK BACKGROUND */
+            background-color: #ff007f !important;
             touch-action: none !important;
             font-family: Arial, sans-serif;
             box-sizing: border-box;
@@ -26,42 +26,47 @@
             margin: 0 !important;
             border-radius: 0 !important;
             border: none !important;
-            /* 🚀 BACKGROUND MATCHED */
-            background-color: #fa1182;
+            background-color: #ff007f;
             display: flex; flex-direction: column; padding: 10px;
             box-sizing: border-box;
             transform-origin: top left !important;
         }
 
-        /* 🚀 TOP HEADER COLORS */
+        /* TOP HEADER COLORS */
         .header { display: flex; justify-content: space-between; color: #610023; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
         .header-right { text-align: right; color: #610023; }
         #welcome-phone, #balance { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-size: 16px;}
         #countdown-display { color: white; text-shadow: 1px 1px 2px #000; }
         
-        /* 🚀 TABS COLOR UPDATED (Dark Blue & Purple) */
+        /* TABS COLOR (Purple and Dark Blue) */
         .tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; justify-content: center; }
-        .tab { background-color: #b9218c; color: white; padding: 5px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; border: none; cursor: pointer; }
-        .tab.active { background-color: #121c9e; color: white; } /* Dark Blue active tab */
+        .tab { background-color: #9c27b0; color: white; padding: 5px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; border: none; cursor: pointer; }
+        .tab.active { background-color: #00008b; color: white; } /* Dark Blue active tab */
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        /* 🚀 TABLE STRUCTURE (SEPARATE BOXES) */
+        /* 🚀 EXACT TABLE BORDER MATCHING */
         .grid-section { width: 100%; overflow-x: auto; background-color: transparent; border: none; }
         .grid-table { 
-            border-collapse: separate !important; /* Dabbe alag karne ke liye */
-            border-spacing: 3px !important;       /* Dabbon ke beech ka gap */
+            border-collapse: collapse !important; /* Table ekdum judi hui */
             width: 100%; font-size: 12px; 
-            background-color: transparent; 
         }
         
-        /* 🚀 TAN/BEIGE COLOR FOR HEADERS AND NON-INPUT CELLS */
-        .grid-table th, .grid-table td:not(.input-cell) { 
-            background-color: #e0d0a6 !important; /* Tan/Beige */
-            color: #7d1c1c; /* Dark reddish text */
-            border: none !important; 
-            text-align: center; padding: 4px; height: 28px; 
-            border-radius: 2px;
+        /* 🚀 THIN BEIGE/TAN BORDER FOR EVERY CELL */
+        .grid-table th, .grid-table td {
+            border: 1px solid #b5a27f !important; /* Photo jaisa patla border */
+            text-align: center; 
+            padding: 4px; 
+            height: 28px; 
+        }
+        
+        /* 🚀 BEIGE/TAN BACKGROUND FOR NON-INPUT CELLS */
+        .grid-table th, 
+        .grid-table td.group-name, 
+        .grid-table td.gift-coin, 
+        .grid-table td:not(.input-cell) { 
+            background-color: #e2d2a4 !important; /* Matti/Beige color */
+            color: #5c0011; 
         }
         
         .group-name { font-weight: bold; text-align: left !important; padding-left: 5px; pointer-events: none; white-space: nowrap; }
@@ -69,16 +74,13 @@
         
         /* 🚀 WHITE INPUT CELLS */
         .input-cell { 
+            background-color: #ffffff !important; /* Khali khane white */
             cursor: pointer; width: 40px; 
-            background-color: white !important; 
-            border: none !important; 
-            border-radius: 2px;
-            text-align: center;
             font-weight: bold;
             color: #000;
         }
         
-        /* 🚀 SELECTED CELL (NEON GREEN) */
+        /* NEON GREEN SELECTED CELL */
         .selected-cell { background-color: #00ff00 !important; color: black !important; }
         
         /* RESULT COLUMN SPECIFIC */
@@ -86,8 +88,8 @@
 
         .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         
-        /* 🚀 NUMPAD COLORS (Light Blue/Grey) */
-        .numpad { background-color: #d8e0f0; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: center; }
+        /* NUMPAD AND ACTION BUTTONS */
+        .numpad { background-color: #e1cce3; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: center; }
         .num-btn { background-color: white; color: #5c6bc0; border: none; border-radius: 5px; padding: 10px 15px; font-size: 16px; font-weight: bold; box-shadow: 0px 2px 2px rgba(0,0,0,0.1); cursor: pointer; }
         .num-btn:active { background-color: #ddd; }
         
@@ -97,16 +99,16 @@
         
         /* Modals */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 100; padding: 10px; box-sizing: border-box; }
-        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #fa1182; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
+        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #ff007f; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
         .btn-ok { background-color: #008000; color: white; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 5px; width: 100%; font-size: 16px;}
         
         .yantra-content { max-width: 650px; height: 80vh; display: flex; flex-direction: column; }
-        .modal-header { display: flex; justify-content: space-between; background-color: #fa1182; padding: 8px; font-weight: bold; color: white; }
+        .modal-header { display: flex; justify-content: space-between; background-color: #ff007f; padding: 8px; font-weight: bold; color: white; }
         .close-btn { background-color: #d10000; color: white; border: 1px solid white; cursor: pointer; font-weight: bold; padding: 2px 10px; }
         .table-scroll { overflow-y: auto; overflow-x: auto; margin-top: 10px; flex-grow: 1; }
         .yantra-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; min-width: 400px; }
         .yantra-table th, .yantra-table td { border: 1px solid #ccc; padding: 6px; }
-        .yantra-table th { background-color: #e0d0a6; color: #7d1c1c; }
+        .yantra-table th { background-color: #e2d2a4; color: #5c0011; }
     </style>
 
     <script>
@@ -171,7 +173,6 @@
 
         <div class="main-content">
             <div class="grid-section">
-                <!-- 🚀 Removed inline backgrounds/colors from table so CSS takes over -->
                 <table class="grid-table" id="game-grid">
                     <tr>
                         <th>Product Group</th><th>Gift Coin</th><th>00-09</th><th>10-19</th><th>20-29</th><th>30-39</th><th>40-49</th><th>50-59</th><th>60-69</th><th>70-79</th><th>80-89</th><th>90-99</th><th>All</th>
