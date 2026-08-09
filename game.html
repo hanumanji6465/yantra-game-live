@@ -10,6 +10,7 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
+            /* 🚀 NEON PINK BACKGROUND */
             background-color: #ff007f !important;
             touch-action: none !important;
             font-family: Arial, sans-serif;
@@ -32,23 +33,25 @@
         }
 
         /* TOP HEADER COLORS */
-        .header { display: flex; justify-content: space-between; color: #610023; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+        .header { display: flex; justify-content: space-between; color: #610023; font-size: 14px; font-weight: bold; margin-bottom: 5px; }
         .header-right { text-align: right; color: #610023; }
         #welcome-phone, #balance { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-size: 16px;}
         #countdown-display { color: white; text-shadow: 1px 1px 2px #000; }
         
-        /* 🚀 TABS COLOR ROW FIXED (Photo jaisa design) */
+        /* 🚀 TABS COLOR ROW FIXED (Left Side Se Start) */
         .tabs { 
             display: flex; 
-            flex-wrap: wrap; 
-            gap: 3px; /* Dabbon ke beech halka sa gap */
-            margin-bottom: 0px; /* Table se chipkane ke liye 0 kar diya */
-            justify-content: flex-start; /* Left side se alignment */
+            flex-wrap: nowrap; 
+            gap: 2px; /* Dabbon ke beech ekdum patla gap photo jaisa */
+            margin-bottom: 0px; /* Table se chipkane ke liye 0 */
+            justify-content: flex-start; /* 🚀 LEFT SIDE ALIGNMENT */
+            align-items: flex-end;
+            width: 100%;
         }
         .tab { 
-            background-color: #aa00ff; /* Baaki tabs ka Purple color */
+            background-color: #d500f9; /* Baaki tabs ka Bright Purple/Magenta color */
             color: white; 
-            padding: 8px 15px; 
+            padding: 8px 18px; 
             border-radius: 4px 4px 0 0; /* Upar se gol, niche se flat (Folder jaisa) */
             font-size: 11px; 
             font-weight: bold; 
@@ -61,8 +64,8 @@
         }
         /* 🚀 BULK A TABS UI COLOR MATCHED */
         .tab:nth-child(1) {
-            background-color: #e2d2a4; /* Matti/Beige background */
-            color: #d10000; /* Laal text */
+            background-color: #e2d2a4; /* Matti/Beige background photo jaisa */
+            color: #e60000; /* Laal text */
         }
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
@@ -111,7 +114,7 @@
         .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         
         /* NUMPAD AND ACTION BUTTONS */
-        .numpad { background-color: #e1cce3; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: center; }
+        .numpad { background-color: #e1cce3; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: flex-start; }
         .num-btn { background-color: white; color: #5c6bc0; border: none; border-radius: 5px; padding: 10px 15px; font-size: 16px; font-weight: bold; box-shadow: 0px 2px 2px rgba(0,0,0,0.1); cursor: pointer; }
         .num-btn:active { background-color: #ddd; }
         
