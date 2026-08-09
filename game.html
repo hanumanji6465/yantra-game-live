@@ -10,7 +10,6 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
-            /* 🚀 NEON PINK BACKGROUND */
             background-color: #ff007f !important;
             touch-action: none !important;
             font-family: Arial, sans-serif;
@@ -38,43 +37,66 @@
         #welcome-phone, #balance { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-size: 16px;}
         #countdown-display { color: white; text-shadow: 1px 1px 2px #000; }
         
-        /* TABS COLOR (Purple and Dark Blue) */
-        .tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; justify-content: center; }
-        .tab { background-color: #9c27b0; color: white; padding: 5px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; border: none; cursor: pointer; }
-        .tab.active { background-color: #00008b; color: white; } /* Dark Blue active tab */
+        /* 🚀 TABS COLOR ROW FIXED (Photo jaisa design) */
+        .tabs { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 3px; /* Dabbon ke beech halka sa gap */
+            margin-bottom: 0px; /* Table se chipkane ke liye 0 kar diya */
+            justify-content: flex-start; /* Left side se alignment */
+        }
+        .tab { 
+            background-color: #aa00ff; /* Baaki tabs ka Purple color */
+            color: white; 
+            padding: 8px 15px; 
+            border-radius: 4px 4px 0 0; /* Upar se gol, niche se flat (Folder jaisa) */
+            font-size: 11px; 
+            font-weight: bold; 
+            border: none; 
+            cursor: pointer; 
+        }
+        .tab.active { 
+            background-color: #00008b; /* Active tab (Bulk B) Dark Blue */
+            color: white; 
+        }
+        /* 🚀 BULK A TABS UI COLOR MATCHED */
+        .tab:nth-child(1) {
+            background-color: #e2d2a4; /* Matti/Beige background */
+            color: #d10000; /* Laal text */
+        }
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        /* 🚀 EXACT TABLE BORDER MATCHING */
+        /* TABLE BORDER MATCHING */
         .grid-section { width: 100%; overflow-x: auto; background-color: transparent; border: none; }
         .grid-table { 
-            border-collapse: collapse !important; /* Table ekdum judi hui */
+            border-collapse: collapse !important; 
             width: 100%; font-size: 12px; 
         }
         
-        /* 🚀 THIN BEIGE/TAN BORDER FOR EVERY CELL */
+        /* THIN BEIGE/TAN BORDER FOR EVERY CELL */
         .grid-table th, .grid-table td {
-            border: 1px solid #b5a27f !important; /* Photo jaisa patla border */
+            border: 1px solid #b5a27f !important; 
             text-align: center; 
             padding: 4px; 
             height: 28px; 
         }
         
-        /* 🚀 BEIGE/TAN BACKGROUND FOR NON-INPUT CELLS */
+        /* BEIGE/TAN BACKGROUND FOR NON-INPUT CELLS */
         .grid-table th, 
         .grid-table td.group-name, 
         .grid-table td.gift-coin, 
         .grid-table td:not(.input-cell) { 
-            background-color: #e2d2a4 !important; /* Matti/Beige color */
+            background-color: #e2d2a4 !important; 
             color: #5c0011; 
         }
         
         .group-name { font-weight: bold; text-align: left !important; padding-left: 5px; pointer-events: none; white-space: nowrap; }
         .gift-coin { pointer-events: none; }
         
-        /* 🚀 WHITE INPUT CELLS */
+        /* WHITE INPUT CELLS */
         .input-cell { 
-            background-color: #ffffff !important; /* Khali khane white */
+            background-color: #ffffff !important; 
             cursor: pointer; width: 40px; 
             font-weight: bold;
             color: #000;
