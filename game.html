@@ -20,45 +20,45 @@
             position: absolute !important;
             top: 0 !important; left: 0 !important;
             width: 1300px !important;  
-            height: 500px !important;  
+            /* 🚀 Height badha di taaki badi table aaram se fit ho jaye */
+            height: 600px !important;  
             max-width: none !important; 
             margin: 0 !important;
             border-radius: 0 !important;
             border: none !important;
             background-color: #eb458b;
-            display: flex; flex-direction: column; padding: 10px;
+            display: flex; flex-direction: column; padding: 15px;
             box-sizing: border-box;
             transform-origin: top left !important;
         }
 
-        /* 🚀 TOP HEADER STYLES */
-        .header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        /* TOP HEADER STYLES */
+        .header { display: flex; justify-content: space-between; margin-bottom: 12px; }
         
-        /* ALIGNMENT TABLES FOR PERFECT SPACING */
-        .header-table { border-collapse: collapse; font-size: 11px; color: #7a1a44; }
+        .header-table { border-collapse: collapse; font-size: 12px; color: #7a1a44; }
         .header-table td { padding: 1px 5px; border: none; }
         
-        #welcome-phone, #balance { color: #551133; font-weight: normal; }
-        #countdown-display { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-weight: bold;}
+        #welcome-phone, #balance { color: #551133; font-weight: normal; font-size: 14px; }
+        #countdown-display { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-weight: bold; font-size: 14px;}
         
-        .lobby-badge { background-color: #e6b800; color: #a30000; padding: 2px 20px; font-size: 11px; font-weight: bold; border-radius: 2px; display: inline-block; margin-bottom: 2px;}
+        .lobby-badge { background-color: #e6b800; color: #a30000; padding: 4px 25px; font-size: 12px; font-weight: bold; border-radius: 2px; display: inline-block; margin-bottom: 4px;}
         
         /* TABS DESIGN */
         .tabs { 
             display: flex; 
             flex-wrap: nowrap; 
             gap: 5px; 
-            margin-bottom: 6px; 
+            margin-bottom: 0px; 
             padding-left: 2px;
             align-items: flex-end;
         }
         .tab { 
-            padding: 7px 16px; 
-            border-radius: 4px; 
-            font-size: 10px; 
+            padding: 8px 20px; 
+            border-radius: 5px 5px 0 0; 
+            font-size: 12px; 
             border: none; 
             cursor: pointer; 
-            font-weight: normal;
+            font-weight: bold;
         }
         .tab:nth-child(1) { background-color: #fdf6e3; color: #6b8e23; } 
         .tab:nth-child(2) { background-color: #002277; color: white; } 
@@ -68,20 +68,20 @@
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        /* EXACT TABLE DESIGN */
+        /* 🚀 EXACT TABLE DESIGN (BIGGER SIZES) */
         .grid-section { width: 100%; overflow-x: auto; }
         .grid-table { 
             border-collapse: collapse !important; 
             width: 100%; 
-            font-size: 11px; 
+            font-size: 13px; /* 🚀 Font bada kar diya (pehle 11px tha) */
             border: 1px solid #a09078 !important; 
         }
         
         .grid-table th, .grid-table td {
             border: 1px solid #a09078 !important; 
             text-align: center; 
-            height: 25px; 
-            padding: 2px;
+            height: 38px; /* 🚀 Unchai badha di (pehle 25px tha) */
+            padding: 4px;
             color: #4a4a4a;
         }
         
@@ -92,16 +92,17 @@
         .grid-table tr:nth-child(5) { background-color: #eaddb6 !important; } 
         .grid-table tr:nth-child(6) { background-color: #eaddb6 !important; } 
         
-        .group-name { text-align: left !important; padding-left: 8px; pointer-events: none; white-space: nowrap; color: #4a4a4a !important; }
+        .group-name { text-align: left !important; padding-left: 10px; pointer-events: none; white-space: nowrap; color: #4a4a4a !important; font-size: 14px;}
         .gift-coin { pointer-events: none; }
         
-        /* WHITE INPUT BOXES */
+        /* 🚀 BADE WHITE INPUT BOXES */
         .input-cell { 
             background-color: #ffffff !important; 
             cursor: pointer; 
-            width: 33px !important; 
+            width: 50px !important; /* 🚀 Chaudai badha di (pehle 33px tha) */
             color: #000000 !important;
-            font-weight: normal;
+            font-weight: bold !important; /* Text ko mota kar diya */
+            font-size: 15px; /* Type kiye numbers bade dikhenge */
         }
         
         .selected-cell { 
@@ -110,28 +111,29 @@
             border-right: 2px solid black !important; 
         }
         
-        td[id^="last-res-"] { font-size: 13px; color: #4a4a4a !important; }
+        td[id^="last-res-"] { font-size: 15px; font-weight: bold; color: #4a4a4a !important; }
 
-        .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; width: 100%; gap: 10px;}
+        .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; width: 100%; gap: 10px;}
         
         /* NUMPAD COLORS */
-        .numpad { background-color: #e4e9f2; display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; border-radius: 4px; justify-content: flex-start; }
+        .numpad { background-color: #e4e9f2; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border-radius: 4px; justify-content: flex-start; }
         .num-btn, .clear-btn { 
             background-color: #ffffff; 
             color: #5b7bb2; 
             border: 1px solid #c9d2e0; 
-            border-radius: 4px; 
-            width: 36px; 
-            height: 34px; 
-            font-size: 15px; 
+            border-radius: 5px; 
+            width: 42px; 
+            height: 40px; 
+            font-size: 18px; 
+            font-weight: bold;
             cursor: pointer; 
         }
         .num-btn:active { background-color: #ddd; }
-        .clear-btn { width: 45px; color: #0033cc; font-size: 16px; }
+        .clear-btn { width: 55px; color: #0033cc; font-size: 18px; }
         
         /* Action Buttons */
-        .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; flex-grow: 1; }
-        .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 4px; padding: 10px 15px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
+        .action-bar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; flex-grow: 1; }
+        .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 5px; padding: 12px 18px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
         .action-btn.green { background-color: #008000; }
         
         /* Modals */
@@ -151,7 +153,7 @@
     <script>
         function makePerfectMobileApp() {
             const container = document.querySelector('.game-container');
-            const targetW = 1300; const targetH = 500;  
+            const targetW = 1300; const targetH = 600; /* 🚀 Target Height bhi bada kar di taki cut na ho */
             const scaleX = window.innerWidth / targetW;
             const scaleY = window.innerHeight / targetH;
             container.style.transform = `scale(${scaleX}, ${scaleY})`;
@@ -194,7 +196,6 @@
             </div>
         </div>
 
-        <!-- 🚀 100% PERFECTLY ALIGNED HEADER -->
         <div class="header">
             <div>
                 <table class="header-table">
@@ -250,28 +251,28 @@
                     <tr>
                         <td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td>
-                        <td id="qty-NV"></td><td id="pts-NV"></td><td id="last-res-nv"></td>
+                        <td id="qty-NV" style="font-weight: bold; color: black;"></td><td id="pts-NV" style="font-weight: bold; color: black;"></td><td id="last-res-nv"></td>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group RR</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="RR" data-range="00-09"></td><td class="input-cell" data-group="RR" data-range="10-19"></td><td class="input-cell" data-group="RR" data-range="20-29"></td><td class="input-cell" data-group="RR" data-range="30-39"></td><td class="input-cell" data-group="RR" data-range="40-49"></td><td class="input-cell" data-group="RR" data-range="50-59"></td><td class="input-cell" data-group="RR" data-range="60-69"></td><td class="input-cell" data-group="RR" data-range="70-79"></td><td class="input-cell" data-group="RR" data-range="80-89"></td><td class="input-cell" data-group="RR" data-range="90-99"></td><td class="input-cell" data-group="RR" data-range="All"></td>
-                        <td id="qty-RR"></td><td id="pts-RR"></td><td id="last-res-rr"></td>
+                        <td id="qty-RR" style="font-weight: bold; color: black;"></td><td id="pts-RR" style="font-weight: bold; color: black;"></td><td id="last-res-rr"></td>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group RY</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="RY" data-range="00-09"></td><td class="input-cell" data-group="RY" data-range="10-19"></td><td class="input-cell" data-group="RY" data-range="20-29"></td><td class="input-cell" data-group="RY" data-range="30-39"></td><td class="input-cell" data-group="RY" data-range="40-49"></td><td class="input-cell" data-group="RY" data-range="50-59"></td><td class="input-cell" data-group="RY" data-range="60-69"></td><td class="input-cell" data-group="RY" data-range="70-79"></td><td class="input-cell" data-group="RY" data-range="80-89"></td><td class="input-cell" data-group="RY" data-range="90-99"></td><td class="input-cell" data-group="RY" data-range="All"></td>
-                        <td id="qty-RY"></td><td id="pts-RY"></td><td id="last-res-ry"></td>
+                        <td id="qty-RY" style="font-weight: bold; color: black;"></td><td id="pts-RY" style="font-weight: bold; color: black;"></td><td id="last-res-ry"></td>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group CH</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="CH" data-range="00-09"></td><td class="input-cell" data-group="CH" data-range="10-19"></td><td class="input-cell" data-group="CH" data-range="20-29"></td><td class="input-cell" data-group="CH" data-range="30-39"></td><td class="input-cell" data-group="CH" data-range="40-49"></td><td class="input-cell" data-group="CH" data-range="50-59"></td><td class="input-cell" data-group="CH" data-range="60-69"></td><td class="input-cell" data-group="CH" data-range="70-79"></td><td class="input-cell" data-group="CH" data-range="80-89"></td><td class="input-cell" data-group="CH" data-range="90-99"></td><td class="input-cell" data-group="CH" data-range="All"></td>
-                        <td id="qty-CH"></td><td id="pts-CH"></td><td id="last-res-ch"></td>
+                        <td id="qty-CH" style="font-weight: bold; color: black;"></td><td id="pts-CH" style="font-weight: bold; color: black;"></td><td id="last-res-ch"></td>
                     </tr>
                     <tr>
                         <td class="group-name">All</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="ALL" data-range="00-09"></td><td class="input-cell" data-group="ALL" data-range="10-19"></td><td class="input-cell" data-group="ALL" data-range="20-29"></td><td class="input-cell" data-group="ALL" data-range="30-39"></td><td class="input-cell" data-group="ALL" data-range="40-49"></td><td class="input-cell" data-group="ALL" data-range="50-59"></td><td class="input-cell" data-group="ALL" data-range="60-69"></td><td class="input-cell" data-group="ALL" data-range="70-79"></td><td class="input-cell" data-group="ALL" data-range="80-89"></td><td class="input-cell" data-group="ALL" data-range="90-99"></td>
-                        <td style="color: #4a4a4a; text-align: left; padding-left: 5px;">TOTAL</td>
-                        <td id="total-qty"></td><td id="cart-total-pts"></td><td></td>
+                        <td style="color: #4a4a4a; text-align: left; padding-left: 5px; font-weight: bold;">TOTAL</td>
+                        <td id="total-qty" style="font-weight: bold; color: black;"></td><td id="cart-total-pts" style="font-weight: bold; color: black;"></td><td></td>
                     </tr>
                 </table>
             </div>
