@@ -32,7 +32,7 @@
             transform-origin: top left !important;
         }
 
-        /* 🚀 TOP HEADER EXACT COLORS (Dark Red text on Pink BG) */
+        /* TOP HEADER EXACT COLORS */
         .header { display: flex; justify-content: space-between; color: #8b0000; font-size: 11px; margin-bottom: 5px; }
         .header-right { text-align: right; line-height: 1.4; }
         .header span { font-weight: bold; }
@@ -40,7 +40,7 @@
         
         .lobby-badge { background-color: #ffcc00; color: #cc0000; padding: 2px 25px; font-size: 11px; font-weight: bold; border-radius: 2px; display: inline-block; margin-bottom: 3px;}
         
-        /* 🚀 EXACT TABS DESIGN (Folder Shape, No gap at bottom) */
+        /* TABS DESIGN */
         .tabs { 
             display: flex; 
             flex-wrap: nowrap; 
@@ -50,66 +50,64 @@
             align-items: flex-end;
         }
         .tab { 
-            background-color: #9900cc; /* Purple color */
+            background-color: #9900cc; 
             color: white; 
             padding: 6px 14px; 
-            border-radius: 4px 4px 0 0; /* Folder design */
+            border-radius: 4px 4px 0 0; 
             font-size: 10px; 
             border: none; 
             cursor: pointer; 
         }
         .tab.active { 
-            background-color: #0033cc; /* Dark Blue */
+            background-color: #0033cc; 
             color: white; 
         }
         .tab:nth-child(1) {
-            background-color: #f5e6c4; /* Beige color matching table */
-            color: #cc0000; /* Red text */
+            background-color: #f5e6c4; 
+            color: #cc0000; 
         }
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        /* 🚀 EXACT TABLE DESIGN (Collapsed, Beige BG, White Inputs) */
+        /* TABLE DESIGN */
         .grid-section { width: 100%; overflow-x: auto; }
         .grid-table { 
             border-collapse: collapse !important; 
             width: 100%; 
             font-size: 11px; 
-            background-color: #f5e6c4 !important; /* Matti/Beige base */
+            background-color: #f5e6c4 !important; 
             border: 1px solid #d3bfa1 !important;
         }
         
         /* THIN BORDERS & TEXT COLOR */
         .grid-table th, .grid-table td {
-            border: 1px solid #d3bfa1 !important; /* Halka brown border */
+            border: 1px solid #d3bfa1 !important; 
             text-align: center; 
             height: 22px; 
-            color: #a5785a; /* Halka brown text for headers */
+            color: #a5785a; 
             padding: 2px;
         }
-        .grid-table td { color: #8b0000; /* Dark red text for data */ }
+        .grid-table td { color: #8b0000; }
         
         .group-name { text-align: left !important; padding-left: 5px; pointer-events: none; white-space: nowrap; color: #8b0000 !important; }
         .gift-coin { pointer-events: none; }
         
-        /* 🚀 THE WHITE INPUT BOXES */
+        /* WHITE INPUT BOXES */
         .input-cell { 
-            background-color: #ffffff !important; /* Safed dabbe */
+            background-color: #ffffff !important; 
             cursor: pointer; 
             width: 35px; 
             color: #000000 !important;
         }
         
-        /* NEON GREEN SELECTION */
         .selected-cell { background-color: #00ff00 !important; color: black !important; }
         
-        /* RESULT COLUMN */
         #last-result-time { color: #a5785a !important; }
         td[id^="last-res-"] { font-weight: normal; color: #8b0000 !important; }
 
         .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         
-        /* 🚀 NUMPAD EXACT COLORS (Icy Blue BG, White Buttons, Blueish text) */
+        /* NUMPAD COLORS */
         .numpad { background-color: #e6ecf5; display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-radius: 4px; justify-content: flex-start; }
         .num-btn { background-color: #ffffff; color: #738fbf; border: 1px solid #ccd6e6; border-radius: 4px; width: 35px; height: 35px; font-size: 14px; font-weight: bold; cursor: pointer; }
         .num-btn:active { background-color: #ddd; }
@@ -151,7 +149,6 @@
     <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
     <div class="game-container">
-        <!-- Add Money / Withdraw Buttons hidden on the main game UI area to exactly match photo, but accessible via modals if needed -->
         <div style="display: flex; gap: 10px; margin-bottom: 5px; justify-content: center; flex-wrap: wrap;">
             <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 5px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:10px;">➕ Add Money</button>
             <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 5px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:10px;">💸 Withdraw</button>
@@ -345,7 +342,17 @@
         setInterval(fetchLiveBalance, 1000); 
 
         allInputCells.forEach(cell => { cell.addEventListener('click', function() { if (activeBox) activeBox.classList.remove('selected-cell'); activeBox = this; activeBox.classList.add('selected-cell'); }); });
-        function typeNumber(number) { if (activeBox) { activeBox.innerText = activeBox.innerText + number; updateCart(); } }
+        
+        // 🚀 NAYA: Sirf 3 number tak hi type hone dega
+        function typeNumber(number) { 
+            if (activeBox) { 
+                if (activeBox.innerText.length < 3) {
+                    activeBox.innerText = activeBox.innerText + number; 
+                    updateCart(); 
+                }
+            } 
+        }
+
         function clearActiveCell() { if (activeBox) { activeBox.innerText = ""; updateCart(); } }
 
         function updateCart() {
