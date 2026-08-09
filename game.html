@@ -42,67 +42,60 @@
         .tabs { 
             display: flex; 
             flex-wrap: nowrap; 
-            gap: 2px; /* Dabbon ke beech ekdum patla gap photo jaisa */
-            margin-bottom: 0px; /* Table se chipkane ke liye 0 */
-            justify-content: flex-start; /* 🚀 LEFT SIDE ALIGNMENT */
+            gap: 2px; 
+            margin-bottom: 0px; 
+            justify-content: flex-start; 
             align-items: flex-end;
             width: 100%;
         }
         .tab { 
-            background-color: #d500f9; /* Baaki tabs ka Bright Purple/Magenta color */
+            background-color: #d500f9; /* Bright Purple/Magenta color */
             color: white; 
             padding: 8px 18px; 
-            border-radius: 4px 4px 0 0; /* Upar se gol, niche se flat (Folder jaisa) */
+            border-radius: 4px 4px 0 0; 
             font-size: 11px; 
             font-weight: bold; 
             border: none; 
             cursor: pointer; 
         }
         .tab.active { 
-            background-color: #00008b; /* Active tab (Bulk B) Dark Blue */
+            background-color: #00008b; /* Dark Blue active tab */
             color: white; 
         }
-        /* 🚀 BULK A TABS UI COLOR MATCHED */
         .tab:nth-child(1) {
-            background-color: #e2d2a4; /* Matti/Beige background photo jaisa */
-            color: #e60000; /* Laal text */
+            background-color: #e2d2a4; /* Matti/Beige background */
+            color: #d10000; /* Laal text */
         }
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        /* TABLE BORDER MATCHING */
+        /* 🚀 TABLE BORDER AND BACKGROUND MATCHING */
         .grid-section { width: 100%; overflow-x: auto; background-color: transparent; border: none; }
         .grid-table { 
             border-collapse: collapse !important; 
             width: 100%; font-size: 12px; 
+            background-color: #e2d2a4 !important; /* Table ka base Beige color */
+            border: 2px solid #b5a27f !important; /* Table ka bahari border */
         }
         
-        /* THIN BEIGE/TAN BORDER FOR EVERY CELL */
+        /* THIN BORDER FOR EVERY CELL */
         .grid-table th, .grid-table td {
-            border: 1px solid #b5a27f !important; 
+            border: 1px solid #b5a27f !important; /* Andar ke dabbon ka patla border */
             text-align: center; 
             padding: 4px; 
             height: 28px; 
-        }
-        
-        /* BEIGE/TAN BACKGROUND FOR NON-INPUT CELLS */
-        .grid-table th, 
-        .grid-table td.group-name, 
-        .grid-table td.gift-coin, 
-        .grid-table td:not(.input-cell) { 
-            background-color: #e2d2a4 !important; 
-            color: #5c0011; 
+            color: #5c0011;
         }
         
         .group-name { font-weight: bold; text-align: left !important; padding-left: 5px; pointer-events: none; white-space: nowrap; }
         .gift-coin { pointer-events: none; }
         
-        /* WHITE INPUT CELLS */
+        /* 🚀 WHITE INPUT CELLS (Number bharne wale dabbe) */
         .input-cell { 
             background-color: #ffffff !important; 
             cursor: pointer; width: 40px; 
             font-weight: bold;
-            color: #000;
+            color: #000000 !important;
         }
         
         /* NEON GREEN SELECTED CELL */
@@ -113,8 +106,8 @@
 
         .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         
-        /* NUMPAD AND ACTION BUTTONS */
-        .numpad { background-color: #e1cce3; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: flex-start; }
+        /* 🚀 NUMPAD COLORS (Photo jaisa Icy Blue) */
+        .numpad { background-color: #c4d4e6; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; border-radius: 5px; justify-content: flex-start; }
         .num-btn { background-color: white; color: #5c6bc0; border: none; border-radius: 5px; padding: 10px 15px; font-size: 16px; font-weight: bold; box-shadow: 0px 2px 2px rgba(0,0,0,0.1); cursor: pointer; }
         .num-btn:active { background-color: #ddd; }
         
@@ -206,22 +199,22 @@
                     <tr>
                         <td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td>
-                        <td id="qty-NV"></td><td id="pts-NV"></td><td id="last-res-nv"></td>
+                        <td id="qty-NV" style="font-weight:bold;"></td><td id="pts-NV" style="font-weight:bold;"></td><td id="last-res-nv"></td>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group RR</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="RR" data-range="00-09"></td><td class="input-cell" data-group="RR" data-range="10-19"></td><td class="input-cell" data-group="RR" data-range="20-29"></td><td class="input-cell" data-group="RR" data-range="30-39"></td><td class="input-cell" data-group="RR" data-range="40-49"></td><td class="input-cell" data-group="RR" data-range="50-59"></td><td class="input-cell" data-group="RR" data-range="60-69"></td><td class="input-cell" data-group="RR" data-range="70-79"></td><td class="input-cell" data-group="RR" data-range="80-89"></td><td class="input-cell" data-group="RR" data-range="90-99"></td><td class="input-cell" data-group="RR" data-range="All"></td>
-                        <td id="qty-RR"></td><td id="pts-RR"></td><td id="last-res-rr"></td>
+                        <td id="qty-RR" style="font-weight:bold;"></td><td id="pts-RR" style="font-weight:bold;"></td><td id="last-res-rr"></td>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group RY</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="RY" data-range="00-09"></td><td class="input-cell" data-group="RY" data-range="10-19"></td><td class="input-cell" data-group="RY" data-range="20-29"></td><td class="input-cell" data-group="RY" data-range="30-39"></td><td class="input-cell" data-group="RY" data-range="40-49"></td><td class="input-cell" data-group="RY" data-range="50-59"></td><td class="input-cell" data-group="RY" data-range="60-69"></td><td class="input-cell" data-group="RY" data-range="70-79"></td><td class="input-cell" data-group="RY" data-range="80-89"></td><td class="input-cell" data-group="RY" data-range="90-99"></td><td class="input-cell" data-group="RY" data-range="All"></td>
-                        <td id="qty-RY"></td><td id="pts-RY"></td><td id="last-res-ry"></td>
+                        <td id="qty-RY" style="font-weight:bold;"></td><td id="pts-RY" style="font-weight:bold;"></td><td id="last-res-ry"></td>
                     </tr>
                     <tr>
                         <td class="group-name">Yantra Group CH</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="CH" data-range="00-09"></td><td class="input-cell" data-group="CH" data-range="10-19"></td><td class="input-cell" data-group="CH" data-range="20-29"></td><td class="input-cell" data-group="CH" data-range="30-39"></td><td class="input-cell" data-group="CH" data-range="40-49"></td><td class="input-cell" data-group="CH" data-range="50-59"></td><td class="input-cell" data-group="CH" data-range="60-69"></td><td class="input-cell" data-group="CH" data-range="70-79"></td><td class="input-cell" data-group="CH" data-range="80-89"></td><td class="input-cell" data-group="CH" data-range="90-99"></td><td class="input-cell" data-group="CH" data-range="All"></td>
-                        <td id="qty-CH"></td><td id="pts-CH"></td><td id="last-res-ch"></td>
+                        <td id="qty-CH" style="font-weight:bold;"></td><td id="pts-CH" style="font-weight:bold;"></td><td id="last-res-ch"></td>
                     </tr>
                     <tr>
                         <td class="group-name">All</td><td class="gift-coin">-</td>
