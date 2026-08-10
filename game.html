@@ -10,8 +10,7 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
-            /* EXACT SOFT PINK FROM YOUR LOGIN SCREEN IMAGE */
-            background-color: #f78fb3 !important;
+            background-color: #f78fb3 !important; /* Soft Pink BG */
             touch-action: none !important;
             font-family: Arial, sans-serif;
             box-sizing: border-box;
@@ -34,32 +33,16 @@
 
         /* TOP HEADER STYLES */
         .header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        
         .header-table { border-collapse: collapse; font-size: 12px; color: #7a1a44; }
         .header-table td { padding: 1px 5px; border: none; }
         
         #welcome-phone, #balance { color: #551133; font-weight: normal; font-size: 14px; }
         #countdown-display { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-weight: bold; font-size: 14px;}
-        
         .lobby-badge { background-color: #e6b800; color: #a30000; padding: 4px 25px; font-size: 12px; font-weight: bold; border-radius: 2px; display: inline-block; margin-bottom: 4px;}
         
         /* TABS DESIGN */
-        .tabs { 
-            display: flex; 
-            flex-wrap: nowrap; 
-            gap: 5px; 
-            margin-bottom: 0px; 
-            padding-left: 2px;
-            align-items: flex-end;
-        }
-        .tab { 
-            padding: 8px 20px; 
-            border-radius: 5px 5px 0 0; 
-            font-size: 12px; 
-            border: none; 
-            cursor: pointer; 
-            font-weight: bold;
-        }
+        .tabs { display: flex; flex-wrap: nowrap; gap: 5px; margin-bottom: 0px; padding-left: 2px; align-items: flex-end; }
+        .tab { padding: 8px 20px; border-radius: 5px 5px 0 0; font-size: 12px; border: none; cursor: pointer; font-weight: bold; }
         .tab:nth-child(1) { background-color: #fdf6e3; color: #6b8e23; } 
         .tab:nth-child(2) { background-color: #002277; color: white; } 
         .tab:nth-child(3) { background-color: #774499; color: white; } 
@@ -70,13 +53,7 @@
         
         /* EXACT TABLE DESIGN WITH FIXED LAYOUT */
         .grid-section { width: 100%; overflow-x: auto; }
-        .grid-table { 
-            border-collapse: collapse !important; 
-            table-layout: fixed !important; 
-            width: 100%; 
-            font-size: 13px; 
-            border: 1px solid #a09078 !important; 
-        }
+        .grid-table { border-collapse: collapse !important; table-layout: fixed !important; width: 100%; font-size: 13px; border: 1px solid #a09078 !important; }
 
         .grid-table th:nth-child(1) { width: 16%; } 
         .grid-table th:nth-child(2) { width: 5%; }  
@@ -85,15 +62,7 @@
         .grid-table th:nth-child(15) { width: 6%; } 
         .grid-table th:nth-child(16) { width: 6.4%; } 
         
-        .grid-table th, .grid-table td {
-            border: 1px solid #a09078 !important; 
-            text-align: center; 
-            height: 38px; 
-            padding: 4px;
-            color: #4a4a4a;
-            overflow: hidden; 
-        }
-        
+        .grid-table th, .grid-table td { border: 1px solid #a09078 !important; text-align: center; height: 38px; padding: 4px; color: #4a4a4a; overflow: hidden; }
         .grid-table tr:nth-child(1) { background-color: #eaddb6 !important; } 
         .grid-table tr:nth-child(2) { background-color: #cfbe96 !important; } 
         .grid-table tr:nth-child(3) { background-color: #eaddb6 !important; } 
@@ -105,37 +74,15 @@
         .gift-coin { pointer-events: none; }
         
         /* WHITE INPUT BOXES */
-        .input-cell { 
-            background-color: #ffffff !important; 
-            cursor: pointer; 
-            color: #000000 !important;
-            font-weight: bold !important; 
-            font-size: 15px; 
-        }
-        
-        .selected-cell { 
-            background-color: #00d200 !important; 
-            color: black !important; 
-            border-right: 2px solid black !important; 
-        }
-        
+        .input-cell { background-color: #ffffff !important; cursor: pointer; color: #000000 !important; font-weight: bold !important; font-size: 15px; }
+        .selected-cell { background-color: #00d200 !important; color: black !important; border-right: 2px solid black !important; }
         td[id^="last-res-"] { font-size: 15px; font-weight: bold; color: #4a4a4a !important; }
 
         .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; width: 100%; gap: 10px;}
         
         /* NUMPAD COLORS */
         .numpad { background-color: #e4e9f2; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border-radius: 4px; justify-content: flex-start; }
-        .num-btn, .clear-btn { 
-            background-color: #ffffff; 
-            color: #5b7bb2; 
-            border: 1px solid #c9d2e0; 
-            border-radius: 5px; 
-            width: 42px; 
-            height: 40px; 
-            font-size: 18px; 
-            font-weight: bold;
-            cursor: pointer; 
-        }
+        .num-btn, .clear-btn { background-color: #ffffff; color: #5b7bb2; border: 1px solid #c9d2e0; border-radius: 5px; width: 42px; height: 40px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .num-btn:active { background-color: #ddd; }
         .clear-btn { width: 55px; color: #0033cc; font-size: 18px; }
         
@@ -172,17 +119,25 @@
         document.addEventListener('fullscreenchange', makePerfectMobileApp);
         document.addEventListener('webkitfullscreenchange', makePerfectMobileApp);
 
-        // 🚀 SMART TRICK: Bina button ke Auto-Fullscreen on First Touch
-        let isFullScreenEngaged = false;
-        document.addEventListener('click', function() {
-            if (!isFullScreenEngaged) {
-                let elem = document.documentElement;
-                if (elem.requestFullscreen) { elem.requestFullscreen(); } 
-                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
-                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
-                isFullScreenEngaged = true; // Taaki baar-baar trigger na ho
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
             }
-        });
+        }
     </script>
 </head>
 <body>
@@ -191,10 +146,10 @@
     <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
     <div class="game-container">
-        <!-- 🚀 Alag se Full screen wala button hata diya -->
         <div style="display: flex; gap: 10px; margin-bottom: 5px; justify-content: center; flex-wrap: wrap;">
             <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">➕ Add Money</button>
             <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">💸 Withdraw</button>
+            <button onclick="toggleFullScreen()" style="background: #00008b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">🔲 Full Screen</button>
         </div>
 
         <div id="walletModal" class="modal-overlay">
