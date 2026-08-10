@@ -20,7 +20,6 @@
             position: absolute !important;
             top: 0 !important; left: 0 !important;
             width: 1300px !important;  
-            /* 🚀 Height badha di taaki badi table aaram se fit ho jaye */
             height: 600px !important;  
             max-width: none !important; 
             margin: 0 !important;
@@ -68,21 +67,31 @@
         
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
-        /* 🚀 EXACT TABLE DESIGN (BIGGER SIZES) */
+        /* 🚀 EXACT TABLE DESIGN WITH FIXED LAYOUT FOR EQUAL WIDTHS */
         .grid-section { width: 100%; overflow-x: auto; }
         .grid-table { 
             border-collapse: collapse !important; 
+            table-layout: fixed !important; /* 🚀 MAGIC TRICK: Ye table ko fix kar dega */
             width: 100%; 
-            font-size: 13px; /* 🚀 Font bada kar diya (pehle 11px tha) */
+            font-size: 13px; 
             border: 1px solid #a09078 !important; 
         }
+
+        /* 🚀 SABHI KHANO KI PERFECT WIDTH SETTING */
+        .grid-table th:nth-child(1) { width: 16%; } /* Product Group */
+        .grid-table th:nth-child(2) { width: 5%; }  /* Gift Coin */
+        .grid-table th:nth-child(n+3):nth-child(-n+13) { width: 6.1%; } /* 🚀 Sabhi 11 Input khane ekdum barabar (6.1%) */
+        .grid-table th:nth-child(14) { width: 4.5%; } /* Qty */
+        .grid-table th:nth-child(15) { width: 6%; } /* Pts */
+        .grid-table th:nth-child(16) { width: 6.4%; } /* Time */
         
         .grid-table th, .grid-table td {
             border: 1px solid #a09078 !important; 
             text-align: center; 
-            height: 38px; /* 🚀 Unchai badha di (pehle 25px tha) */
+            height: 38px; 
             padding: 4px;
             color: #4a4a4a;
+            overflow: hidden; /* Text bahar nahi niklega */
         }
         
         .grid-table tr:nth-child(1) { background-color: #eaddb6 !important; } 
@@ -95,14 +104,13 @@
         .group-name { text-align: left !important; padding-left: 10px; pointer-events: none; white-space: nowrap; color: #4a4a4a !important; font-size: 14px;}
         .gift-coin { pointer-events: none; }
         
-        /* 🚀 BADE WHITE INPUT BOXES */
+        /* WHITE INPUT BOXES */
         .input-cell { 
             background-color: #ffffff !important; 
             cursor: pointer; 
-            width: 50px !important; /* 🚀 Chaudai badha di (pehle 33px tha) */
             color: #000000 !important;
-            font-weight: bold !important; /* Text ko mota kar diya */
-            font-size: 15px; /* Type kiye numbers bade dikhenge */
+            font-weight: bold !important; 
+            font-size: 15px; 
         }
         
         .selected-cell { 
@@ -153,7 +161,7 @@
     <script>
         function makePerfectMobileApp() {
             const container = document.querySelector('.game-container');
-            const targetW = 1300; const targetH = 600; /* 🚀 Target Height bhi bada kar di taki cut na ho */
+            const targetW = 1300; const targetH = 600; 
             const scaleX = window.innerWidth / targetW;
             const scaleY = window.innerHeight / targetH;
             container.style.transform = `scale(${scaleX}, ${scaleY})`;
