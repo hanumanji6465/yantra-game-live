@@ -10,7 +10,7 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
-            background-color: #f78fb3 !important; /* Soft Pink BG */
+            background-color: #f78fb3 !important; 
             touch-action: none !important;
             font-family: Arial, sans-serif;
             box-sizing: border-box;
@@ -78,19 +78,31 @@
         .selected-cell { background-color: #00d200 !important; color: black !important; border-right: 2px solid black !important; }
         td[id^="last-res-"] { font-size: 15px; font-weight: bold; color: #4a4a4a !important; }
 
-        .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; width: 100%; gap: 10px;}
+        /* 🚀 NAYA: BOTTOM BAR (SAB KUCH EK SATH DIKHEGA) */
+        .bottom-controls { background-color: #e4e9f2; display: flex; width: 100%; justify-content: space-between; align-items: center; padding: 8px 10px; border-radius: 5px; box-sizing: border-box; margin-top: 15px; gap: 10px;}
         
-        /* NUMPAD COLORS */
-        .numpad { background-color: #e4e9f2; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border-radius: 4px; justify-content: flex-start; }
-        .num-btn, .clear-btn { background-color: #ffffff; color: #5b7bb2; border: 1px solid #c9d2e0; border-radius: 5px; width: 42px; height: 40px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .numpad { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; margin: 0; padding: 0; }
+        .num-btn, .clear-btn { background-color: #ffffff; color: #5b7bb2; border: 1px solid #c9d2e0; border-radius: 5px; width: 44px; height: 42px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 3px rgba(0,0,0,0.1); }
         .num-btn:active { background-color: #ddd; }
         .clear-btn { width: 55px; color: #0033cc; font-size: 18px; }
-        
-        /* Action Buttons */
-        .action-bar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; flex-grow: 1; }
-        .action-btn { background-color: #d10000; color: white; border: 1px solid #fff; border-radius: 5px; padding: 12px 18px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 2px rgba(0,0,0,0.3); }
+
+        /* ACTION BAR (Permanently visible now) */
+        .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; flex-grow: 1; align-items: center; }
+        .action-btn { 
+            color: white; 
+            border: 2px solid #ffffff; 
+            border-radius: 6px; 
+            padding: 12px 18px; 
+            font-size: 13px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.4); 
+            transition: transform 0.1s;
+        }
         .action-btn.green { background-color: #008000; }
-        
+        .action-btn.red { background-color: #cc0000; }
+        .action-btn:active { transform: scale(0.95); }
+
         /* Modals */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 100; padding: 10px; box-sizing: border-box; }
         .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #f78fb3; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
@@ -119,25 +131,39 @@
         document.addEventListener('fullscreenchange', makePerfectMobileApp);
         document.addEventListener('webkitfullscreenchange', makePerfectMobileApp);
 
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen();
-                } else if (document.documentElement.webkitRequestFullscreen) {
-                    document.documentElement.webkitRequestFullscreen();
-                } else if (document.documentElement.msRequestFullscreen) {
-                    document.documentElement.msRequestFullscreen();
+        // Wake Lock & Auto FullScreen
+        let isFullScreenEngaged = false;
+        let wakeLock = null;
+
+        async function keepScreenAwake() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Screen is locked ON.');
                 }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
+            } catch (err) {
+                console.log('Wake Lock Error:', err);
             }
         }
+
+        document.addEventListener('click', function() {
+            if (!isFullScreenEngaged) {
+                let elem = document.documentElement;
+                if (elem.requestFullscreen) { elem.requestFullscreen(); } 
+                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
+                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                isFullScreenEngaged = true; 
+            }
+            if (!wakeLock) {
+                keepScreenAwake();
+            }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                keepScreenAwake();
+            }
+        });
     </script>
 </head>
 <body>
@@ -146,10 +172,10 @@
     <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
     <div class="game-container">
+        <!-- Add Money / Withdraw Buttons -->
         <div style="display: flex; gap: 10px; margin-bottom: 5px; justify-content: center; flex-wrap: wrap;">
             <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">➕ Add Money</button>
             <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">💸 Withdraw</button>
-            <button onclick="toggleFullScreen()" style="background: #00008b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">🔲 Full Screen</button>
         </div>
 
         <div id="walletModal" class="modal-overlay">
@@ -257,7 +283,9 @@
             </div>
         </div>
 
+        <!-- 🚀 1 SE 0 WALE BUTTONS AUR ACTION BUTTONS DONO SATH MEIN -->
         <div class="bottom-controls">
+            
             <div class="numpad">
                 <button class="num-btn" onclick="typeNumber('1')">1</button>
                 <button class="num-btn" onclick="typeNumber('2')">2</button>
@@ -274,12 +302,13 @@
             
             <div class="action-bar">
                 <button class="action-btn green" onclick="buyTickets()">BUY</button>
-                <button class="action-btn" onclick="clearEntireGrid()">CLEAR</button>
-                <button class="action-btn" onclick="cancelLastTicket()">CANCEL</button>
-                <button class="action-btn" onclick="openDatePicker()">YANTRA</button>
-                <button class="action-btn" onclick="openHistoryModal()">C.DETAILS</button>
-                <button class="action-btn" onclick="openPsumModal()">P.SUM</button>
+                <button class="action-btn red" onclick="clearEntireGrid()">CLEAR</button>
+                <button class="action-btn red" onclick="cancelLastTicket()">CANCEL</button>
+                <button class="action-btn red" onclick="openDatePicker()">YANTRA</button>
+                <button class="action-btn red" onclick="openHistoryModal()">C.DETAILS</button>
+                <button class="action-btn red" onclick="openPsumModal()">P.SUM</button>
             </div>
+
         </div>
     </div>
 
@@ -336,10 +365,15 @@
     </div>
 
     <script>
+        // SECURITY LOCK
+        let currentUser = localStorage.getItem('userPhone');
+        if (!currentUser || currentUser === "Guest") {
+            window.location.href = "login.html"; 
+        }
+
         let activeBox = null;
         const allInputCells = document.querySelectorAll('.input-cell');
         let currentTotal = 0;
-        let currentUser = localStorage.getItem('userPhone') || "Guest";
         let currentBalance = parseFloat(localStorage.getItem('userBalance')) || 0;
         
         let isBettingClosed = false;
@@ -351,7 +385,7 @@
         function playSound(id) { let sound = document.getElementById(id); if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); } }
 
         async function fetchLiveBalance() {
-            if (currentUser === "Guest") return; 
+            if (!currentUser || currentUser === "Guest") return; 
             try {
                 let response = await fetch('/api/get-balance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
                 let data = await response.json();
@@ -438,7 +472,7 @@
         }
 
         async function cancelLastTicket() {
-            if (currentUser === "Guest") { alert("Pehle login karein!"); return; }
+            if (!currentUser || currentUser === "Guest") { alert("Pehle login karein!"); return; }
             if (confirm("Kya aap apni aakhiri kharidi hui ticket sach mein Cancel karna chahte hain? Paise turant wapas aa jayenge.")) {
                 try {
                     let response = await fetch('/api/cancel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
