@@ -119,17 +119,25 @@
         document.addEventListener('fullscreenchange', makePerfectMobileApp);
         document.addEventListener('webkitfullscreenchange', makePerfectMobileApp);
 
-        // 🚀 BINA BUTTON KE AUTO-FULLSCREEN (JAISE HI KAHIN CLICK HOGA)
-        let isFullScreenEngaged = false;
-        document.addEventListener('click', function() {
-            if (!isFullScreenEngaged) {
-                let elem = document.documentElement;
-                if (elem.requestFullscreen) { elem.requestFullscreen(); } 
-                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
-                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
-                isFullScreenEngaged = true; // Ek baar hone ke baad baar baar call nahi hoga
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
             }
-        });
+        }
     </script>
 </head>
 <body>
@@ -138,10 +146,10 @@
     <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
     <div class="game-container">
-        <!-- 🚀 Button Hata Diya Gaya Hai -->
         <div style="display: flex; gap: 10px; margin-bottom: 5px; justify-content: center; flex-wrap: wrap;">
             <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">➕ Add Money</button>
             <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">💸 Withdraw</button>
+            <button onclick="toggleFullScreen()" style="background: #00008b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">🔲 Full Screen</button>
         </div>
 
         <div id="walletModal" class="modal-overlay">
