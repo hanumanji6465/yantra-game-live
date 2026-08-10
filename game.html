@@ -78,55 +78,83 @@
         .selected-cell { background-color: #00d200 !important; color: black !important; border-right: 2px solid black !important; }
         td[id^="last-res-"] { font-size: 15px; font-weight: bold; color: #4a4a4a !important; }
 
-        /* 🚀 NAYA: BOTTOM BAR */
-        .bottom-controls { background-color: #e4e9f2; display: flex; width: 100%; justify-content: space-between; align-items: center; padding: 10px; border-radius: 5px; box-sizing: border-box; margin-top: 15px; gap: 10px;}
+        /* 🚀 BOTTOM BAR (PERFECT SINGLE LINE ALIGNMENT) */
+        .bottom-controls { 
+            background-color: #e4e9f2; 
+            display: flex; 
+            flex-wrap: nowrap !important; /* Koi button niche nahi girega */
+            width: 100%; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            margin-top: 15px; 
+        }
         
-        /* 🚀 NAYA: 3D NUMPAD DESIGN */
-        .numpad { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; margin: 0; padding: 0; }
+        /* 🚀 3D NUMPAD (NO WRAP STRICT) */
+        .numpad { 
+            display: flex; 
+            flex-wrap: nowrap !important; 
+            gap: 6px; 
+            justify-content: flex-start; 
+            align-items: center; 
+            margin: 0; 
+            padding: 0; 
+        }
         
         .num-btn, .clear-btn { 
             background: linear-gradient(to bottom, #ffffff, #eaf0f8);
             color: #2c3e50; 
             border: 1px solid #b8c5d6; 
-            border-bottom: 5px solid #9aa9c2; /* 3D Base/Mota border */
-            border-radius: 8px; 
-            width: 55px; /* 🚀 SIZE BADA KIYA */
-            height: 52px; /* 🚀 SIZE BADA KIYA */
-            font-size: 22px; /* 🚀 FONT BADA KIYA */
+            border-bottom: 5px solid #9aa9c2; 
+            border-radius: 6px; 
+            width: 45px; /* Perfect square size */
+            height: 48px; 
+            font-size: 20px; 
             font-weight: bold; 
             cursor: pointer; 
-            box-shadow: 0px 5px 8px rgba(0,0,0,0.25); /* 3D Shadow */
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.25); 
             transition: all 0.1s;
+            flex-shrink: 0; /* Button apne aap chota nahi hoga */
         }
         
-        /* 🚀 NAYA: Button dabne ka animation (Click Effect) */
         .num-btn:active, .clear-btn:active { 
-            border-bottom: 1px solid #9aa9c2; /* Dabne par border chota hoga */
-            transform: translateY(4px); /* Button thoda niche jayega */
-            box-shadow: 0px 2px 3px rgba(0,0,0,0.2); 
+            border-bottom: 1px solid #9aa9c2; 
+            transform: translateY(4px); 
+            box-shadow: 0px 1px 2px rgba(0,0,0,0.2); 
             background: #e0e7f0;
         }
         
-        /* 🗑️ Delete button ko aur accha banaya */
         .clear-btn { 
-            width: 70px; /* Thoda lamba kiya */
-            color: #c0392b; /* Laal rang */
-            font-size: 24px; 
+            width: 55px; 
+            color: #c0392b; 
+            font-size: 22px; 
         }
 
-        /* ACTION BAR (Permanently visible) */
-        .action-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; flex-grow: 1; align-items: center; }
+        /* 🚀 ACTION BAR (NO WRAP STRICT) */
+        .action-bar { 
+            display: flex; 
+            flex-wrap: nowrap !important; 
+            gap: 8px; 
+            justify-content: flex-end; 
+            align-items: center; 
+        }
+        
         .action-btn { 
             color: white; 
             border: 2px solid #ffffff; 
             border-radius: 6px; 
-            padding: 12px 18px; 
+            padding: 12px 14px; 
             font-size: 13px; 
             font-weight: bold; 
+            white-space: nowrap !important; /* Text 2 line me nahi tutega */
+            flex-shrink: 0; /* Button pichkega nahi */
             cursor: pointer; 
             box-shadow: 0px 4px 6px rgba(0,0,0,0.4); 
             transition: transform 0.1s;
         }
+        
         .action-btn.green { background-color: #008000; }
         .action-btn.red { background-color: #cc0000; }
         .action-btn:active { transform: scale(0.95); }
@@ -167,11 +195,8 @@
             try {
                 if ('wakeLock' in navigator) {
                     wakeLock = await navigator.wakeLock.request('screen');
-                    console.log('Screen is locked ON.');
                 }
-            } catch (err) {
-                console.log('Wake Lock Error:', err);
-            }
+            } catch (err) {}
         }
 
         document.addEventListener('click', function() {
@@ -311,7 +336,7 @@
             </div>
         </div>
 
-        <!-- 🚀 1 SE 0 WALE 3D BUTTONS AUR ACTION BUTTONS -->
+        <!-- 🚀 1 SE 0 WALE 3D BUTTONS AUR ACTION BUTTONS (NO WRAP STRICT) -->
         <div class="bottom-controls">
             
             <div class="numpad">
@@ -328,7 +353,6 @@
                 <button class="clear-btn" onclick="clearActiveCell()">🗑️</button>
             </div>
             
-            <!-- KOI TOGGLE NAHI, YE HAMESHA DIKHENGE -->
             <div class="action-bar">
                 <button class="action-btn green" onclick="buyTickets()">BUY</button>
                 <button class="action-btn red" onclick="clearEntireGrid()">CLEAR</button>
