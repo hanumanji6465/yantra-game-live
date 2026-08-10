@@ -10,7 +10,7 @@
             margin: 0 !important; padding: 0 !important;
             width: 100vw !important; height: 100vh !important;
             overflow: hidden !important; 
-            /* 🚀 EXACT SOFT PINK FROM YOUR LOGIN SCREEN IMAGE */
+            /* EXACT SOFT PINK FROM YOUR LOGIN SCREEN IMAGE */
             background-color: #f78fb3 !important;
             touch-action: none !important;
             font-family: Arial, sans-serif;
@@ -26,7 +26,6 @@
             margin: 0 !important;
             border-radius: 0 !important;
             border: none !important;
-            /* 🚀 EXACT SOFT PINK */
             background-color: #f78fb3;
             display: flex; flex-direction: column; padding: 15px;
             box-sizing: border-box;
@@ -170,9 +169,20 @@
         window.onload = makePerfectMobileApp;
         window.onresize = makePerfectMobileApp;
         
-        // 🚀 FULL SCREEN AUTO-ADJUST FIX
         document.addEventListener('fullscreenchange', makePerfectMobileApp);
         document.addEventListener('webkitfullscreenchange', makePerfectMobileApp);
+
+        // 🚀 SMART TRICK: Bina button ke Auto-Fullscreen on First Touch
+        let isFullScreenEngaged = false;
+        document.addEventListener('click', function() {
+            if (!isFullScreenEngaged) {
+                let elem = document.documentElement;
+                if (elem.requestFullscreen) { elem.requestFullscreen(); } 
+                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
+                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                isFullScreenEngaged = true; // Taaki baar-baar trigger na ho
+            }
+        });
     </script>
 </head>
 <body>
@@ -181,12 +191,10 @@
     <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
     <div class="game-container">
+        <!-- 🚀 Alag se Full screen wala button hata diya -->
         <div style="display: flex; gap: 10px; margin-bottom: 5px; justify-content: center; flex-wrap: wrap;">
             <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">➕ Add Money</button>
             <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">💸 Withdraw</button>
-            
-            <!-- FULL SCREEN BUTTON -->
-            <button onclick="toggleFullScreen()" style="background: #00008b; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">🔲 Full Screen</button>
         </div>
 
         <div id="walletModal" class="modal-overlay">
@@ -386,27 +394,6 @@
         balanceElement.innerText = currentBalance.toFixed(2);
 
         function playSound(id) { let sound = document.getElementById(id); if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); } }
-
-        // FULL SCREEN LOGIC
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen();
-                } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
-                    document.documentElement.webkitRequestFullscreen();
-                } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
-                    document.documentElement.msRequestFullscreen();
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) { /* Safari */
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) { /* IE11 */
-                    document.msExitFullscreen();
-                }
-            }
-        }
 
         async function fetchLiveBalance() {
             if (currentUser === "Guest") return; 
