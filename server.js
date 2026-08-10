@@ -10,12 +10,12 @@ app.use(express.json());
 app.use(express.static(__dirname));
 
 // ==========================================
-// 🗄️ ASLI DATABASE CONNECTION (MongoDB Cloud)
+// 🗄️ DATABASE CONNECTION 
 // ==========================================
 const DB_LINK = "mongodb://ranjay222_db_user:Ranjay8303@ac-w5tcwg9-shard-00-00.oxuypkt.mongodb.net:27017,ac-w5tcwg9-shard-00-01.oxuypkt.mongodb.net:27017,ac-w5tcwg9-shard-00-02.oxuypkt.mongodb.net:27017/?ssl=true&replicaSet=atlas-k0tlsu-shard-0&authSource=admin&appName=Cluster0"; 
 
 mongoose.connect(DB_LINK, { family: 4, serverSelectionTimeoutMS: 10000 })
-    .then(() => console.log("✅ MongoDB Asli Database Connect Ho Gaya!"))
+    .then(() => console.log("✅ MongoDB Database Connect Ho Gaya!"))
     .catch((err) => console.log("❌ Database Error: ", err.message));
 
 // ==========================================
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { type: String, default: "user" },
     balance: { type: Number, default: 0 },
-    status: { type: String, default: "Active" } // 🚀 NAYA: Account Status
+    status: { type: String, default: "Active" }
 });
 const User = mongoose.model('User', userSchema);
 
@@ -37,7 +37,7 @@ const Result = mongoose.model('Result', resultSchema);
 
 const ticketSchema = new mongoose.Schema({
     phone: String, tickets: Array, totalCost: Number,
-    wonAmount: { type: Number, default: 0 }, // 🚀 NAYA: Profit/Loss Calculation ke liye
+    wonAmount: { type: Number, default: 0 }, 
     date: { type: Date, default: Date.now },
     status: { type: String, default: 'Pending' } 
 });
@@ -63,10 +63,10 @@ app.post('/api/register', async (req, res) => {
     const { phone, password } = req.body;
     try {
         const existingUser = await User.findOne({ phone });
-        if (existingUser) return res.json({ success: false, message: "User ID already exists! Naya number use karein." });
+        if (existingUser) return res.json({ success: false, message: "User ID already exists!" });
         const newUser = new User({ phone, password, role: "user", balance: 0, status: "Active" });
         await newUser.save(); 
-        res.json({ success: true, message: "Account Created! Please Login." });
+        res.json({ success: true, message: "Account Created!" });
     } catch (error) { res.json({ success: false }); }
 });
 
@@ -75,10 +75,7 @@ app.post('/api/login', async (req, res) => {
     try {
         const user = await User.findOne({ phone });
         if (!user || user.password !== password) return res.json({ success: false, message: "Invalid Phone/Password!" });
-        
-        // 🚀 NAYA: Agar block hai toh login nahi hoga
         if (user.status === 'Blocked') return res.json({ success: false, message: "🚫 Aapka account Admin dwara BLOCK kar diya gaya hai!" });
-
         res.json({ success: true, role: user.role, balance: user.balance });
     } catch (error) { res.json({ success: false }); }
 });
@@ -136,29 +133,23 @@ app.post('/api/purchase-summary', async (req, res) => {
     try {
         const tickets = await Ticket.find({ phone: req.body.phone, status: { $ne: 'Cancelled' } });
         let totalSpent = 0, todaySpent = 0;
-        
         let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
         let today = new Date(nowStr); today.setHours(0, 0, 0, 0);
-        
         tickets.forEach(t => { totalSpent += t.totalCost; if (new Date(t.date) >= today) todaySpent += t.totalCost; });
         res.json({ success: true, totalTickets: tickets.length, todaySpent, totalSpent });
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 ADMIN RESULT CONTROL
+// 🚀 NAYA: ADMIN RESULT CONTROL (TIME LOCK KE SATH)
 app.post('/api/admin/result', async (req, res) => {
     const { nv, rr, ry, ch, customDate, customTime } = req.body;
     try {
         let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
         let d = new Date(nowStr);
         let dd = String(d.getDate()).padStart(2, '0'); let mm = String(d.getMonth() + 1).padStart(2, '0');
-        let finalDate = customDate ? customDate : `${dd}/${mm}/${d.getFullYear()}`; 
-        
+        let yyyy = d.getFullYear();
+        let finalDate = customDate ? customDate : `${dd}/${mm}/${yyyy}`; 
         let finalTime = customTime;
-        if (!finalTime) {
-            let hh = String(d.getHours()).padStart(2, '0'); let mns = d.getMinutes();
-            let slotMns = String(mns - (mns % 15)).padStart(2, '0'); finalTime = `${hh}:${slotMns}`;
-        }
 
         let existing = await Result.findOne({ date: finalDate, time: finalTime });
         if (existing) {
@@ -167,15 +158,20 @@ app.post('/api/admin/result', async (req, res) => {
             const newResult = new Result({ date: finalDate, time: finalTime, nv, rr, ry, ch }); await newResult.save();
         }
 
-        let isFuture = false;
         let currentMinutes = d.getHours() * 60 + d.getMinutes();
         let timeParts = finalTime.split(':');
         let resultMinutes = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
 
-        if (finalDate === `${dd}/${mm}/${d.getFullYear()}` && resultMinutes > currentMinutes) {
-            return res.json({ success: true, message: `✅ Advance Result Saved. Time aane par dikhega!` });
+        let rParts = finalDate.split('/');
+        let rDateObj = new Date(rParts[2], rParts[1] - 1, rParts[0]);
+        let todayObj = new Date(yyyy, d.getMonth(), d.getDate());
+
+        // 🔒 TIME LOCK: Agar future time ka result dala gaya hai, toh ticket settle matt karo.
+        if (rDateObj > todayObj || (rDateObj.getTime() === todayObj.getTime() && resultMinutes > currentMinutes)) {
+            return res.json({ success: true, message: `✅ Advance Result Saved! Waqt aane par automatically logo ko dikhega aur paise milenge.` });
         }
 
+        // Agar purana/current waqt ka hai toh turant settle karo
         const pendingTickets = await Ticket.find({ status: 'Pending' });
         const resultsDict = { "NV": nv, "RR": rr, "RY": ry, "CH": ch };
 
@@ -191,7 +187,7 @@ app.post('/api/admin/result', async (req, res) => {
             });
             if (totalWinningAmount > 0) {
                 ticket.status = 'Won';
-                ticket.wonAmount = totalWinningAmount; // 🚀 NAYA: Save Win Amount for P&L
+                ticket.wonAmount = totalWinningAmount; 
                 const user = await User.findOne({ phone: ticket.phone });
                 if (user) { user.balance += totalWinningAmount; await user.save(); }
             } else { ticket.status = 'Lost'; ticket.wonAmount = 0; }
@@ -217,42 +213,55 @@ app.get('/api/admin/live-bets', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 PROFIT / LOSS API
 app.get('/api/admin/profit-loss', async (req, res) => {
     try {
-        // Sirf un tickets ka hisaab jo cancel nahi hui hain
         const tickets = await Ticket.find({ status: { $ne: 'Cancelled' } });
-        let totalBets = 0;
-        let totalWins = 0;
-        
-        tickets.forEach(t => {
-            totalBets += (t.totalCost || 0); // Game mein kitna paisa laga
-            totalWins += (t.wonAmount || 0); // Game se kitna inam nikla
-        });
-        
-        let netProfit = totalBets - totalWins; // Game ka fayda ya nuksan
-        
+        let totalBets = 0, totalWins = 0;
+        tickets.forEach(t => { totalBets += (t.totalCost || 0); totalWins += (t.wonAmount || 0); });
+        let netProfit = totalBets - totalWins; 
         res.json({ success: true, totalBets, totalWins, netProfit });
     } catch(e) { res.json({ success: false }); }
 });
 
-// 🚀 BLOCK / UNBLOCK USER API
 app.post('/api/admin/toggle-block', async (req, res) => {
     try {
         const user = await User.findOne({ phone: req.body.phone });
         if(!user) return res.json({ success: false, message: "User nahi mila!" });
-        
         user.status = user.status === 'Blocked' ? 'Active' : 'Blocked';
         await user.save();
         res.json({ success: true, message: `User ID ${user.phone} ab ${user.status} ho gaya hai.` });
     } catch (error) { res.json({ success: false }); }
 });
 
+// 🚀 NAYA: RESULTS API (HIDE FUTURE RESULTS FROM USERS)
 app.post('/api/results', async (req, res) => {
     try {
         let query = req.body.date ? { date: req.body.date } : {}; 
         const results = await Result.find(query).sort({ _id: -1 }).limit(100);
-        res.json({ success: true, results });
+
+        let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+        let d = new Date(nowStr);
+        let currentMinutes = d.getHours() * 60 + d.getMinutes();
+        let yyyy = d.getFullYear();
+
+        // 🔒 TIME LOCK: Agar slot ka waqt nahi aaya hai toh user ko number nahi dikhega
+        let safeResults = results.map(r => {
+            let rTimeParts = r.time.split(':');
+            let rMinutes = parseInt(rTimeParts[0]) * 60 + parseInt(rTimeParts[1]);
+            
+            let rDateParts = r.date.split('/');
+            let rDateObj = new Date(rDateParts[2], rDateParts[1] - 1, rDateParts[0]);
+            let todayObj = new Date(yyyy, d.getMonth(), d.getDate());
+
+            // Agar future date hai, ya aaj ki date hai par future time hai
+            if (rDateObj > todayObj || (rDateObj.getTime() === todayObj.getTime() && rMinutes > currentMinutes)) {
+                // Result empty bhejo (Frontend apne aap '-' dikhayega)
+                return { date: r.date, time: r.time, nv: '', rr: '', ry: '', ch: '' }; 
+            }
+            return r; // Waqt ho gaya hai, normal result bhejo
+        });
+
+        res.json({ success: true, results: safeResults });
     } catch (error) { res.json({ success: false }); }
 });
 
@@ -312,6 +321,7 @@ app.get('/api/admin/users', async (req, res) => {
     try { res.json({ success: true, users: await User.find({ role: 'user' }).sort({ _id: -1 }) }); } catch (error) { res.json({ success: false }); }
 });
 
+// 🚀 NAYA: AUTO-SETTLE SCRIPT (Jo theek waqt par tickets settle karegi)
 let aakhiriAutoSlot = ""; 
 setInterval(async () => {
     let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
@@ -335,6 +345,7 @@ setInterval(async () => {
         try {
             let existingResult = await Result.findOne({ date: todayStr, time: currentSlotTime });
             if (existingResult) {
+                // Time aa gaya hai, ab advance save kiye hue result par tickets ko won/loss karo
                 const pendingTickets = await Ticket.find({ status: 'Pending' });
                 const resultsDict = { "NV": existingResult.nv, "RR": existingResult.rr, "RY": existingResult.ry, "CH": existingResult.ch };
 
