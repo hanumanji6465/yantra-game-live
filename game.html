@@ -1,382 +1,664 @@
-// 🚀 INDIA TIMEZONE FIX
-process.env.TZ = 'Asia/Kolkata';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Yantra Game Interface - Full Version</title>
 
-const express = require('express');
-const path = require('path');
-const mongoose = require('mongoose');
-const app = express();
+    <style>
+        html, body {
+            margin: 0 !important; padding: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            overflow: hidden !important; 
+            background-color: #f78fb3 !important; 
+            touch-action: none !important;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
 
-app.use(express.json());
-app.use(express.static(__dirname));
+        .game-container {
+            position: absolute !important;
+            top: 0 !important; left: 0 !important;
+            width: 1300px !important;  
+            height: 600px !important;  
+            max-width: none !important; 
+            margin: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            background-color: #f78fb3;
+            display: flex; flex-direction: column; padding: 15px;
+            box-sizing: border-box;
+            transform-origin: top left !important;
+        }
 
-// ==========================================
-// 🗄️ DATABASE CONNECTION 
-// ==========================================
-const DB_LINK = "mongodb://ranjay222_db_user:Ranjay8303@ac-w5tcwg9-shard-00-00.oxuypkt.mongodb.net:27017,ac-w5tcwg9-shard-00-01.oxuypkt.mongodb.net:27017,ac-w5tcwg9-shard-00-02.oxuypkt.mongodb.net:27017/?ssl=true&replicaSet=atlas-k0tlsu-shard-0&authSource=admin&appName=Cluster0"; 
-
-mongoose.connect(DB_LINK, { family: 4, serverSelectionTimeoutMS: 10000 })
-    .then(() => console.log("✅ MongoDB Database Connect Ho Gaya!"))
-    .catch((err) => console.log("❌ Database Error: ", err.message));
-
-// ==========================================
-// 📝 DATABASE SCHEMAS
-// ==========================================
-const userSchema = new mongoose.Schema({
-    phone: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    role: { type: String, default: "user" },
-    balance: { type: Number, default: 0 },
-    status: { type: String, default: "Active" }
-});
-const User = mongoose.model('User', userSchema);
-
-const resultSchema = new mongoose.Schema({
-    date: String, time: String, nv: String, rr: String, ry: String, ch: String
-});
-const Result = mongoose.model('Result', resultSchema);
-
-const ticketSchema = new mongoose.Schema({
-    phone: String, tickets: Array, totalCost: Number,
-    wonAmount: { type: Number, default: 0 }, 
-    date: { type: Date, default: Date.now },
-    status: { type: String, default: 'Pending' } 
-});
-const Ticket = mongoose.model('Ticket', ticketSchema);
-
-const depositSchema = new mongoose.Schema({
-    phone: String, amount: Number, utr: String,
-    status: { type: String, default: 'Pending' }, date: { type: Date, default: Date.now }
-});
-const Deposit = mongoose.model('Deposit', depositSchema);
-
-const withdrawSchema = new mongoose.Schema({
-    phone: String, amount: Number, bankDetails: String,
-    status: { type: String, default: 'Pending' }, date: { type: Date, default: Date.now }
-});
-const Withdraw = mongoose.model('Withdraw', withdrawSchema);
-
-// ==========================================
-// 🌐 API ROUTES 
-// ==========================================
-
-app.post('/api/register', async (req, res) => {
-    const { phone, password } = req.body;
-    try {
-        const existingUser = await User.findOne({ phone });
-        if (existingUser) return res.json({ success: false, message: "User ID already exists!" });
-        const newUser = new User({ phone, password, role: "user", balance: 0, status: "Active" });
-        await newUser.save(); 
-        res.json({ success: true, message: "Account Created!" });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/login', async (req, res) => {
-    const { phone, password } = req.body;
-    try {
-        const user = await User.findOne({ phone });
-        if (!user || user.password !== password) return res.json({ success: false, message: "Invalid Phone/Password!" });
-        if (user.status === 'Blocked') return res.json({ success: false, message: "🚫 Aapka account Admin dwara BLOCK kar diya gaya hai!" });
-        res.json({ success: true, role: user.role, balance: user.balance });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/get-balance', async (req, res) => {
-    try {
-        const user = await User.findOne({ phone: req.body.phone });
-        res.json(user ? { success: true, balance: user.balance } : { success: false });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/buy', async (req, res) => {
-    let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-    let now = new Date(nowStr);
-    let currentMins = now.getHours() * 60 + now.getMinutes();
-    
-    if (currentMins < 510 || currentMins >= 1380) {
-        return res.json({ success: false, message: "❌ Game Band Hai! Khulne ka samay Subah 8:30 se Raat 11:00 baje tak hai." });
-    }
-
-    const { phone, totalCost, cartData } = req.body; 
-    try {
-        const user = await User.findOne({ phone });
-        if (!user || user.status === 'Blocked') return res.json({ success: false, message: "User blocked or not found!" });
-        if (user.balance < totalCost) return res.json({ success: false, message: "Insufficient Balance!" });
+        /* TOP HEADER STYLES */
+        .header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .header-table { border-collapse: collapse; font-size: 12px; color: #7a1a44; }
+        .header-table td { padding: 1px 5px; border: none; }
         
-        user.balance -= totalCost; await user.save(); 
-        const newTicket = new Ticket({ phone, tickets: cartData, totalCost, wonAmount: 0 });
-        await newTicket.save();
-        res.json({ success: true, newBalance: user.balance, message: "Tickets Purchased Successfully!" });
-    } catch (error) { res.json({ success: false }); }
-});
+        #welcome-phone, #balance { color: #551133; font-weight: normal; font-size: 14px; }
+        #countdown-display { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-weight: bold; font-size: 14px;}
+        .lobby-badge { background-color: #e6b800; color: #a30000; padding: 4px 25px; font-size: 12px; font-weight: bold; border-radius: 2px; display: inline-block; margin-bottom: 4px;}
+        
+        /* TABS DESIGN */
+        .tabs { display: flex; flex-wrap: nowrap; gap: 5px; margin-bottom: 0px; padding-left: 2px; align-items: flex-end; }
+        .tab { padding: 8px 20px; border-radius: 5px 5px 0 0; font-size: 12px; border: none; cursor: pointer; font-weight: bold; }
+        .tab:nth-child(1) { background-color: #fdf6e3; color: #6b8e23; } 
+        .tab:nth-child(2) { background-color: #002277; color: white; } 
+        .tab:nth-child(3) { background-color: #774499; color: white; } 
+        .tab:nth-child(4) { background-color: #002277; color: white; } 
+        .tab:nth-child(5) { background-color: #774499; color: white; } 
+        
+        .main-content { display: flex; gap: 10px; flex-grow: 1; }
+        
+        /* EXACT TABLE DESIGN WITH FIXED LAYOUT */
+        .grid-section { width: 100%; overflow-x: auto; }
+        .grid-table { border-collapse: collapse !important; table-layout: fixed !important; width: 100%; font-size: 13px; border: 1px solid #a09078 !important; }
 
-app.post('/api/cancel', async (req, res) => {
-    try {
-        let user = await User.findOne({ phone: req.body.phone });
-        let lastTicket = await Ticket.findOne({ phone: req.body.phone }).sort({ date: -1 });
-        if (!lastTicket) return res.json({ success: false, message: "Koi ticket nahi mili!" });
-        if (lastTicket.status === 'Cancelled') return res.json({ success: false, message: "Pehle hi cancel ho chuki hai!" });
+        .grid-table th:nth-child(1) { width: 16%; } 
+        .grid-table th:nth-child(2) { width: 5%; }  
+        .grid-table th:nth-child(n+3):nth-child(-n+13) { width: 6.1%; } 
+        .grid-table th:nth-child(14) { width: 4.5%; } 
+        .grid-table th:nth-child(15) { width: 6%; } 
+        .grid-table th:nth-child(16) { width: 6.4%; } 
+        
+        .grid-table th, .grid-table td { border: 1px solid #a09078 !important; text-align: center; height: 38px; padding: 4px; color: #4a4a4a; overflow: hidden; }
+        .grid-table tr:nth-child(1) { background-color: #eaddb6 !important; } 
+        .grid-table tr:nth-child(2) { background-color: #cfbe96 !important; } 
+        .grid-table tr:nth-child(3) { background-color: #eaddb6 !important; } 
+        .grid-table tr:nth-child(4) { background-color: #cfbe96 !important; } 
+        .grid-table tr:nth-child(5) { background-color: #eaddb6 !important; } 
+        .grid-table tr:nth-child(6) { background-color: #eaddb6 !important; } 
+        
+        .group-name { text-align: left !important; padding-left: 10px; pointer-events: none; white-space: nowrap; color: #4a4a4a !important; font-size: 14px;}
+        .gift-coin { pointer-events: none; }
+        
+        /* WHITE INPUT BOXES */
+        .input-cell { background-color: #ffffff !important; cursor: pointer; color: #000000 !important; font-weight: bold !important; font-size: 15px; }
+        .selected-cell { background-color: #00d200 !important; color: black !important; border-right: 2px solid black !important; }
+        td[id^="last-res-"] { font-size: 15px; font-weight: bold; color: #4a4a4a !important; }
 
-        user.balance += lastTicket.totalCost; await user.save();
-        lastTicket.status = 'Cancelled'; await lastTicket.save();
-        res.json({ success: true, newBalance: user.balance, message: "Ticket cancel ho gayi!" });
-    } catch (error) { res.json({ success: false }); }
-});
+        /* 🚀 NAYA: BOTTOM BAR & EXACT TOGGLE */
+        .bottom-controls { background-color: #e4e9f2; display: flex; width: 100%; justify-content: space-between; align-items: center; padding: 8px 10px; border-radius: 5px; box-sizing: border-box; margin-top: 15px; }
+        
+        .numpad { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; margin: 0; padding: 0; }
+        .num-btn, .clear-btn { background-color: #ffffff; color: #5b7bb2; border: 1px solid #c9d2e0; border-radius: 5px; width: 44px; height: 42px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0px 2px 3px rgba(0,0,0,0.1); }
+        .num-btn:active { background-color: #ddd; }
+        .clear-btn { width: 55px; color: #0033cc; font-size: 18px; }
 
-app.post('/api/history', async (req, res) => {
-    try {
-        const tickets = await Ticket.find({ phone: req.body.phone }).sort({ date: -1 });
-        res.json({ success: true, tickets });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/purchase-summary', async (req, res) => {
-    try {
-        const tickets = await Ticket.find({ phone: req.body.phone, status: { $ne: 'Cancelled' } });
-        let totalSpent = 0, todaySpent = 0;
-        let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-        let today = new Date(nowStr); today.setHours(0, 0, 0, 0);
-        tickets.forEach(t => { totalSpent += t.totalCost; if (new Date(t.date) >= today) todaySpent += t.totalCost; });
-        res.json({ success: true, totalTickets: tickets.length, todaySpent, totalSpent });
-    } catch (error) { res.json({ success: false }); }
-});
-
-// 🚀 NAYA: ADMIN RESULT CONTROL (TIME LOCK KE SATH)
-app.post('/api/admin/result', async (req, res) => {
-    const { nv, rr, ry, ch, customDate, customTime } = req.body;
-    try {
-        let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-        let d = new Date(nowStr);
-        let dd = String(d.getDate()).padStart(2, '0'); let mm = String(d.getMonth() + 1).padStart(2, '0');
-        let yyyy = d.getFullYear();
-        let finalDate = customDate ? customDate : `${dd}/${mm}/${yyyy}`; 
-        let finalTime = customTime;
-
-        let existing = await Result.findOne({ date: finalDate, time: finalTime });
-        if (existing) {
-            existing.nv = nv; existing.rr = rr; existing.ry = ry; existing.ch = ch; await existing.save();
-        } else {
-            const newResult = new Result({ date: finalDate, time: finalTime, nv, rr, ry, ch }); await newResult.save();
+        /* ACTION BAR (Usi jagah khulega jahan numpad tha) */
+        .action-bar { display: none; gap: 10px; justify-content: flex-start; align-items: center; width: 100%; }
+        .action-btn { 
+            color: white; 
+            border: 2px solid #ffffff; 
+            border-radius: 6px; 
+            padding: 12px 22px; 
+            font-size: 14px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.4); 
         }
+        .action-btn.green { background-color: #008000; }
+        .action-btn.red { background-color: #cc0000; }
+        .action-btn:active { transform: scale(0.95); }
 
-        let currentMinutes = d.getHours() * 60 + d.getMinutes();
-        let timeParts = finalTime.split(':');
-        let resultMinutes = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
+        /* SAME WHITE TOGGLE BUTTON */
+        .keyboard-toggle-btn { background-color: #ffffff; border: 1px solid #c9d2e0; border-radius: 5px; width: 55px; height: 42px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0px 2px 4px rgba(0,0,0,0.1); }
+        
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 100; padding: 10px; box-sizing: border-box; }
+        .modal-content { background-color: #fdf5f6; border-radius: 5px; border: 2px solid #f78fb3; padding: 15px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
+        .btn-ok { background-color: #008000; color: white; border: none; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 5px; width: 100%; font-size: 16px;}
+        
+        .yantra-content { max-width: 650px; height: 80vh; display: flex; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; background-color: #f78fb3; padding: 8px; font-weight: bold; color: white; }
+        .close-btn { background-color: #d10000; color: white; border: 1px solid white; cursor: pointer; font-weight: bold; padding: 2px 10px; }
+        .table-scroll { overflow-y: auto; overflow-x: auto; margin-top: 10px; flex-grow: 1; }
+        .yantra-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; min-width: 400px; }
+        .yantra-table th, .yantra-table td { border: 1px solid #ccc; padding: 6px; }
+        .yantra-table th { background-color: #eaddb6; color: #4a4a4a; }
+    </style>
 
-        let rParts = finalDate.split('/');
-        let rDateObj = new Date(rParts[2], rParts[1] - 1, rParts[0]);
-        let todayObj = new Date(yyyy, d.getMonth(), d.getDate());
-
-        // 🔒 TIME LOCK: Agar future time ka result dala gaya hai, toh ticket settle matt karo.
-        if (rDateObj > todayObj || (rDateObj.getTime() === todayObj.getTime() && resultMinutes > currentMinutes)) {
-            return res.json({ success: true, message: `✅ Advance Result Saved! Waqt aane par automatically logo ko dikhega aur paise milenge.` });
+    <script>
+        function makePerfectMobileApp() {
+            const container = document.querySelector('.game-container');
+            const targetW = 1300; const targetH = 600; 
+            const scaleX = window.innerWidth / targetW;
+            const scaleY = window.innerHeight / targetH;
+            container.style.transform = `scale(${scaleX}, ${scaleY})`;
         }
+        window.onload = makePerfectMobileApp;
+        window.onresize = makePerfectMobileApp;
+        
+        document.addEventListener('fullscreenchange', makePerfectMobileApp);
+        document.addEventListener('webkitfullscreenchange', makePerfectMobileApp);
 
-        // Agar purana/current waqt ka hai toh turant settle karo
-        const pendingTickets = await Ticket.find({ status: 'Pending' });
-        const resultsDict = { "NV": nv, "RR": rr, "RY": ry, "CH": ch };
-
-        for (let ticket of pendingTickets) {
-            let totalWinningAmount = 0;
-            ticket.tickets.forEach(bet => {
-                let winningNumber = resultsDict[bet.group]; 
-                if (winningNumber && bet.number.includes("-")) {
-                    let winNum = parseInt(winningNumber);
-                    let minVal = parseInt(bet.number.split("-")[0]); let maxVal = parseInt(bet.number.split("-")[1]);
-                    if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 100);
-                }
-            });
-            if (totalWinningAmount > 0) {
-                ticket.status = 'Won';
-                ticket.wonAmount = totalWinningAmount; 
-                const user = await User.findOne({ phone: ticket.phone });
-                if (user) { user.balance += totalWinningAmount; await user.save(); }
-            } else { ticket.status = 'Lost'; ticket.wonAmount = 0; }
-            await ticket.save(); 
-        }
-        res.json({ success: true, message: `✅ Result Saved & Tickets Settled!` });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.get('/api/admin/live-bets', async (req, res) => {
-    try {
-        const pendingTickets = await Ticket.find({ status: 'Pending' });
-        let liveData = { "NV": {}, "RR": {}, "RY": {}, "CH": {} };
-        pendingTickets.forEach(ticket => {
-            ticket.tickets.forEach(bet => {
-                if(liveData[bet.group]) {
-                    if(!liveData[bet.group][bet.number]) liveData[bet.group][bet.number] = 0;
-                    liveData[bet.group][bet.number] += bet.points;
-                }
-            });
+        let isFullScreenEngaged = false;
+        document.addEventListener('click', function() {
+            if (!isFullScreenEngaged) {
+                let elem = document.documentElement;
+                if (elem.requestFullscreen) { elem.requestFullscreen(); } 
+                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
+                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                isFullScreenEngaged = true; 
+            }
         });
-        res.json({ success: true, liveData });
-    } catch (error) { res.json({ success: false }); }
-});
 
-app.get('/api/admin/profit-loss', async (req, res) => {
-    try {
-        const tickets = await Ticket.find({ status: { $ne: 'Cancelled' } });
-        let totalBets = 0, totalWins = 0;
-        tickets.forEach(t => { totalBets += (t.totalCost || 0); totalWins += (t.wonAmount || 0); });
-        let netProfit = totalBets - totalWins; 
-        res.json({ success: true, totalBets, totalWins, netProfit });
-    } catch(e) { res.json({ success: false }); }
-});
-
-app.post('/api/admin/toggle-block', async (req, res) => {
-    try {
-        const user = await User.findOne({ phone: req.body.phone });
-        if(!user) return res.json({ success: false, message: "User nahi mila!" });
-        user.status = user.status === 'Blocked' ? 'Active' : 'Blocked';
-        await user.save();
-        res.json({ success: true, message: `User ID ${user.phone} ab ${user.status} ho gaya hai.` });
-    } catch (error) { res.json({ success: false }); }
-});
-
-// 🚀 NAYA: RESULTS API (HIDE FUTURE RESULTS FROM USERS)
-app.post('/api/results', async (req, res) => {
-    try {
-        let query = req.body.date ? { date: req.body.date } : {}; 
-        const results = await Result.find(query).sort({ _id: -1 }).limit(100);
-
-        let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-        let d = new Date(nowStr);
-        let currentMinutes = d.getHours() * 60 + d.getMinutes();
-        let yyyy = d.getFullYear();
-
-        // 🔒 TIME LOCK: Agar slot ka waqt nahi aaya hai toh user ko number nahi dikhega
-        let safeResults = results.map(r => {
-            let rTimeParts = r.time.split(':');
-            let rMinutes = parseInt(rTimeParts[0]) * 60 + parseInt(rTimeParts[1]);
+        // 🚀 EXACT TOGGLE: Numpad aur Action buttons aapas mein jagah badlenge
+        function toggleControls() {
+            const numpadDiv = document.getElementById('numpad-container');
+            const actionBarDiv = document.getElementById('action-bar-container');
             
-            let rDateParts = r.date.split('/');
-            let rDateObj = new Date(rDateParts[2], rDateParts[1] - 1, rDateParts[0]);
-            let todayObj = new Date(yyyy, d.getMonth(), d.getDate());
-
-            // Agar future date hai, ya aaj ki date hai par future time hai
-            if (rDateObj > todayObj || (rDateObj.getTime() === todayObj.getTime() && rMinutes > currentMinutes)) {
-                // Result empty bhejo (Frontend apne aap '-' dikhayega)
-                return { date: r.date, time: r.time, nv: '', rr: '', ry: '', ch: '' }; 
+            if (numpadDiv.style.display === 'none') {
+                numpadDiv.style.display = 'flex';
+                actionBarDiv.style.display = 'none';
+            } else {
+                numpadDiv.style.display = 'none';
+                actionBarDiv.style.display = 'flex';
             }
-            return r; // Waqt ho gaya hai, normal result bhejo
-        });
-
-        res.json({ success: true, results: safeResults });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/admin/modify-points', async (req, res) => {
-    try {
-        const user = await User.findOne({ phone: req.body.targetPhone });
-        if (!user) return res.json({ success: false, message: "User nahi mila!" });
-        let amount = parseFloat(req.body.points);
-        if (req.body.action === 'add') user.balance += amount;
-        else if (req.body.action === 'deduct') { if (user.balance < amount) return res.json({ success: false, message: "Insufficient balance!" }); user.balance -= amount; }
-        await user.save(); 
-        res.json({ success: true, newBalance: user.balance, message: `Points update ho gaye!` });
-    } catch (error) { res.json({ success: false }); }
-});
-
-app.post('/api/deposit', async (req, res) => {
-    try { await new Deposit(req.body).save(); res.json({ success: true, message: "Request Bhej Di Gayi Hai!" }); } catch (error) { res.json({ success: false }); }
-});
-app.get('/api/admin/pending-deposits', async (req, res) => { res.json({ success: true, deposits: await Deposit.find({ status: 'Pending' }) }); });
-app.post('/api/admin/handle-deposit', async (req, res) => {
-    try {
-        const deposit = await Deposit.findById(req.body.depositId);
-        if (!deposit || deposit.status !== 'Pending') return res.json({ success: false });
-        deposit.status = req.body.action; await deposit.save();
-        if (req.body.action === 'Approved') {
-            const user = await User.findOne({ phone: deposit.phone });
-            if (user) { user.balance += deposit.amount; await user.save(); }
         }
-        res.json({ success: true, message: `Payment ${req.body.action}!` });
-    } catch (error) { res.json({ success: false }); }
-});
+    </script>
+</head>
+<body>
+    <audio id="sound-buy" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
+    <audio id="sound-win" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" preload="auto"></audio>
+    <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
-app.post('/api/withdraw', async (req, res) => {
-    try {
-        const user = await User.findOne({ phone: req.body.phone });
-        if (user.balance < req.body.amount) return res.json({ success: false, message: "Balance kam hai!" });
-        user.balance -= req.body.amount; await user.save();
-        await new Withdraw(req.body).save();
-        res.json({ success: true, message: "Withdrawal request bheji gayi!" });
-    } catch (error) { res.json({ success: false }); }
-});
-app.get('/api/admin/pending-withdrawals', async (req, res) => { res.json({ success: true, withdrawals: await Withdraw.find({ status: 'Pending' }) }); });
-app.post('/api/admin/handle-withdrawal', async (req, res) => {
-    try {
-        const request = await Withdraw.findById(req.body.withdrawId);
-        if (!request || request.status !== 'Pending') return res.json({ success: false });
-        request.status = req.body.action; await request.save();
-        if (req.body.action === 'Rejected') {
-            const user = await User.findOne({ phone: request.phone });
-            if (user) { user.balance += request.amount; await user.save(); }
+    <div class="game-container">
+        <!-- Add Money / Withdraw Buttons -->
+        <div style="display: flex; gap: 10px; margin-bottom: 5px; justify-content: center; flex-wrap: wrap;">
+            <button onclick="document.getElementById('walletModal').style.display='block'" style="background: green; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">➕ Add Money</button>
+            <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold;">💸 Withdraw</button>
+        </div>
+
+        <div id="walletModal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 style="color: black; margin-top: 0;">Add Points to Wallet</h3>
+                <img src="qrcode.jpeg" alt="UPI QR Code" style="width: 200px; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 10px;">
+                <p style="font-size: 14px; color: red;">Scan karke payment karein aur niche UTR number dalein.</p>
+                <input type="number" id="depositAmount" placeholder="Kitne Paise Bheje?" style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
+                <input type="text" id="utrNumber" placeholder="12-Digit UTR Number" style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
+                <button onclick="submitDeposit()" style="background: blue; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">Submit Request</button>
+                <button onclick="document.getElementById('walletModal').style.display='none'" style="background: red; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+        </div>
+
+        <div id="withdrawModal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 style="color: black; margin-top: 0;">Withdraw Points</h3>
+                <p style="font-size: 14px; color: #555;">Jeete huye paise nikalne ke liye details dalein.</p>
+                <input type="number" id="withdrawAmount" placeholder="Amount (Kam se kam 10)" style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
+                <input type="text" id="bankDetails" placeholder="UPI ID ya Bank A/C No." style="width:90%; padding:8px; margin-bottom:10px; box-sizing: border-box;">
+                <button onclick="submitWithdraw()" style="background: #27ae60; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">Send Request</button>
+                <button onclick="document.getElementById('withdrawModal').style.display='none'" style="background: red; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+        </div>
+
+        <div class="header">
+            <div>
+                <table class="header-table">
+                    <tr>
+                        <td style="text-align: right; padding-right: 15px;">Welcome :</td>
+                        <td style="text-align: left;"><span id="welcome-phone">Guest</span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; padding-right: 15px;">Balance Point :</td>
+                        <td style="text-align: left;"><span id="balance">0.00</span></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="header-right">
+                <table class="header-table" style="margin-left: auto;">
+                    <tr>
+                        <td></td>
+                        <td style="text-align: center; padding-bottom: 4px;">
+                            <span class="lobby-badge">LOBBY</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; padding-right: 8px;">Date :</td>
+                        <td style="text-align: center; width: 80px;"><span id="current-date"></span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; padding-right: 8px;">Gift Event Code :</td>
+                        <td style="text-align: center;"><span id="event-code">--:--</span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; padding-right: 8px;">Countdown :</td>
+                        <td style="text-align: center;"><span id="countdown-display">00:00:00</span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab">Bulk Coupons [ A ]</div>
+            <div class="tab active">Bulk Coupons [ B ]</div>
+            <div class="tab">Pointwise Coupons</div>
+            <div class="tab">Loose Coupons</div>
+            <div class="tab">Loose Pointwise Coupons</div>
+        </div>
+
+        <div class="main-content">
+            <div class="grid-section">
+                <table class="grid-table" id="game-grid">
+                    <tr>
+                        <th>Product Group</th><th>Gift Coin</th><th>00-09</th><th>10-19</th><th>20-29</th><th>30-39</th><th>40-49</th><th>50-59</th><th>60-69</th><th>70-79</th><th>80-89</th><th>90-99</th><th>All</th>
+                        <th>Qty</th><th>Pts</th><th id="last-result-time">--:--</th>
+                    </tr>
+                    <tr>
+                        <td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td>
+                        <td id="qty-NV" style="font-weight: bold; color: black;"></td><td id="pts-NV" style="font-weight: bold; color: black;"></td><td id="last-res-nv"></td>
+                    </tr>
+                    <tr>
+                        <td class="group-name">Yantra Group RR</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="RR" data-range="00-09"></td><td class="input-cell" data-group="RR" data-range="10-19"></td><td class="input-cell" data-group="RR" data-range="20-29"></td><td class="input-cell" data-group="RR" data-range="30-39"></td><td class="input-cell" data-group="RR" data-range="40-49"></td><td class="input-cell" data-group="RR" data-range="50-59"></td><td class="input-cell" data-group="RR" data-range="60-69"></td><td class="input-cell" data-group="RR" data-range="70-79"></td><td class="input-cell" data-group="RR" data-range="80-89"></td><td class="input-cell" data-group="RR" data-range="90-99"></td><td class="input-cell" data-group="RR" data-range="All"></td>
+                        <td id="qty-RR" style="font-weight: bold; color: black;"></td><td id="pts-RR" style="font-weight: bold; color: black;"></td><td id="last-res-rr"></td>
+                    </tr>
+                    <tr>
+                        <td class="group-name">Yantra Group RY</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="RY" data-range="00-09"></td><td class="input-cell" data-group="RY" data-range="10-19"></td><td class="input-cell" data-group="RY" data-range="20-29"></td><td class="input-cell" data-group="RY" data-range="30-39"></td><td class="input-cell" data-group="RY" data-range="40-49"></td><td class="input-cell" data-group="RY" data-range="50-59"></td><td class="input-cell" data-group="RY" data-range="60-69"></td><td class="input-cell" data-group="RY" data-range="70-79"></td><td class="input-cell" data-group="RY" data-range="80-89"></td><td class="input-cell" data-group="RY" data-range="90-99"></td><td class="input-cell" data-group="RY" data-range="All"></td>
+                        <td id="qty-RY" style="font-weight: bold; color: black;"></td><td id="pts-RY" style="font-weight: bold; color: black;"></td><td id="last-res-ry"></td>
+                    </tr>
+                    <tr>
+                        <td class="group-name">Yantra Group CH</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="CH" data-range="00-09"></td><td class="input-cell" data-group="CH" data-range="10-19"></td><td class="input-cell" data-group="CH" data-range="20-29"></td><td class="input-cell" data-group="CH" data-range="30-39"></td><td class="input-cell" data-group="CH" data-range="40-49"></td><td class="input-cell" data-group="CH" data-range="50-59"></td><td class="input-cell" data-group="CH" data-range="60-69"></td><td class="input-cell" data-group="CH" data-range="70-79"></td><td class="input-cell" data-group="CH" data-range="80-89"></td><td class="input-cell" data-group="CH" data-range="90-99"></td><td class="input-cell" data-group="CH" data-range="All"></td>
+                        <td id="qty-CH" style="font-weight: bold; color: black;"></td><td id="pts-CH" style="font-weight: bold; color: black;"></td><td id="last-res-ch"></td>
+                    </tr>
+                    <tr>
+                        <td class="group-name">All</td><td class="gift-coin">-</td>
+                        <td class="input-cell" data-group="ALL" data-range="00-09"></td><td class="input-cell" data-group="ALL" data-range="10-19"></td><td class="input-cell" data-group="ALL" data-range="20-29"></td><td class="input-cell" data-group="ALL" data-range="30-39"></td><td class="input-cell" data-group="ALL" data-range="40-49"></td><td class="input-cell" data-group="ALL" data-range="50-59"></td><td class="input-cell" data-group="ALL" data-range="60-69"></td><td class="input-cell" data-group="ALL" data-range="70-79"></td><td class="input-cell" data-group="ALL" data-range="80-89"></td><td class="input-cell" data-group="ALL" data-range="90-99"></td>
+                        <td style="color: #4a4a4a; text-align: left; padding-left: 5px; font-weight: bold;">TOTAL</td>
+                        <td id="total-qty" style="font-weight: bold; color: black;"></td><td id="cart-total-pts" style="font-weight: bold; color: black;"></td><td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- 🚀 BOTTOM CONTROLS WITH EXACT WHITE BUTTON SWITCH -->
+        <div class="bottom-controls">
+            
+            <!-- 1. NUMPAD (Default Visible) -->
+            <div id="numpad-container" class="numpad" style="display: flex;">
+                <button class="num-btn" onclick="typeNumber('1')">1</button>
+                <button class="num-btn" onclick="typeNumber('2')">2</button>
+                <button class="num-btn" onclick="typeNumber('3')">3</button>
+                <button class="num-btn" onclick="typeNumber('4')">4</button>
+                <button class="num-btn" onclick="typeNumber('5')">5</button>
+                <button class="num-btn" onclick="typeNumber('6')">6</button>
+                <button class="num-btn" onclick="typeNumber('7')">7</button>
+                <button class="num-btn" onclick="typeNumber('8')">8</button>
+                <button class="num-btn" onclick="typeNumber('9')">9</button>
+                <button class="num-btn" onclick="typeNumber('0')">0</button>
+                <button class="clear-btn" onclick="clearActiveCell()">🗑️</button>
+            </div>
+
+            <!-- 2. ACTION BUTTONS (Hidden by default, click pe aayenge) -->
+            <div id="action-bar-container" class="action-bar">
+                <button class="action-btn green" onclick="buyTickets(); toggleControls();">BUY</button>
+                <button class="action-btn red" onclick="clearEntireGrid(); toggleControls();">CLEAR</button>
+                <button class="action-btn red" onclick="cancelLastTicket(); toggleControls();">CANCEL</button>
+                <button class="action-btn red" onclick="openDatePicker(); toggleControls();">YANTRA</button>
+                <button class="action-btn red" onclick="openHistoryModal(); toggleControls();">C.DETAILS</button>
+                <button class="action-btn red" onclick="openPsumModal(); toggleControls();">P.SUM</button>
+            </div>
+
+            <!-- 3. WHITE TOGGLE BUTTON (Usi jagah par hamesha rahega) -->
+            <button class="keyboard-toggle-btn" onclick="toggleControls()">
+                <span style="font-size: 16px;">⌨️</span>
+                <span style="color: #0033cc; font-size: 10px; margin-top: -2px;">🔵 ▼</span>
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="date-modal">
+        <div class="modal-content">
+            <h3 style="color: #7a1a44; margin-top: 0; margin-bottom: 15px;">Purana Result Dekhein</h3>
+            <input type="date" id="yantra-date-input" style="width: 90%; padding: 10px; font-size: 16px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;"><br>
+            <button class="btn-ok" onclick="submitDateAndOpenYantra()">Check Result</button>
+            <button class="btn-ok" onclick="document.getElementById('date-modal').style.display='none'" style="background: #d10000;">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="yantra-modal">
+        <div class="modal-content yantra-content">
+            <div class="modal-header">
+                <span id="yantra-header-date"></span>
+                <button class="close-btn" onclick="closeYantraModal()">Close</button>
+            </div>
+            <div class="table-scroll">
+                <table class="yantra-table" id="yantra-results-table">
+                    <tr><th>Event Time</th><th>NV</th><th>RR</th><th>RY</th><th>CH</th></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="history-modal">
+        <div class="modal-content yantra-content">
+            <div class="modal-header">
+                <span>My Coupon Details (Bet History)</span>
+                <button class="close-btn" onclick="closeHistoryModal()">Close</button>
+            </div>
+            <div class="table-scroll">
+                <table class="yantra-table" id="history-table">
+                    <tr><th>Date & Time</th><th>Group</th><th>Number Range</th><th>Points</th><th>Status</th></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="psum-modal">
+        <div class="modal-content" style="text-align: left;">
+            <div class="modal-header" style="margin-bottom: 10px;">
+                <span>Purchase Summary (P.SUM)</span>
+                <button class="close-btn" onclick="closePsumModal()">Close</button>
+            </div>
+            <div style="padding: 10px; color: black; font-size: 16px;">
+                <p><strong>Total Tickets Bought:</strong> <span id="psum-total-tickets" style="color: blue;">0</span></p>
+                <p><strong>Points Spent Today:</strong> ₹<span id="psum-today-spent" style="color: green;">0.00</span></p>
+                <p><strong>Total Points Spent:</strong> ₹<span id="psum-total-spent" style="color: red;">0.00</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SECURITY LOCK
+        let currentUser = localStorage.getItem('userPhone');
+        if (!currentUser || currentUser === "Guest") {
+            window.location.href = "login.html"; 
         }
-        res.json({ success: true, message: `Withdrawal ${req.body.action} ho gaya!` });
-    } catch (error) { res.json({ success: false }); }
-});
 
-app.get('/api/admin/users', async (req, res) => {
-    try { res.json({ success: true, users: await User.find({ role: 'user' }).sort({ _id: -1 }) }); } catch (error) { res.json({ success: false }); }
-});
+        let activeBox = null;
+        const allInputCells = document.querySelectorAll('.input-cell');
+        let currentTotal = 0;
+        let currentBalance = parseFloat(localStorage.getItem('userBalance')) || 0;
+        
+        let isBettingClosed = false;
 
-// 🚀 NAYA: AUTO-SETTLE SCRIPT (Jo theek waqt par tickets settle karegi)
-let aakhiriAutoSlot = ""; 
-setInterval(async () => {
-    let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-    let now = new Date(nowStr);
-    
-    let min = now.getMinutes();
-    let lastSlotMinutes = min - (min % 15);
-    
-    let hh = String(now.getHours()).padStart(2, '0');
-    let mm = String(lastSlotMinutes).padStart(2, '0');
-    let currentSlotTime = `${hh}:${mm}`; 
-    
-    let dd = String(now.getDate()).padStart(2, '0');
-    let mo = String(now.getMonth() + 1).padStart(2, '0');
-    let yyyy = now.getFullYear();
-    let todayStr = `${dd}/${mo}/${yyyy}`;
-    
-    let uniqueSlotCheck = todayStr + " " + currentSlotTime;
+        document.getElementById('welcome-phone').innerText = currentUser;
+        const balanceElement = document.getElementById('balance');
+        balanceElement.innerText = currentBalance.toFixed(2);
 
-    if (aakhiriAutoSlot !== uniqueSlotCheck) {
-        try {
-            let existingResult = await Result.findOne({ date: todayStr, time: currentSlotTime });
-            if (existingResult) {
-                // Time aa gaya hai, ab advance save kiye hue result par tickets ko won/loss karo
-                const pendingTickets = await Ticket.find({ status: 'Pending' });
-                const resultsDict = { "NV": existingResult.nv, "RR": existingResult.rr, "RY": existingResult.ry, "CH": existingResult.ch };
+        function playSound(id) { let sound = document.getElementById(id); if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); } }
 
-                for (let ticket of pendingTickets) {
-                    let totalWinningAmount = 0;
-                    ticket.tickets.forEach(bet => {
-                        let winningNumber = resultsDict[bet.group]; 
-                        if (winningNumber && bet.number.includes("-")) {
-                            let winNum = parseInt(winningNumber);
-                            let minVal = parseInt(bet.number.split("-")[0]);
-                            let maxVal = parseInt(bet.number.split("-")[1]);
-                            if (winNum >= minVal && winNum <= maxVal) totalWinningAmount += (bet.points * 100); 
-                        }
-                    });
-                    if (totalWinningAmount > 0) {
-                        ticket.status = 'Won';
-                        ticket.wonAmount = totalWinningAmount;
-                        const user = await User.findOne({ phone: ticket.phone });
-                        if (user) { user.balance += totalWinningAmount; await user.save(); }
-                    } else { ticket.status = 'Lost'; ticket.wonAmount = 0; }
-                    await ticket.save(); 
+        async function fetchLiveBalance() {
+            if (!currentUser || currentUser === "Guest") return; 
+            try {
+                let response = await fetch('/api/get-balance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
+                let data = await response.json();
+                
+                if (data.success && data.balance !== currentBalance) { 
+                    let isWin = data.balance > currentBalance; 
+                    currentBalance = data.balance; 
+                    balanceElement.innerText = currentBalance.toFixed(2); 
+                    localStorage.setItem('userBalance', currentBalance); 
+                    
+                    if (isWin) {
+                        playSound('sound-win');
+                        setTimeout(() => {
+                            alert(`🎉 BADHAI HO!\nAap Jeet Gaye Hain!\nAapka naya balance hai: ₹${data.balance.toFixed(2)}`);
+                        }, 500);
+                    }
                 }
-                aakhiriAutoSlot = uniqueSlotCheck; 
-            }
-        } catch (err) {}
-    }
-}, 5000);
+            } catch(e) {}
+        }
+        
+        setInterval(fetchLiveBalance, 1000); 
 
-app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'login.html')); });
-app.listen(3000, () => {
-    console.log("=======================================");
-    console.log("🚀 YANTRA GAME SERVER IS RUNNING!");
-    console.log("=======================================");
-});
+        allInputCells.forEach(cell => { cell.addEventListener('click', function() { if (activeBox) activeBox.classList.remove('selected-cell'); activeBox = this; activeBox.classList.add('selected-cell'); }); });
+        
+        function typeNumber(number) { 
+            if (activeBox) { 
+                if (activeBox.innerText.length < 3) {
+                    activeBox.innerText = activeBox.innerText + number; 
+                    updateCart(); 
+                }
+            } 
+        }
+
+        function clearActiveCell() { if (activeBox) { activeBox.innerText = ""; updateCart(); } }
+
+        function updateCart() {
+            let totalQty = 0, totalPts = 0;
+            let groupTotals = { "NV": {qty:0, pts:0}, "RR": {qty:0, pts:0}, "RY": {qty:0, pts:0}, "CH": {qty:0, pts:0}, "ALL": {qty:0, pts:0} };
+
+            allInputCells.forEach(cell => {
+                let points = parseInt(cell.innerText);
+                if (!isNaN(points) && points > 0) {
+                    let group = cell.getAttribute('data-group');
+                    if(groupTotals[group]) { 
+                        groupTotals[group].qty += points; 
+                        groupTotals[group].pts += (points * 10.10);
+                    }
+                    totalQty += points; 
+                    totalPts += (points * 10.10);
+                }
+            });
+
+            ['NV', 'RR', 'RY', 'CH'].forEach(g => {
+                let qCell = document.getElementById('qty-' + g), pCell = document.getElementById('pts-' + g);
+                if(qCell && pCell) { 
+                    qCell.innerText = groupTotals[g].qty > 0 ? groupTotals[g].qty : ''; 
+                    pCell.innerText = groupTotals[g].pts > 0 ? groupTotals[g].pts.toFixed(2) : ''; 
+                }
+            });
+
+            document.getElementById('total-qty').innerText = totalQty > 0 ? totalQty : '';
+            document.getElementById('cart-total-pts').innerText = totalPts > 0 ? totalPts.toFixed(2) : '';
+            currentTotal = parseFloat(totalPts.toFixed(2));
+        }
+
+        function clearEntireGrid() { allInputCells.forEach(cell => cell.innerText = ""); updateCart(); }
+
+        async function buyTickets() {
+            if (isBettingClosed) {
+                playSound('sound-error');
+                alert("Game abhi Band Hai! Ya aakhiri 1 minute bacha hai.");
+                return;
+            }
+
+            if (currentTotal === 0) { playSound('sound-error'); alert("Board khali hai!"); return; }
+            let myTickets = [];
+            allInputCells.forEach(cell => { let points = parseInt(cell.innerText); if (!isNaN(points) && points > 0) { myTickets.push({ group: cell.getAttribute('data-group'), number: cell.getAttribute('data-range'), points: points }); } });
+            try {
+                let response = await fetch('/api/buy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, totalCost: currentTotal, cartData: myTickets }) });
+                let data = await response.json();
+                if (data.success) { playSound('sound-buy'); currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); alert("Ticket Khareedi Gayi!\nBalance: ₹" + currentBalance.toFixed(2)); clearEntireGrid(); } 
+                else { playSound('sound-error'); alert("Error: " + data.message); }
+            } catch (error) { alert("Server connection error!"); }
+        }
+
+        async function cancelLastTicket() {
+            if (!currentUser || currentUser === "Guest") { alert("Pehle login karein!"); return; }
+            if (confirm("Kya aap apni aakhiri kharidi hui ticket sach mein Cancel karna chahte hain? Paise turant wapas aa jayenge.")) {
+                try {
+                    let response = await fetch('/api/cancel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
+                    let data = await response.json();
+                    if (data.success) { playSound('sound-win'); currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); alert("✅ " + data.message + "\nAapka naya balance: ₹" + currentBalance.toFixed(2)); } 
+                    else { playSound('sound-error'); alert("❌ Error: " + data.message); }
+                } catch (error) { alert("Server error!"); }
+            }
+        }
+
+        async function submitDeposit() {
+            const amount = document.getElementById('depositAmount').value, utr = document.getElementById('utrNumber').value;
+            if (!amount || !utr || utr.length < 12) { alert("Sahi Details dalein!"); return; }
+            const res = await fetch('/api/deposit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, amount: Number(amount), utr }) });
+            alert((await res.json()).message); document.getElementById('walletModal').style.display = 'none';
+        }
+
+        async function submitWithdraw() {
+            const amount = document.getElementById('withdrawAmount').value, bankDetails = document.getElementById('bankDetails').value;
+            if (!amount || amount <= 0) { alert("Kripya sahi amount dalein!"); return; }
+            if (amount < 10) { alert("Kam se kam 10 points nikal sakte hain!"); return; }
+            if (!bankDetails) { alert("Kripya apni UPI ID ya Bank Account Number dalein!"); return; }
+            try {
+                const response = await fetch('/api/withdraw', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser, amount: Number(amount), bankDetails }) });
+                const data = await response.json(); alert(data.message);
+                if(data.success) { document.getElementById('withdrawModal').style.display = 'none'; currentBalance = data.newBalance; balanceElement.innerText = currentBalance.toFixed(2); localStorage.setItem('userBalance', currentBalance); }
+            } catch(err) { alert("Server error!"); }
+        }
+
+        function openDatePicker() { 
+            document.getElementById('date-modal').style.display = 'flex'; 
+            let today = new Date();
+            let yyyy = today.getFullYear();
+            let mm = String(today.getMonth() + 1).padStart(2, '0');
+            let dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('yantra-date-input').value = `${yyyy}-${mm}-${dd}`;
+        }
+        
+        function submitDateAndOpenYantra() { 
+            let dateVal = document.getElementById('yantra-date-input').value;
+            if (!dateVal) return alert("Kripya date select karein!");
+            let parts = dateVal.split("-"); let formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            document.getElementById('date-modal').style.display = 'none'; 
+            document.getElementById('yantra-modal').style.display = 'flex'; 
+            document.getElementById('yantra-header-date').innerText = "Result for: " + formattedDate;
+            fetchYantraResults(formattedDate); 
+        }
+
+        async function fetchYantraResults(selectedDate) {
+            const table = document.getElementById('yantra-results-table'); 
+            table.innerHTML = `<tr><th>Event Time</th><th>NV</th><th>RR</th><th>RY</th><th>CH</th></tr>`; 
+            try {
+                const response = await fetch('/api/results', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: selectedDate }) });
+                const data = await response.json();
+                if(data.success && data.results.length > 0) { 
+                    data.results.forEach(res => { table.innerHTML += `<tr><td style="font-weight: bold; color: blue;">${res.time}</td><td>${res.nv || '-'}</td><td>${res.rr || '-'}</td><td>${res.ry || '-'}</td><td>${res.ch || '-'}</td></tr>`; });
+                } else { table.innerHTML += `<tr><td colspan="5">Is date par koi result declare nahi hua hai.</td></tr>`; }
+            } catch(e) {}
+        }
+        function closeYantraModal() { document.getElementById('yantra-modal').style.display = 'none'; }
+
+        async function openHistoryModal() {
+            document.getElementById('history-modal').style.display = 'flex'; const table = document.getElementById('history-table'); table.innerHTML = `<tr><th>Date & Time</th><th>Group</th><th>Number Range</th><th>Points</th><th>Status</th></tr>`;
+            try {
+                const response = await fetch('/api/history', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
+                const data = await response.json();
+                let hasWonAny = false; 
+                if (data.success && data.tickets.length > 0) {
+                    data.tickets.forEach(ticket => {
+                        let dateObj = new Date(ticket.date); let dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString(); 
+                        let statusColor = ticket.status === 'Won' ? 'green' : (ticket.status === 'Lost' ? 'red' : (ticket.status === 'Cancelled' ? 'gray' : 'blue'));
+                        if (ticket.status === 'Won') hasWonAny = true; 
+                        ticket.tickets.forEach(bet => { table.innerHTML += `<tr><td>${dateStr}</td><td>${bet.group}</td><td>${bet.number}</td><td>${bet.points}</td><td style="color: ${statusColor}; font-weight: bold;">${ticket.status}</td></tr>`; });
+                    });
+                } else table.innerHTML += `<tr><td colspan="5">Aapne abhi tak koi ticket nahi kharidi hai.</td></tr>`;
+            } catch (err) { table.innerHTML += `<tr><td colspan="5">History load nahi ho payi.</td></tr>`; }
+        }
+        function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
+
+        function startEventTimer() {
+            setInterval(() => {
+                let now = new Date();
+                let min = now.getMinutes();
+                let sec = now.getSeconds();
+                let hours = now.getHours();
+
+                let currentMins = hours * 60 + min;
+                let startMins = 510; // 8:30 AM
+                let endMins = 1380; // 11:00 PM
+
+                if (currentMins < startMins || currentMins >= endMins) {
+                    document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB'); 
+                    document.getElementById('event-code').innerText = "--:--";
+                    let countdownDisplay = document.getElementById('countdown-display');
+                    countdownDisplay.innerText = "GAME CLOSED";
+                    countdownDisplay.style.color = "red";
+                    isBettingClosed = true;
+                    return;
+                }
+
+                let nextSlotMinutes = min - (min % 15) + 15;
+                let nextHours = hours;
+                if (nextSlotMinutes >= 60) {
+                    nextSlotMinutes = 0;
+                    nextHours += 1;
+                }
+                if (nextHours >= 24) {
+                    nextHours = 0;
+                }
+                
+                let eventCodeStr = String(nextHours).padStart(2, '0') + ":" + String(nextSlotMinutes).padStart(2, '0');
+                
+                document.getElementById('current-date').innerText = now.toLocaleDateString('en-GB'); 
+                document.getElementById('event-code').innerText = eventCodeStr;
+
+                let mLeft = 15 - (min % 15) - 1; 
+                let sLeft = 60 - sec; 
+                if (sLeft === 60) { sLeft = 0; mLeft += 1; }
+                
+                let countdownDisplay = document.getElementById('countdown-display');
+                countdownDisplay.innerText = `00:${mLeft.toString().padStart(2, '0')}:${sLeft.toString().padStart(2, '0')}`;
+                
+                if (mLeft === 0) {
+                    countdownDisplay.style.color = "red";
+                    isBettingClosed = true;
+                } else {
+                    countdownDisplay.style.color = "white";
+                    isBettingClosed = false;
+                }
+            }, 1000);
+        }
+        startEventTimer();
+
+        function updateLiveResultColumn() {
+            let now = new Date();
+            let minutes = now.getMinutes(); let hours = now.getHours();
+            
+            let currentMins = hours * 60 + minutes;
+            if (currentMins < 510 || currentMins >= 1380) {
+                document.getElementById('last-result-time').innerText = "CLOSED";
+                document.getElementById('last-res-nv').innerText = ""; 
+                document.getElementById('last-res-rr').innerText = ""; 
+                document.getElementById('last-res-ry').innerText = ""; 
+                document.getElementById('last-res-ch').innerText = "";
+                return;
+            }
+
+            let lastSlotMinutes = minutes - (minutes % 15);
+            let hh = hours.toString().padStart(2, '0'); let mmSlot = lastSlotMinutes.toString().padStart(2, '0');
+            let expectedTimeStr = hh + ":" + mmSlot;
+            
+            document.getElementById('last-result-time').innerText = expectedTimeStr;
+
+            let dd = String(now.getDate()).padStart(2, '0'); 
+            let mm = String(now.getMonth() + 1).padStart(2, '0'); 
+            let yyyy = now.getFullYear();
+            let todayStr = `${dd}/${mm}/${yyyy}`;
+
+            fetch('/api/results', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: todayStr })
+            }).then(res => res.json()).then(data => {
+                if (data.success && data.results.length > 0) {
+                    let exactResult = data.results.find(r => r.time === expectedTimeStr);
+                    if (exactResult) {
+                        document.getElementById('last-res-nv').innerText = exactResult.nv ? "NV" + exactResult.nv : "-";
+                        document.getElementById('last-res-rr').innerText = exactResult.rr ? "RR" + exactResult.rr : "-";
+                        document.getElementById('last-res-ry').innerText = exactResult.ry ? "RY" + exactResult.ry : "-";
+                        document.getElementById('last-res-ch').innerText = exactResult.ch ? "CH" + exactResult.ch : "-";
+                    } else {
+                        document.getElementById('last-res-nv').innerText = ""; 
+                        document.getElementById('last-res-rr').innerText = ""; 
+                        document.getElementById('last-res-ry').innerText = ""; 
+                        document.getElementById('last-res-ch').innerText = "";
+                    }
+                } else {
+                    document.getElementById('last-res-nv').innerText = ""; 
+                    document.getElementById('last-res-rr').innerText = ""; 
+                    document.getElementById('last-res-ry').innerText = ""; 
+                    document.getElementById('last-res-ch').innerText = "";
+                }
+            }).catch(e => console.log("Result fetch error:", e));
+        }
+        
+        setInterval(updateLiveResultColumn, 2000); 
+        updateLiveResultColumn();
+    </script>
+</body>
+</html>
