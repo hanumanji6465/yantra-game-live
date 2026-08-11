@@ -27,7 +27,7 @@
         <div><button class="btn btn-red" onclick="logoutAdmin()">Logout</button></div>
     </div>
 
-    <!-- 🚀 NAYA: PROFIT / LOSS ROW -->
+    <!-- 🚀 PROFIT / LOSS ROW -->
     <div class="dashboard-grid">
         <div class="card" style="border-top-color: #2980b9; text-align: center;">
             <h2>📈 Profit & Loss Report</h2>
@@ -157,7 +157,6 @@
             } catch (error) {}
         }
 
-        // 🚀 NAYA: Fetch Profit / Loss
         async function fetchProfitLoss() {
             try {
                 const res = await fetch('/api/admin/profit-loss');
@@ -168,10 +167,10 @@
                     let net = document.getElementById('pl-net');
                     if (data.netProfit >= 0) {
                         net.innerText = `+ ₹${data.netProfit.toFixed(2)}`;
-                        net.style.color = '#2ecc71'; // Profit in Green
+                        net.style.color = '#2ecc71'; 
                     } else {
                         net.innerText = `- ₹${Math.abs(data.netProfit).toFixed(2)}`;
-                        net.style.color = '#e74c3c'; // Loss in Red
+                        net.style.color = '#e74c3c'; 
                     }
                 }
             } catch (err) { }
@@ -231,15 +230,50 @@
             fetchLiveBets(); loadAllUsers(); fetchProfitLoss();
         }
 
+        // 🚀 UPDATED: Modify Points With Admin PIN Security
         async function modifyPoints(action) {
-            let targetPhone = document.getElementById('target-phone').value, points = document.getElementById('target-points').value;
-            if(!targetPhone || !points) return;
-            let res = await fetch('/api/admin/modify-points', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetPhone, points, action }) });
-            alert((await res.json()).message);
-            loadAllUsers(); 
+            let targetPhone = document.getElementById('target-phone').value;
+            let points = document.getElementById('target-points').value;
+            
+            if(!targetPhone || !points) {
+                alert("Kripya User ID aur Points dono daalein!");
+                return;
+            }
+
+            // Password Prompt
+            let adminPin = prompt(`🔒 SECURITY CHECK:\nUser ID ${targetPhone} mein points ${action === 'add' ? 'ADD' : 'DEDUCT'} karne ke liye Admin Password dalein:`);
+            
+            // Agar Admin ne password popup ko cancel kar diya
+            if (!adminPin) {
+                return; 
+            }
+
+            try {
+                let res = await fetch('/api/admin/modify-points', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ 
+                        targetPhone: targetPhone, 
+                        points: points, 
+                        action: action,
+                        adminPin: adminPin // Password server ko ja raha hai
+                    }) 
+                });
+                
+                let data = await res.json();
+                alert(data.message);
+                
+                // Agar successful ho gaya toh input fields khali kar do
+                if(data.success) {
+                    document.getElementById('target-phone').value = '';
+                    document.getElementById('target-points').value = '';
+                    loadAllUsers(); 
+                }
+            } catch (err) {
+                alert("Server se connection toot gaya!");
+            }
         }
 
-        // 🚀 NAYA: Load users with Block/Unblock toggle
         async function loadAllUsers() {
             try {
                 const res = await fetch('/api/admin/users');
@@ -268,7 +302,6 @@
             } catch (error) {}
         }
 
-        // 🚀 NAYA: Toggle Block function
         async function toggleBlock(phone) {
             if(!confirm(`Kya aap sach mein User ID ${phone} ka status change karna chahte hain?`)) return;
             
@@ -294,7 +327,7 @@
             loadPendingWithdrawals(); 
             fetchLiveBets();
             loadAllUsers(); 
-            fetchProfitLoss(); // Load P&L on start
+            fetchProfitLoss(); 
         };
     </script>
 </body>
