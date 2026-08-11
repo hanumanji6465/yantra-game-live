@@ -40,8 +40,8 @@
         #countdown-display { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-weight: bold; font-size: 14px;}
         .lobby-badge { background-color: #e6b800; color: #a30000; padding: 4px 25px; font-size: 12px; font-weight: bold; border-radius: 2px; display: inline-block; margin-bottom: 4px;}
         
-        /* TABS DESIGN */
-        .tabs { display: flex; flex-wrap: nowrap; gap: 5px; padding-left: 2px; align-items: flex-end; }
+        /* TABS DESIGN & ACTION BUTTONS INLINE */
+        .tabs-container { display: flex; flex-wrap: nowrap; gap: 5px; align-items: flex-end; margin-bottom: 0px; padding-left: 2px; }
         .tab { padding: 8px 20px; border-radius: 5px 5px 0 0; font-size: 12px; border: none; cursor: pointer; font-weight: bold; }
         .tab:nth-child(1) { background-color: #fdf6e3; color: #6b8e23; } 
         .tab:nth-child(2) { background-color: #002277; color: white; } 
@@ -49,6 +49,12 @@
         .tab:nth-child(4) { background-color: #002277; color: white; } 
         .tab:nth-child(5) { background-color: #774499; color: white; } 
         
+        /* 🚀 NAYA: Add Money & Withdraw buttons styled to match tabs */
+        .inline-action-btn { padding: 8px 15px; border-radius: 5px 5px 0 0; font-size: 12px; border: none; cursor: pointer; font-weight: bold; color: white; box-shadow: none; }
+        .btn-add-money { background-color: #27ae60; }
+        .btn-withdraw { background-color: #c0392b; }
+        .inline-action-btn:active { opacity: 0.8; }
+
         .main-content { display: flex; gap: 10px; flex-grow: 1; }
         
         /* EXACT TABLE DESIGN WITH FIXED LAYOUT */
@@ -62,7 +68,7 @@
         .grid-table th:nth-child(15) { width: 6%; } 
         .grid-table th:nth-child(16) { width: 6.4%; } 
         
-        /* 🚀 NAYA: TABLE KI HEIGHT BADHA DI GAYI HAI (50px) */
+        /* TABLE HEIGHT INCREASED (50px) */
         .grid-table th, .grid-table td { border: 1px solid #a09078 !important; text-align: center; height: 50px; padding: 4px; color: #4a4a4a; overflow: hidden; }
         .grid-table tr:nth-child(1) { background-color: #eaddb6 !important; } 
         .grid-table tr:nth-child(2) { background-color: #cfbe96 !important; } 
@@ -79,7 +85,7 @@
         .selected-cell { background-color: #00d200 !important; color: black !important; border-right: 2px solid black !important; }
         td[id^="last-res-"] { font-size: 16px; font-weight: bold; color: #4a4a4a !important; }
 
-        /* BOTTOM BAR (PERFECT SINGLE LINE ALIGNMENT) */
+        /* BOTTOM BAR */
         .bottom-controls { 
             background-color: #e4e9f2; 
             display: flex; 
@@ -93,7 +99,7 @@
             margin-top: 15px; 
         }
         
-        /* 3D NUMPAD (NO WRAP STRICT) */
+        /* 3D NUMPAD */
         .numpad { 
             display: flex; 
             flex-wrap: nowrap !important; 
@@ -133,7 +139,7 @@
             font-size: 22px; 
         }
 
-        /* ACTION BAR (NO WRAP STRICT) */
+        /* ACTION BAR */
         .action-bar { 
             display: flex; 
             flex-wrap: nowrap !important; 
@@ -287,20 +293,16 @@
             </div>
         </div>
 
-        <!-- 🚀 NAYA: TABS AUR ADD MONEY/WITHDRAW BUTTONS EK HI LINE MEIN -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0px;">
-            <div class="tabs">
-                <div class="tab">Bulk Coupons [ A ]</div>
-                <div class="tab active">Bulk Coupons [ B ]</div>
-                <div class="tab">Pointwise Coupons</div>
-                <div class="tab">Loose Coupons</div>
-                <div class="tab">Loose Pointwise Coupons</div>
-            </div>
+        <!-- 🚀 TABS KE THEEK BAGAL MEIN ADD MONEY & WITHDRAW BUTTONS -->
+        <div class="tabs-container">
+            <div class="tab">Bulk Coupons [ A ]</div>
+            <div class="tab active">Bulk Coupons [ B ]</div>
+            <div class="tab">Pointwise Coupons</div>
+            <div class="tab">Loose Coupons</div>
+            <div class="tab">Loose Pointwise Coupons</div>
             
-            <div style="display: flex; gap: 10px; margin-bottom: 3px; padding-right: 2px;">
-                <button onclick="document.getElementById('walletModal').style.display='block'" style="background: #008800; color: white; padding: 6px 12px; border: 2px solid white; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold; box-shadow: 0px 3px 5px rgba(0,0,0,0.3);">➕ Add Money</button>
-                <button onclick="document.getElementById('withdrawModal').style.display='block'" style="background: #cc0000; color: white; padding: 6px 12px; border: 2px solid white; border-radius: 5px; cursor: pointer; font-size:12px; font-weight: bold; box-shadow: 0px 3px 5px rgba(0,0,0,0.3);">💸 Withdraw</button>
-            </div>
+            <button class="inline-action-btn btn-add-money" onclick="document.getElementById('walletModal').style.display='block'">➕ Add Money</button>
+            <button class="inline-action-btn btn-withdraw" onclick="document.getElementById('withdrawModal').style.display='block'">💸 Withdraw</button>
         </div>
 
         <div class="main-content">
