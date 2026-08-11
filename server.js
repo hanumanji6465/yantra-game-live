@@ -140,7 +140,7 @@ app.post('/api/purchase-summary', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 NAYA: ADMIN RESULT CONTROL (TIME LOCK KE SATH)
+// 🚀 ADMIN RESULT CONTROL (TIME LOCK KE SATH)
 app.post('/api/admin/result', async (req, res) => {
     const { nv, rr, ry, ch, customDate, customTime } = req.body;
     try {
@@ -233,7 +233,7 @@ app.post('/api/admin/toggle-block', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 NAYA: RESULTS API (HIDE FUTURE RESULTS FROM USERS)
+// 🚀 RESULTS API (HIDE FUTURE RESULTS FROM USERS)
 app.post('/api/results', async (req, res) => {
     try {
         let query = req.body.date ? { date: req.body.date } : {}; 
@@ -265,16 +265,34 @@ app.post('/api/results', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
+// 🚀 NAYA: POINTS MODIFY API (WITH PASSWORD SECURITY)
 app.post('/api/admin/modify-points', async (req, res) => {
+    const { targetPhone, points, action, adminPin } = req.body;
+    
+    // 🔒 YAHAN APNA SECRET ADMIN PASSWORD SET KAREIN
+    const SECRET_PASSWORD = "123456"; 
+
+    if (adminPin !== SECRET_PASSWORD) {
+        return res.json({ success: false, message: "❌ Galat Password! Access Denied." });
+    }
+
     try {
-        const user = await User.findOne({ phone: req.body.targetPhone });
+        const user = await User.findOne({ phone: targetPhone });
         if (!user) return res.json({ success: false, message: "User nahi mila!" });
-        let amount = parseFloat(req.body.points);
-        if (req.body.action === 'add') user.balance += amount;
-        else if (req.body.action === 'deduct') { if (user.balance < amount) return res.json({ success: false, message: "Insufficient balance!" }); user.balance -= amount; }
+        
+        let amount = parseFloat(points);
+        if (action === 'add') {
+            user.balance += amount;
+        } else if (action === 'deduct') { 
+            if (user.balance < amount) return res.json({ success: false, message: "Insufficient balance!" }); 
+            user.balance -= amount; 
+        }
+        
         await user.save(); 
-        res.json({ success: true, newBalance: user.balance, message: `Points update ho gaye!` });
-    } catch (error) { res.json({ success: false }); }
+        res.json({ success: true, newBalance: user.balance, message: `✅ Points update ho gaye!` });
+    } catch (error) { 
+        res.json({ success: false, message: "Server error!" }); 
+    }
 });
 
 app.post('/api/deposit', async (req, res) => {
@@ -321,7 +339,7 @@ app.get('/api/admin/users', async (req, res) => {
     try { res.json({ success: true, users: await User.find({ role: 'user' }).sort({ _id: -1 }) }); } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 NAYA: AUTO-SETTLE SCRIPT (Jo theek waqt par tickets settle karegi)
+// 🚀 AUTO-SETTLE SCRIPT (Jo theek waqt par tickets settle karegi)
 let aakhiriAutoSlot = ""; 
 setInterval(async () => {
     let nowStr = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
