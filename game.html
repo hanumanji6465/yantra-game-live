@@ -40,8 +40,8 @@
         #countdown-display { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); font-weight: bold; font-size: 14px;}
         .lobby-badge { background-color: #e6b800; color: #a30000; padding: 4px 25px; font-size: 12px; font-weight: bold; border-radius: 2px; display: inline-block; margin-bottom: 4px;}
         
-        /* 🚀 NAYA: TABS DESIGN (SAB EK SATH) */
-        .tabs { display: flex; flex-wrap: nowrap; gap: 5px; margin-bottom: 0px; padding-left: 2px; align-items: flex-end; }
+        /* 🚀 TABS & WALLET BUTTONS (SAB EK SATH CHIPKE HUE) */
+        .tabs { display: flex; flex-wrap: nowrap; gap: 5px; margin-bottom: 0px; padding-left: 2px; align-items: flex-end; width: 100%; }
         .tab { padding: 8px 20px; border-radius: 5px 5px 0 0; font-size: 12px; border: none; cursor: pointer; font-weight: bold; }
         
         .tab:nth-child(1) { background-color: #fdf6e3; color: #6b8e23; } 
@@ -50,12 +50,12 @@
         .tab:nth-child(4) { background-color: #002277; color: white; } 
         .tab:nth-child(5) { background-color: #774499; color: white; } 
         
-        /* Add Money aur Withdraw ko bhi Tab ka style diya gaya hai */
-        .tab.add-money-tab { background-color: #008000; color: white; margin-left: 5px;}
-        .tab.withdraw-tab { background-color: #cc0000; color: white; }
+        /* Add Money aur Withdraw ekdum Tabs jaise lagenege */
+        .tab.add-money-tab { background-color: #008800; color: white; margin-left: 5px; box-shadow: inset 0px 2px 3px rgba(255,255,255,0.3);}
+        .tab.withdraw-tab { background-color: #cc0000; color: white; box-shadow: inset 0px 2px 3px rgba(255,255,255,0.3);}
         .tab:active { opacity: 0.8; }
 
-        .main-content { display: flex; gap: 10px; flex-grow: 1; }
+        .main-content { display: flex; gap: 10px; flex-grow: 1; margin-top: 0px;}
         
         /* EXACT TABLE DESIGN WITH FIXED LAYOUT */
         .grid-section { width: 100%; overflow-x: auto; }
@@ -68,7 +68,8 @@
         .grid-table th:nth-child(15) { width: 6%; } 
         .grid-table th:nth-child(16) { width: 6.4%; } 
         
-        .grid-table th, .grid-table td { border: 1px solid #a09078 !important; text-align: center; height: 38px; padding: 4px; color: #4a4a4a; overflow: hidden; }
+        /* TABLE HEIGHT 42px rakhi hai taaki screen ke bahar na jaye aur touch karne me aasan ho */
+        .grid-table th, .grid-table td { border: 1px solid #a09078 !important; text-align: center; height: 42px; padding: 4px; color: #4a4a4a; overflow: hidden; }
         .grid-table tr:nth-child(1) { background-color: #eaddb6 !important; } 
         .grid-table tr:nth-child(2) { background-color: #cfbe96 !important; } 
         .grid-table tr:nth-child(3) { background-color: #eaddb6 !important; } 
@@ -84,7 +85,7 @@
         td[id^="last-res-"] { font-size: 15px; font-weight: bold; color: #4a4a4a !important; }
 
         /* =========================================================
-           🚀 BOTTOM BAR (FULL WIDTH TOGGLE) - As requested
+           🚀 EXACT VIDEO-STYLE BOTTOM BAR (FULL WIDTH TOGGLE)
            ========================================================= */
         .bottom-wrapper {
             background-color: #e4e9f2; 
@@ -117,7 +118,7 @@
             border: 1px solid #b8c5d6; 
             border-bottom: 5px solid #9aa9c2; 
             border-radius: 6px; 
-            width: 85px; 
+            width: 60px; 
             height: 50px; 
             font-size: 22px; 
             font-weight: bold; 
@@ -202,6 +203,7 @@
         document.addEventListener('fullscreenchange', makePerfectMobileApp);
         document.addEventListener('webkitfullscreenchange', makePerfectMobileApp);
 
+        // Wake Lock & Auto FullScreen
         let isFullScreenEngaged = false;
         let wakeLock = null;
 
@@ -232,6 +234,7 @@
             }
         });
 
+        // 🚀 TOGGLE FUNCTION
         function toggleBottomBar() {
             const numpadRow = document.getElementById('row-numpad');
             const actionRow = document.getElementById('row-actions');
@@ -314,37 +317,3 @@
 
         <div class="tabs">
             <div class="tab">Bulk Coupons [ A ]</div>
-            <div class="tab active">Bulk Coupons [ B ]</div>
-            <div class="tab">Pointwise Coupons</div>
-            <div class="tab">Loose Coupons</div>
-            <div class="tab">Loose Pointwise Coupons</div>
-            
-            <button class="tab add-money-tab" onclick="document.getElementById('walletModal').style.display='block'">➕ Add Money</button>
-            <button class="tab withdraw-tab" onclick="document.getElementById('withdrawModal').style.display='block'">💸 Withdraw</button>
-        </div>
-
-        <div class="main-content">
-            <div class="grid-section">
-                <table class="grid-table" id="game-grid">
-                    <tr>
-                        <th>Product Group</th><th>Gift Coin</th><th>00-09</th><th>10-19</th><th>20-29</th><th>30-39</th><th>40-49</th><th>50-59</th><th>60-69</th><th>70-79</th><th>80-89</th><th>90-99</th><th>All</th>
-                        <th>Qty</th><th>Pts</th><th id="last-result-time">--:--</th>
-                    </tr>
-                    <tr>
-                        <td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td>
-                        <td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td>
-                        <td id="qty-NV" style="font-weight: bold; color: black;"></td><td id="pts-NV" style="font-weight: bold; color: black;"></td><td id="last-res-nv"></td>
-                    </tr>
-                    <tr>
-                        <td class="group-name">Yantra Group RR</td><td class="gift-coin">-</td>
-                        <td class="input-cell" data-group="RR" data-range="00-09"></td><td class="input-cell" data-group="RR" data-range="10-19"></td><td class="input-cell" data-group="RR" data-range="20-29"></td><td class="input-cell" data-group="RR" data-range="30-39"></td><td class="input-cell" data-group="RR" data-range="40-49"></td><td class="input-cell" data-group="RR" data-range="50-59"></td><td class="input-cell" data-group="RR" data-range="60-69"></td><td class="input-cell" data-group="RR" data-range="70-79"></td><td class="input-cell" data-group="RR" data-range="80-89"></td><td class="input-cell" data-group="RR" data-range="90-99"></td><td class="input-cell" data-group="RR" data-range="All"></td>
-                        <td id="qty-RR" style="font-weight: bold; color: black;"></td><td id="pts-RR" style="font-weight: bold; color: black;"></td><td id="last-res-rr"></td>
-                    </tr>
-                    <tr>
-                        <td class="group-name">Yantra Group RY</td><td class="gift-coin">-</td>
-                        <td class="input-cell" data-group="RY" data-range="00-09"></td><td class="input-cell" data-group="RY" data-range="10-19"></td><td class="input-cell" data-group="RY" data-range="20-29"></td><td class="input-cell" data-group="RY" data-range="30-39"></td><td class="input-cell" data-group="RY" data-range="40-49"></td><td class="input-cell" data-group="RY" data-range="50-59"></td><td class="input-cell" data-group="RY" data-range="60-69"></td><td class="input-cell" data-group="RY" data-range="70-79"></td><td class="input-cell" data-group="RY" data-range="80-89"></td><td class="input-cell" data-group="RY" data-range="90-99"></td><td class="input-cell" data-group="RY" data-range="All"></td>
-                        <td id="qty-RY" style="font-weight: bold; color: black;"></td><td id="pts-RY" style="font-weight: bold; color: black;"></td><td id="last-res-ry"></td>
-                    </tr>
-                    <tr>
-                        <td class="group-name">Yantra Group CH</td><td class="gift-coin">-</td>
-                        <td class="input-cell" data-group="CH" data-range="00-09"></td><td class="input-cell" data-group="CH" data-range="10-19"></td><td class="input-cell" data-group="CH
