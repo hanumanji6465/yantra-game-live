@@ -213,7 +213,7 @@ app.get('/api/admin/live-bets', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 NAYA: DAILY CYCLE SHIFT WISE PROFIT & LOSS (8:30 AM to 8:00 AM)
+// 🚀 DAILY CYCLE SHIFT WISE PROFIT & LOSS (8:30 AM to 8:00 AM)
 app.get('/api/admin/profit-loss', async (req, res) => {
     try {
         let now = new Date();
@@ -333,6 +333,28 @@ app.post('/api/admin/modify-points', async (req, res) => {
         res.json({ success: true, newBalance: user.balance, message: `✅ Points update ho gaye!` });
     } catch (error) { 
         res.json({ success: false, message: "Server error!" }); 
+    }
+});
+
+// 🚀 NAYA: DELETE USER API (WITH PASSWORD SECURITY)
+app.post('/api/admin/delete-user', async (req, res) => {
+    const { phone, adminPin } = req.body;
+    
+    // 🔒 YAHAN APNA SECRET ADMIN PASSWORD SET KAREIN
+    const SECRET_PASSWORD = "123456"; 
+
+    if (adminPin !== SECRET_PASSWORD) {
+        return res.json({ success: false, message: "❌ Galat Password! Access Denied." });
+    }
+
+    try {
+        const deletedUser = await User.findOneAndDelete({ phone: phone });
+        if (!deletedUser) {
+            return res.json({ success: false, message: "User nahi mila!" });
+        }
+        res.json({ success: true, message: `✅ User ID ${phone} hamesha ke liye Delete ho gaya!` });
+    } catch (error) {
+        res.json({ success: false, message: "Server error!" });
     }
 });
 
