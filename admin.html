@@ -230,7 +230,6 @@
             fetchLiveBets(); loadAllUsers(); fetchProfitLoss();
         }
 
-        // 🚀 UPDATED: Modify Points With Admin PIN Security
         async function modifyPoints(action) {
             let targetPhone = document.getElementById('target-phone').value;
             let points = document.getElementById('target-points').value;
@@ -240,10 +239,8 @@
                 return;
             }
 
-            // Password Prompt
             let adminPin = prompt(`🔒 SECURITY CHECK:\nUser ID ${targetPhone} mein points ${action === 'add' ? 'ADD' : 'DEDUCT'} karne ke liye Admin Password dalein:`);
             
-            // Agar Admin ne password popup ko cancel kar diya
             if (!adminPin) {
                 return; 
             }
@@ -256,14 +253,13 @@
                         targetPhone: targetPhone, 
                         points: points, 
                         action: action,
-                        adminPin: adminPin // Password server ko ja raha hai
+                        adminPin: adminPin
                     }) 
                 });
                 
                 let data = await res.json();
                 alert(data.message);
                 
-                // Agar successful ho gaya toh input fields khali kar do
                 if(data.success) {
                     document.getElementById('target-phone').value = '';
                     document.getElementById('target-points').value = '';
@@ -284,16 +280,20 @@
                     data.users.forEach(u => {
                         let isBlocked = u.status === 'Blocked';
                         let statusText = isBlocked ? '<span style="color:red; font-weight:bold;">Blocked 🚫</span>' : '<span style="color:green; font-weight:bold;">Active ✅</span>';
+                        
                         let btnHtml = isBlocked 
                             ? `<button class="btn btn-green" style="padding: 5px 10px; font-size: 11px;" onclick="toggleBlock('${u.phone}')">✅ Unblock</button>` 
                             : `<button class="btn btn-red" style="padding: 5px 10px; font-size: 11px;" onclick="toggleBlock('${u.phone}')">🚫 Block</button>`;
+
+                        // 🚀 NAYA: Delete Button
+                        let deleteBtn = `<button class="btn btn-red" style="padding: 5px 10px; font-size: 11px; margin-left: 5px; background-color: #800000;" onclick="deleteUser('${u.phone}')">🗑️ Delete</button>`;
 
                         tbody.innerHTML += `<tr>
                             <td style="font-weight: bold;">${u.phone}</td>
                             <td>${u.password}</td>
                             <td style="color: green; font-weight: bold;">₹${u.balance.toFixed(2)}</td>
                             <td>${statusText}</td>
-                            <td>${btnHtml}</td>
+                            <td>${btnHtml} ${deleteBtn}</td>
                         </tr>`;
                     });
                 } else {
@@ -316,6 +316,31 @@
                 loadAllUsers(); 
             } catch (error) {
                 alert("Error changing user status.");
+            }
+        }
+
+        // 🚀 NAYA: Delete User Function
+        async function deleteUser(phone) {
+            let confirmDelete = confirm(`⚠️ WARNING: Kya aap sach mein User ID ${phone} ko hamesha ke liye DELETE karna chahte hain? Yeh wapas nahi aayega!`);
+            if (!confirmDelete) return;
+
+            let adminPin = prompt(`🔒 SECURITY CHECK:\nUser ID ${phone} ko DELETE karne ke liye Admin Password dalein:`);
+            if (!adminPin) return;
+
+            try {
+                let res = await fetch('/api/admin/delete-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone, adminPin: adminPin })
+                });
+                let data = await res.json();
+                alert(data.message);
+                
+                if (data.success) {
+                    loadAllUsers(); 
+                }
+            } catch (error) {
+                alert("Error deleting user.");
             }
         }
 
