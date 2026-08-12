@@ -213,14 +213,55 @@ app.get('/api/admin/live-bets', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
+// 🚀 NAYA: DAILY CYCLE SHIFT WISE PROFIT & LOSS (8:30 AM to 8:00 AM)
 app.get('/api/admin/profit-loss', async (req, res) => {
     try {
-        const tickets = await Ticket.find({ status: { $ne: 'Cancelled' } });
+        let now = new Date();
+        
+        // India Time (IST) nikalne ka sabse safe tarika
+        let options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+        let formatter = new Intl.DateTimeFormat('en-US', options);
+        let parts = formatter.formatToParts(now);
+        let p = {};
+        parts.forEach(part => p[part.type] = part.value);
+        
+        let currentTotalMins = parseInt(p.hour) * 60 + parseInt(p.minute);
+
+        // Shift ke Start aur End ka waqt set kar rahe hain
+        let shiftStartIST = new Date(`${p.year}-${p.month}-${p.day}T08:30:00+05:30`);
+        let shiftEndIST = new Date(`${p.year}-${p.month}-${p.day}T08:00:00+05:30`);
+
+        if (currentTotalMins < 480) { 
+            // Raat 12:00 se Subah 8:00 baje tak (Pichhle din ki shift chal rahi hai)
+            shiftStartIST.setDate(shiftStartIST.getDate() - 1);
+        } else if (currentTotalMins >= 480 && currentTotalMins < 510) { 
+            // ⚠️ Subah 8:00 se 8:30 baje tak (RESET TIME - Yahan sab 0 ho jayega)
+            return res.json({ success: true, totalBets: 0, totalWins: 0, netProfit: 0 });
+        } else { 
+            // Subah 8:30 se Raat 12:00 baje tak (Aaj ki naye shift)
+            shiftEndIST.setDate(shiftEndIST.getDate() + 1);
+        }
+
+        // Database se sirf is particular shift ke tickets nikalenge
+        const tickets = await Ticket.find({ 
+            status: { $ne: 'Cancelled' },
+            date: { $gte: shiftStartIST, $lte: shiftEndIST } 
+        });
+
         let totalBets = 0, totalWins = 0;
-        tickets.forEach(t => { totalBets += (t.totalCost || 0); totalWins += (t.wonAmount || 0); });
+        
+        tickets.forEach(t => {
+            totalBets += (t.totalCost || 0); 
+            totalWins += (t.wonAmount || 0);
+        });
+
         let netProfit = totalBets - totalWins; 
+        
+        // Final hisab bhejo
         res.json({ success: true, totalBets, totalWins, netProfit });
-    } catch(e) { res.json({ success: false }); }
+    } catch(e) { 
+        res.json({ success: false }); 
+    }
 });
 
 app.post('/api/admin/toggle-block', async (req, res) => {
@@ -265,7 +306,7 @@ app.post('/api/results', async (req, res) => {
     } catch (error) { res.json({ success: false }); }
 });
 
-// 🚀 NAYA: POINTS MODIFY API (WITH PASSWORD SECURITY)
+// 🚀 POINTS MODIFY API (WITH PASSWORD SECURITY)
 app.post('/api/admin/modify-points', async (req, res) => {
     const { targetPhone, points, action, adminPin } = req.body;
     
