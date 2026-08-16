@@ -54,6 +54,8 @@
         .inline-action-btn { padding: 6px 14px; border-radius: 4px; font-size: 12px; border: 2px solid white; cursor: pointer; font-weight: bold; color: white; box-shadow: 0px 2px 4px rgba(0,0,0,0.3); }
         .btn-add-money { background-color: #008800; }
         .btn-withdraw { background-color: #cc0000; }
+        /* 🚀 Naya WhatsApp Button Style */
+        .btn-whatsapp { background-color: #25D366; } 
         .inline-action-btn:active { transform: scale(0.95); }
 
         .main-content { display: flex; gap: 10px; flex-grow: 1; margin-top: 0px;}
@@ -221,6 +223,14 @@
                 else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
                 isFullScreenEngaged = true; 
             }
+            
+            // Lock Orientation to Landscape
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(function(error) {
+                    console.log("Landscape lock failed:", error);
+                });
+            }
+
             if (!wakeLock) {
                 keepScreenAwake();
             }
@@ -252,6 +262,7 @@
     <audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
 
     <div class="game-container">
+        <!-- Modals for Add Money & Withdraw (Hidden for now) -->
         <div id="walletModal" class="modal-overlay">
             <div class="modal-content">
                 <h3 style="color: black; margin-top: 0;">Add Points to Wallet</h3>
@@ -322,8 +333,12 @@
             </div>
             
             <div class="inline-action-btns">
-                <button class="inline-action-btn btn-add-money" onclick="document.getElementById('walletModal').style.display='block'">➕ Add Money</button>
-                <button class="inline-action-btn btn-withdraw" onclick="document.getElementById('withdrawModal').style.display='block'">💸 Withdraw</button>
+                <!-- 🚀 Purane Add Money aur Withdraw buttons chhipe huye hain -->
+                <button class="inline-action-btn btn-add-money" onclick="document.getElementById('walletModal').style.display='block'" style="display: none;">➕ Add Money</button>
+                <button class="inline-action-btn btn-withdraw" onclick="document.getElementById('withdrawModal').style.display='block'" style="display: none;">💸 Withdraw</button>
+                
+                <!-- 🚀 Naya WhatsApp Button yahan laga diya gaya hai -->
+                <button class="inline-action-btn btn-whatsapp" onclick="window.open('https://wa.me/917502714687', '_blank')">💬 WhatsApp</button>
             </div>
         </div>
 
@@ -335,7 +350,7 @@
                         <th>Qty</th><th>Pts</th><th id="last-result-time">--:--</th>
                     </tr>
                     <tr>
-                        <td style="text-align:center;"class="group-name">Yantra Group NV</td><td class="gift-coin">-</td>
+                        <td class="group-name">Yantra Group NV</td><td class="gift-coin">-</td>
                         <td class="input-cell" data-group="NV" data-range="00-09"></td><td class="input-cell" data-group="NV" data-range="10-19"></td><td class="input-cell" data-group="NV" data-range="20-29"></td><td class="input-cell" data-group="NV" data-range="30-39"></td><td class="input-cell" data-group="NV" data-range="40-49"></td><td class="input-cell" data-group="NV" data-range="50-59"></td><td class="input-cell" data-group="NV" data-range="60-69"></td><td class="input-cell" data-group="NV" data-range="70-79"></td><td class="input-cell" data-group="NV" data-range="80-89"></td><td class="input-cell" data-group="NV" data-range="90-99"></td><td class="input-cell" data-group="NV" data-range="All"></td>
                         <td id="qty-NV" style="font-weight: bold; color: black;"></td><td id="pts-NV" style="font-weight: bold; color: black;"></td><td id="last-res-nv"></td>
                     </tr>
@@ -679,6 +694,20 @@
             } catch (err) { table.innerHTML += `<tr><td colspan="5">History load nahi ho payi.</td></tr>`; }
         }
         function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
+
+        async function openPsumModal() {
+            document.getElementById('psum-modal').style.display = 'flex';
+            try {
+                let response = await fetch('/api/purchase-summary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: currentUser }) });
+                let data = await response.json();
+                if (data.success) {
+                    document.getElementById('psum-total-tickets').innerText = data.totalTickets;
+                    document.getElementById('psum-today-spent').innerText = data.todaySpent.toFixed(2);
+                    document.getElementById('psum-total-spent').innerText = data.totalSpent.toFixed(2);
+                }
+            } catch (err) { alert("Summary nahi mil payi!"); }
+        }
+        function closePsumModal() { document.getElementById('psum-modal').style.display = 'none'; }
 
         function startEventTimer() {
             setInterval(() => {
