@@ -26,7 +26,9 @@
             border-radius: 0 !important;
             border: none !important;
             background-color: #f78fb3;
-            display: flex; flex-direction: column; padding: 12px 15px;
+            display: flex; flex-direction: column; 
+            /* 🚀 Yahan right side mein 65px ka space de diya hai taaki patti ke piche kuch na chhupe */
+            padding: 12px 65px 12px 15px; 
             box-sizing: border-box;
             transform-origin: top left !important;
         }
@@ -50,11 +52,11 @@
         .tab:nth-child(4) { background-color: #002277; color: white; } 
         .tab:nth-child(5) { background-color: #774499; color: white; } 
         
-        ..inline-action-btns { display: flex; gap: 8px; margin-bottom: 2px; margin-right: 45px; }
+        /* 🚀 Double dot wali galti theek kar di hai */
+        .inline-action-btns { display: flex; gap: 8px; margin-bottom: 2px; }
         .inline-action-btn { padding: 6px 14px; border-radius: 4px; font-size: 12px; border: 2px solid white; cursor: pointer; font-weight: bold; color: white; box-shadow: 0px 2px 4px rgba(0,0,0,0.3); }
         .btn-add-money { background-color: #008800; }
         .btn-withdraw { background-color: #cc0000; }
-        /* 🚀 Naya WhatsApp Button Style */
         .btn-whatsapp { background-color: #25D366; } 
         .inline-action-btn:active { transform: scale(0.95); }
 
